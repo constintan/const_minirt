@@ -6,32 +6,61 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 23:31:11 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 01:23:58 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
+// float	get_sp_radius(char **str)
+// {
+// 	float	res;
+
+// 	res = ft_atof(*str);
+// }
+
 // sp 0,0,20.6 12.6 10,0,255
 //return -1 in case of invalid data
-int	add_sphere(t_scene *scene, char *str)
+void	add_sphere(t_scene *scene, char *str)
 {
 	t_sphere	*sphere;
 	t_vector	*center;
+	t_color		*color;
 	float		radius;
+	int			err;
 
-	printf("str:%s\n", str);
-	radius = 12.6 / 2;
+	err = 0;
+	center = new_vector_atof(&str, &err);
+	printf("***add_sphere***\n");
+	printf("center->x:%f\n", center->x);
+	printf("err:%d\n", err);
+	printf("center->y:%f\n", center->y);
+	printf("err:%d\n", err);
+	printf("center->z:%f\n", center->z);
+	printf("err:%d\n", err);
+	// center = new_vector(3, 2, -32.8);
+	radius = ft_atof(&str, &err);
+	printf("radius:%f\n", radius);
+	printf("err:%d\n", err);
 
-	center = new_vector(3, 2, -32.8);
-	sphere = new_sphere(center, radius);
+	color = new_color_atoc(&str, &err);
+	printf("color->r:%d\n", color->r);
+	printf("color->g:%d\n", color->g);
+	printf("color->b:%d\n", color->b);
+
+	printf("err:%d\n", err);
+	check_endline(&str, &err);
+	printf("err:%d\n", err);
+	if (err)
+		ft_error(3);
+	sphere = new_sphere(center, radius, color);
 	sphere->next = scene->spheres;
 	scene->spheres = sphere;
 
-	return (1);
+	// return (1);
 }
 
-t_sphere	*new_sphere(t_vector *center, float radius)
+t_sphere	*new_sphere(t_vector *center, double radius, t_color *color)
 {
 	t_sphere	*sphere;
 
@@ -41,6 +70,7 @@ t_sphere	*new_sphere(t_vector *center, float radius)
 	sphere->center = center;
 	sphere->radius = radius;
 	sphere->next = NULL;
+	sphere->color = color;
 	return (sphere);
 }
 

@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 22:33:55 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 01:33:33 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,22 @@ int invalid_filename(char *filename)
 
 void	ft_error(int err)
 {
+	ft_putstr_fd("Error\n", STDERR_FILENO);
 	if (err == -1)
 		ft_putstr_fd("Malloc error!\n", STDERR_FILENO);
 	else if (err == 1)
 		ft_putstr_fd("Error with filename argument\n", STDERR_FILENO);
 	else if (err == 2)
 		ft_putstr_fd("Error during file opening\n", STDERR_FILENO);
+	else if (err == 3)
+		ft_putstr_fd("Error during sphere initialization\n", STDERR_FILENO);
+	else if (err == 4)
+		ft_putstr_fd("Error during camera initialization\n", STDERR_FILENO);
+	else if (err == 5)
+		ft_putstr_fd("Wrong type identifier\n", STDERR_FILENO);
+	else if (err == 6)
+		ft_putstr_fd("Error during ambient light initialization\n", STDERR_FILENO);
+	else if (err == 7)
+		ft_putstr_fd("Error during lighter initialization\n", STDERR_FILENO);
 	exit(err);
 }

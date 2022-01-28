@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 23:34:52 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 01:41:10 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ t_scene	*new_scene(void)
 		ft_error(-1);
 	scene->width = WINDOW_WIDTH;
 	scene->height = WINDOW_HEIGHT;
+	scene->camera = NULL;
+	scene->ambient = NULL;
+	scene->light = NULL;
 
 	scene->spheres = NULL;
 
@@ -48,7 +51,21 @@ void	parse_line(t_scene *scene, char *str)
 	while (ft_isspace(*str))
 		str++;
 	if (str[0] == 's' && str[1] == 'p')
-		add_sphere(scene, str);
+		add_sphere(scene, &str[2]);
+	else if (str[0] == 'C')
+		add_camera(scene, &str[1]);
+	else if (str[0] == 'A')
+		add_ambient(scene, &str[1]);
+	else if (str[0] == 'L')
+		add_light(scene, &str[1]);
+
+
+
+	else if (str[0] == '\0')
+		;
+	else
+		ft_error(5);
+
 	// free_after_split(subs);
 }
 
@@ -65,7 +82,9 @@ t_scene	*scene_init(char *filename)
 	str = get_next_line(fd);
 	while (str)
 	{
+		// savepoint = str; //we need a savepoint because 
 		parse_line(scene, str);
+		free(str); 
 		str = get_next_line(fd);
 	}
 	return (scene);

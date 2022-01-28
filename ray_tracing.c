@@ -6,16 +6,16 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:51:17 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 23:47:26 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 00:40:26 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-t_screen	*new_screen(float width, float height, float fov)
+t_screen	*new_screen(double width, double height, double fov)
 {
 	t_screen	*screen;
-	float		ratio;
+	double		ratio;
 
 	screen = (t_screen *)malloc(sizeof(t_screen));
 	if (screen == NULL)
@@ -33,16 +33,15 @@ void	ray_tracing(t_scene *scene)
 {
 	int			mlx_x;
 	int			mlx_y;
-	float		x;
-	float		y;
-	float		x_ray;
-	float		y_ray;
-	int			color;
+	double		x;
+	double		y;
+	double		x_ray;
+	double		y_ray;
+	t_color			*color;
 	t_vector	*ray;
 	t_screen	*screen;
 
 	screen = new_screen(scene->width, scene->height, scene->camera->fov);
-	write(1, "2here!!\n", 8);
 	y = scene->height / 2;
 	mlx_y = 0;
 	while (y > (scene->height / 2 * -1))
@@ -56,9 +55,9 @@ void	ray_tracing(t_scene *scene)
 			ray = new_vector(x_ray, y_ray, -1);
 			vec_normalize(ray);
 			if (sphere_intersect(scene->camera, ray, scene->spheres))
-				color = 0xFFFF;
+				color = scene->spheres->color;
 			else
-				color = 0;
+				color = new_color(0, 0, 0);
 			draw_pixel(scene, mlx_x, mlx_y, color);
 			// mlx_pixel_put(scene->mlx, scene->window, mlx_x, mlx_y, color);
 			// printf("mlx_x:%d, mlx_y:%d\n", mlx_x, mlx_y);
@@ -66,11 +65,9 @@ void	ray_tracing(t_scene *scene)
 			x++;
 			mlx_x++;
 		}
-		write(1, "4here!!\n", 8);
 		y--;
 		mlx_y++;
 	}
-	write(1, "3here!!\n", 8);
 	mlx_put_image_to_window(scene->mlx, scene->window, scene->img, 0, 0);
 	mlx_destroy_image(scene->mlx, scene->img);
 }

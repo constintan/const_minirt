@@ -6,13 +6,34 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:08:54 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 01:25:56 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 00:46:31 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-t_vector *new_vector(float x, float y, float z)
+t_vector	*new_vector_atof(char **str, int *err)
+{
+	double x;
+	double y;
+	double z;
+
+	x = ft_atof(str, err);
+	while (ft_isspace(**str))
+		(*str)++;
+	if (**str == ',')
+		(*str)++;
+	y = ft_atof(str, err);
+	while (ft_isspace(**str))
+		(*str)++;
+	if (**str == ',')
+		(*str)++;
+	z = ft_atof(str, err);
+	return (new_vector(x, y, z));
+}
+// new_vector(ft_atof(&str, &err), ft_atof(&str, &err), ft_atof(&str, &err))
+
+t_vector *new_vector(double x, double y, double z)
 {
 	t_vector	*vec;
 
@@ -33,9 +54,9 @@ t_vector	*vec_subtract(t_vector *vec1, t_vector *vec2)
 	return (result);
 }
 
-float	vec_length(t_vector	*vec)
+double	vec_length(t_vector	*vec)
 {
-	float	result;
+	double	result;
 
 	result = sqrt(pow(vec->x, 2) + pow(vec->y, 2) + pow(vec->z, 2));
 	return (result);
@@ -43,7 +64,7 @@ float	vec_length(t_vector	*vec)
 
 void	vec_normalize(t_vector *vec)
 {
-	float	length;
+	double	length;
 
 	length = vec_length(vec);
 	vec->x = vec->x / length;
@@ -51,9 +72,9 @@ void	vec_normalize(t_vector *vec)
 	vec->z = vec->z / length;
 }
 
-float	vec_dot_product(t_vector *v1, t_vector *v2)
+double	vec_dot_product(t_vector *v1, t_vector *v2)
 {
-	float	result;
+	double	result;
 
 	result = ((v1->x * v2->x) + (v1->y * v2->y) + (v1->z * v2->z));
 	return (result);
