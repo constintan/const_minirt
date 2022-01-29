@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 19:52:05 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/30 01:09:35 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # define WINDOW_WIDTH 800
 # define WINDOW_HEIGHT 600
 # define WINDOW_NAME "miniRT window"
+# define DEFAULT_BG_COLOR 255, 255, 255
+
 
 typedef struct	s_vector
 {
@@ -77,6 +79,7 @@ typedef struct	s_light
 	t_vector	*position;
 	double		bright;
 	t_color		*color;
+	//next === доделать!!!!!!!!!!
 }	t_light;
 
 typedef struct	s_ambient
@@ -109,6 +112,14 @@ typedef struct	s_scene
 	t_cylinder *cylinders;
 
 }	t_scene;
+
+// typedef struct	s_shapes
+// {
+// 	int type;
+// 	void *params;
+// 	struct s_shapes next;
+// }
+// доделать!!!!!!!!!!
 
 typedef struct	s_screen
 {

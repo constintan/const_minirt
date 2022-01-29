@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:51:17 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 00:40:26 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 21:52:34 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	ray_tracing(t_scene *scene)
 			if (sphere_intersect(scene->camera, ray, scene->spheres))
 				color = scene->spheres->color;
 			else
-				color = new_color(0, 0, 0);
+				color = new_color(DEFAULT_BG_COLOR);
 			draw_pixel(scene, mlx_x, mlx_y, color);
 			// mlx_pixel_put(scene->mlx, scene->window, mlx_x, mlx_y, color);
 			// printf("mlx_x:%d, mlx_y:%d\n", mlx_x, mlx_y);

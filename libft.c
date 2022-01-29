@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:13:07 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/27 22:47:50 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/30 01:36:57 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,19 @@ void	ft_putstr_fd(char *s, int fd)
 		ft_putchar_fd(*s++, fd);
 }
 
-void	free_after_split(char **argv)
-{
-	int	i;
+// void	free_after_split(char **argv)
+// {
+// 	int	i;
 
-	i = 0;
-	while (argv && argv[i])
-	{
-		free(argv[i]);
-		argv[i] = NULL;
-		i++;
-	}
-	free(argv);
-}
+// 	i = 0;
+// 	while (argv && argv[i])
+// 	{
+// 		free(argv[i]);
+// 		argv[i] = NULL;
+// 		i++;
+// 	}
+// 	free(argv);
+// }
 
 int	ft_strcmp(char *s1, char *s2)
 {
