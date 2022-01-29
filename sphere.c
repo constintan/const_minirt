@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 01:23:58 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 19:18:36 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	add_sphere(t_scene *scene, char *str)
 	t_sphere	*sphere;
 	t_vector	*center;
 	t_color		*color;
-	float		radius;
+	float		diametr;
 	int			err;
 
 	err = 0;
@@ -39,8 +39,8 @@ void	add_sphere(t_scene *scene, char *str)
 	printf("center->z:%f\n", center->z);
 	printf("err:%d\n", err);
 	// center = new_vector(3, 2, -32.8);
-	radius = ft_atof(&str, &err);
-	printf("radius:%f\n", radius);
+	diametr = ft_atof(&str, &err);
+	printf("diametr:%f\n", diametr);
 	printf("err:%d\n", err);
 
 	color = new_color_atoc(&str, &err);
@@ -53,7 +53,7 @@ void	add_sphere(t_scene *scene, char *str)
 	printf("err:%d\n", err);
 	if (err)
 		ft_error(3);
-	sphere = new_sphere(center, radius, color);
+	sphere = new_sphere(center, diametr / 2, color);
 	sphere->next = scene->spheres;
 	scene->spheres = sphere;
 

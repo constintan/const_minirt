@@ -6,7 +6,7 @@
 #    By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/04 17:15:03 by lajudy            #+#    #+#              #
-#    Updated: 2022/01/29 01:41:33 by lajudy           ###   ########.fr        #
+#    Updated: 2022/01/29 19:42:38 by lajudy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ SRCS =	minirt.c  error_managment.c \
 		libft.c libft2.c \
 		draw.c scene_init.c\
 		ft_atox.c color.c ambient.c \
-		light.c
+		light.c plane.c cylinder.c
 
 
 

@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 01:33:33 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 19:46:44 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,9 @@ void	ft_error(int err)
 		ft_putstr_fd("Error during ambient light initialization\n", STDERR_FILENO);
 	else if (err == 7)
 		ft_putstr_fd("Error during lighter initialization\n", STDERR_FILENO);
+	else if (err == 8)
+		ft_putstr_fd("Error during plane initialization\n", STDERR_FILENO);
+	else if (err == 9)
+		ft_putstr_fd("Error during cylinder initialization\n", STDERR_FILENO);
 	exit(err);
 }

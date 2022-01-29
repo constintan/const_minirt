@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 01:41:10 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/29 19:50:25 by lajudy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ t_scene	*new_scene(void)
 	scene->light = NULL;
 
 	scene->spheres = NULL;
+	scene->planes = NULL;
+	scene->cylinders = NULL;
 
 	scene->mlx = mlx_init();
 	scene->window = mlx_new_window(scene->mlx, scene->width, scene->height, WINDOW_NAME);
@@ -52,6 +54,10 @@ void	parse_line(t_scene *scene, char *str)
 		str++;
 	if (str[0] == 's' && str[1] == 'p')
 		add_sphere(scene, &str[2]);
+	else if (str[0] == 'p' && str[1] == 'l')
+		add_plane(scene, &str[2]);
+	else if (str[0] == 'c' && str[1] == 'y')
+		add_cylinder(scene, &str[2]);
 	else if (str[0] == 'C')
 		add_camera(scene, &str[1]);
 	else if (str[0] == 'A')
