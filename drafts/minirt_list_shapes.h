@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/31 23:36:06 by konstanting      ###   ########.fr       */
+/*   Updated: 2022/01/31 23:05:15 by konstanting      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,24 @@ typedef struct	s_ambient
 	t_color	*color;
 }	t_ambient;
 
+typedef enum e_objtype
+{
+	NO_OBJTYPE,
+	SPHERE,
+	PLANE,
+	CYLINDER,
+	CONE,
+	HYPERBOLOID,
+	PARABOLOID
+}	t_objtype;
+
+typedef struct	s_shape_list
+{
+	t_objtype type;
+	void *params;
+	struct s_shape_list *next;
+} t_shape_list;
+
 typedef struct	s_scene
 {
 	t_camera	*camera;
@@ -107,11 +125,13 @@ typedef struct	s_scene
 	double		width;
 	double		height;
 
-	t_sphere *spheres;
-	t_plane *planes;
-	t_cylinder *cylinders;
+	t_shape_list	*shapes;
+	// t_sphere *spheres;
+	// t_plane *planes;
+	// t_cylinder *cylinders;
 
 }	t_scene;
+
 
 typedef struct	s_screen
 {
@@ -203,6 +223,9 @@ unsigned char	ft_atoc(char **str, int *err);
 t_color			*new_color(unsigned char r, unsigned char g, unsigned char b);
 t_color			*new_color_atoc(char **str, int *err);
 
+//shape_list_utils.c
+t_shape_list	*new_shape(t_objtype type, void *params);
+void	add_shape_front(t_shape_list **begin_list, t_objtype type, void *data);
 
 
 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+         #
+#    By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/04 17:15:03 by lajudy            #+#    #+#              #
-#    Updated: 2022/01/29 19:42:38 by lajudy           ###   ########.fr        #
+#    Updated: 2022/01/31 23:38:54 by konstanting      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ SRCS =	minirt.c  error_managment.c \
 		libft.c libft2.c \
 		draw.c scene_init.c\
 		ft_atox.c color.c ambient.c \
-		light.c plane.c cylinder.c
+		light.c \
+		plane.c cylinder.c
 
 
 
@@ -51,10 +52,10 @@ ${MLX}:
 $(OBJS):$(HDRS) Makefile
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	$(CC) $(CFLAGS) -I${PATHTOMLX} -c $< -o $(<:.c=.o)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -L${PATHTOGNL} -lgnl -L${PATHTOMLX} -lmlx  ${FRMWRKS} -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -L${PATHTOGNL} -lgnl -I${PATHTOMLX} -L${PATHTOMLX} -lmlx ${FRMWRKS} -o $(NAME)
 
 bonus: all
 

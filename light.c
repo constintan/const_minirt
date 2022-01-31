@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   light.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/29 01:31:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 01:41:45 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/31 23:36:11 by konstanting      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@ void	add_light(t_scene *scene, char *str)
 	t_vector	*position;
 	double		bright;
 	t_color		*color;
+	t_light		*light;
 
 	int			err;
 
-	if (scene->light != NULL)
-		ft_error(7);
+	// это условие только для основной части, в бонусной части "мультилайт" -- не нужно проверять что ровно один светильник
+	// if (scene->light != NULL)
+	// 	ft_error(7);
+
 	err = 0;
 	position = new_vector_atof(&str, &err);
 	printf("***add_light***\n");
@@ -50,7 +53,9 @@ void	add_light(t_scene *scene, char *str)
 	printf("err:%d\n", err);
 	if (err)
 		ft_error(7);
-	scene->light = new_light(position, bright, color);
+	light = new_light(position, bright, color);
+	light->next = scene->lights;
+	scene->lights = light;
 }
 
 t_light	*new_light(t_vector *position, double bright, t_color *color)
@@ -63,5 +68,6 @@ t_light	*new_light(t_vector *position, double bright, t_color *color)
 	light->position = position;
 	light->bright = bright;
 	light->color = color;
+	light->next = NULL;
 	return (light);
 }

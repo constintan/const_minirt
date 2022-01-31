@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/31 23:33:56 by konstanting      ###   ########.fr       */
+/*   Updated: 2022/01/31 22:56:36 by konstanting      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ void	add_sphere(t_scene *scene, char *str)
 	if (err)
 		ft_error(3);
 	sphere = new_sphere(center, diametr / 2, color);
-	sphere->next = scene->spheres;
-	scene->spheres = sphere;
+	add_shape_front(&scene->shapes, SPHERE, sphere);
 
 	// return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scene_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/01/29 19:50:25 by lajudy           ###   ########.fr       */
+/*   Updated: 2022/01/31 23:34:42 by konstanting      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_scene	*new_scene(void)
 	scene->height = WINDOW_HEIGHT;
 	scene->camera = NULL;
 	scene->ambient = NULL;
-	scene->light = NULL;
+	scene->lights = NULL;
 
 	scene->spheres = NULL;
 	scene->planes = NULL;
