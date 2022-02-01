@@ -1,77 +1,108 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/11/04 17:15:03 by lajudy            #+#    #+#              #
-#    Updated: 2022/01/31 23:38:54 by konstanting      ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME		= miniRT
 
-SRCS =	minirt.c  error_managment.c \
-		vector.c sphere.c camera.c \
-		ray_tracing.c \
-		libft.c libft2.c \
-		draw.c scene_init.c\
-		ft_atox.c color.c ambient.c \
-		light.c \
-		plane.c cylinder.c
+NAME_BONUS	= miniRT
 
+FOLDER		= src/
 
+FOLDER_BON	= src_bonus/
 
-BSRCS = 
+MLX			= libmlx.a
+MLX_PATH	= mlx_static/
 
-HDRS =	minirt.h
+LIBKD		= libft.a
+LIBKD_PATH	= libkd/
 
-PATHTOMLX = minilibx_macos/
-PATHTOGNL = gnl/
-MLX = ${PATHTOMLX}libmlx.a
-GNL = ${PATHTOGNL}libgnl.a
+GNL			= libgnl.a
+GNL_PATH	= gnl/
 
-OBJS = 	$(SRCS:.c=.o)
+RM      	= rm -f
 
-NAME = 	minirt
+all:		mlx libkd gnl $(NAME)
 
-CC = 	gcc
-CFLAGS = -Wall -Wextra -Werror
-FRMWRKS = -framework OpenGL -framework AppKit 
-RM = 	rm -f
+mlx:
+			@echo "Making $(MLX_PATH)$(MLX)"
+			@make -C $(MLX_PATH)
+			@cp $(MLX_PATH)$(MLX) ./
 
-all:	${GNL} ${MLX} ${NAME} 
+libkd:
+			@echo "Making $(LIBKD_PATH)$(LIBKD)"
+			@make -C $(LIBKD_PATH)
 
-${GNL}: 
-	@echo "Making ${GNL}"
-	@make -C ${PATHTOGNL}
+gnl:
+			@echo "Making $(GNL_PATH)$(GNL)"
+			@make -C $(GNL_PATH)
 
-${MLX}: 
-	@make -C ${PATHTOMLX}
+$(NAME):
+			@make -C $(FOLDER)
+			@cp $(FOLDER)$(NAME) ./
 
-
-$(OBJS):$(HDRS) Makefile
-
-.c.o:
-	$(CC) $(CFLAGS) -I${PATHTOMLX} -c $< -o $(<:.c=.o)
-
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -L${PATHTOGNL} -lgnl -I${PATHTOMLX} -L${PATHTOMLX} -lmlx ${FRMWRKS} -o $(NAME)
-
-bonus: all
+bonus:		mlx libkd gnl
+			@make -C $(FOLDER_BON)
+			@cp $(FOLDER_BON)$(NAME_BONUS) ./
 
 clean:
-	${RM} ${OBJS}
-	@make -C ${PATHTOGNL} clean
-	@make -C ${PATHTOMLX} clean
+			@make clean -C $(FOLDER) > /dev/null
+			@make clean -C $(FOLDER_BON) > /dev/null
+			@echo "clean is finished"
 
-fclean: clean
-	${RM} ${NAME}
-	@make -C ${PATHTOGNL} fclean
+mlx_clean:
+			@make clean -C $(MLX_PATH) > /dev/null
+			@echo "mlx_clean is finished"
 
-re: fclean all
+libkd_clean:
+			@make clean -C $(LIBKD_PATH) > /dev/null
+			@echo "libkd_clean is finished"
+
+gnl_clean:
+			@make clean -C $(GNL_PATH) > /dev/null
+			@echo "gnl_clean is finished"
+
+clean_all:	mlx_clean libkd_clean gnl_clean clean
+
+fclean:
+			@make fclean -C $(FOLDER) > /dev/null
+			@make fclean -C $(FOLDER_BON) > /dev/null
+			@$(RM) $(NAME) $(NAME_BONUS) $(MLX)
+			@echo "fclean is finished"
+
+libkd_fclean:
+			@make fclean -C $(LIBKD_PATH) > /dev/null
+			@echo "libkd_fclean is finished"
+
+gnl_fclean:
+			@make fclean -C $(GNL_PATH) > /dev/null
+			@echo "gnl_fclean is finished"
+
+fclean_all:	mlx_clean libkd_fclean gnl_fclean fclean
+
+re:			fclean all
+
+re_all:		fclean_all all
 
 norm:
-	norminette -R CheckForbiddenSourceHeader ${SRCS} ${BSRCS}
-	norminette -R CheckDefine ${HDRS}
+			@make norm -C $(LIBKD_PATH)
+			@make norm -C $(FOLDER)
+			@make norm -C $(FOLDER_BON)
 
-.PHONY: all clean fclean re bonus norm
+leaks:
+			leaks --atExit -- ./$(NAME)
+
+.PHONY:		\
+all \
+bonus \
+mlx \
+libkd \
+gnl \
+clean \
+mlx_clean \
+libkd_clean \
+gnl_clean \
+clean_all \
+fclean \
+libkd_fclean \
+gnl_fclean \
+fclean_all \
+re \
+re_all \
+norm \
+leaks \
