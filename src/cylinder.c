@@ -86,7 +86,7 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, d
 	if (cylinder == NULL)
 		ft_error(-1);
 	cylinder->position = position;
-	cylinder->orient = orient;
+	cylinder->orient = vector3_normalise(orient);
 	cylinder->radius = radius;
 	cylinder->height = height;
 	cylinder->color = color;

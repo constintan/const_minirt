@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 22:25:47 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 00:29:00 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define WINDOW_HEIGHT 600
 # define WINDOW_NAME "miniRT window"
 # define DEFAULT_BG_COLOR 128, 128, 128
+# define DEFAULT_ZOOM 32
 # define EPSILON 1e-6
 
 typedef enum e_bool
@@ -168,6 +169,9 @@ typedef struct	s_scene
 	t_cylinder *cylinders;
 //	t_obj		*obj;
 	t_bool		play;
+	t_bool		no_shadows;
+	t_bool		one_light;
+	t_bool		no_lights;
 	int			view;
 
 }	t_scene;
@@ -315,6 +319,7 @@ t_vector3	vector3_multiply(t_vector3 direction, double multiply);
 double		vector3_sumpow2(t_vector3 a);
 double		vector3_scalar(t_vector3 a, t_vector3 b);
 t_vector3	vector3_rotate(t_vector3 a, t_vector2 rotate);
+t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
 t_vector3	new_vector3(double x, double y, double z);
 t_vector2	new_vector2(double u, double v);
 t_vector3	vector3_negate(t_vector3 a);

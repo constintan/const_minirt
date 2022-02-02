@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/01 22:05:40 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 01:28:54 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,21 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 
 static void	intersect(t_ray *ray, t_scene *scene)
 {
-	intersect_plane(scene->planes, ray);
-	intersect_sphere(scene->spheres, ray);
+	t_plane		*plane;
+	t_sphere	*sphere;
+
+	plane = scene->planes;
+	while (plane)
+	{
+		intersect_plane(plane, ray);
+		plane = plane->next;
+	}
+	sphere = scene->spheres;
+	while (sphere)
+	{
+		intersect_sphere(sphere, ray);
+		sphere = sphere->next;
+	}
 }
 
 static t_bool compute_shadow(t_light *light, t_ray *ray, t_scene *scene)
@@ -104,14 +117,16 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 		return (new_color(DEFAULT_BG_COLOR));
 	color = colour_matrix_amplify(ray->color, colour_amplify(scene->ambient->color, scene->ambient->bright));
 	light = scene->light;
-	while (light)
+	while (light && !scene->no_lights)
 	{
 		l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 		fctr = vector3_scalar(ray->normal, l);
-		if (fctr < 0 || compute_shadow(light, ray, scene))
+		if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, ray, scene)))
 			fctr = 0;
 		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), fctr));
 		light = light->next;
+		if (scene->one_light)
+			light = NULL;
 	}
 	return (color);
 }
@@ -140,7 +155,7 @@ static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 	ray->position.y = camera->position.y + step.v * camera->zoom;
 	ray->position.z = camera->position.z;
 	ray->position = matrix3_addition(vector3_rotate(matrix3_subtract(ray->position, camera->position), camera->rotate), camera->position);
-	ray->orientation = vector3_rotate(camera->orient, camera->rotate);
+	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), camera->rotate);
 }
 
 static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
@@ -186,7 +201,7 @@ int	render_next_frame(t_scene *scene)
 
 	animate(scene);
 	kd_free(scene->hud);
-	scene->hud = kd_strf("x %d y %d", scene->camera->rotate.u, scene->camera->rotate.v);
+	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
 	pixel.y = 0;
 	while (pixel.y < scene->height)
 	{

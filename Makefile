@@ -89,6 +89,7 @@ leaks:
 
 .PHONY:		\
 all \
+$(NAME) \
 bonus \
 mlx \
 libkd \

@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 21:09:25 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 01:35:44 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,24 @@ int	close_minirt(void)
 void	reset_game(t_scene *scene)
 {
 	(void)scene;
+}
+
+static int	key_hook(int key, t_scene *scene)
+{
+	if (key == KEY_ESC)
+		close_minirt();
+	else if (key == KEY_R)
+	{
+		scene->view++;
+		if (scene->view >= 3 || scene->view < 0)
+			scene->view = 0;
+//		reset_game(mlx);
+	} else if (key == KEY_ENTER || key == KEY_TAB)
+		scene->play = TRUE;
+//		next_level(mlx);
+//	if (check_move(key, mlx) && scene->hud)
+//		scene->hud = kd_free(scene->hud);
+	return (0);
 }
 
 // static int	mouse_hook(int button, int x, int y, t_mlx *mlx)
@@ -46,9 +64,18 @@ int	main(int argc, char **argv)
 	if (argc == 1 || invalid_filename(argv[1]))
 		ft_error(1);
 	scene = scene_init(argv[1]);
+	while (--argc > 1)
+	{
+		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 's'))
+			scene->no_shadows = TRUE;
+		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 'l'))
+			scene->one_light = TRUE;
+		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 'L'))
+			scene->no_lights = TRUE;
+	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
 	mlx_loop_hook(scene->mlx, render_next_frame, scene);
-//	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
+	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
 	mlx_hook(scene->window, 17, 0, close_minirt, scene);
 	// mlx_mouse_hook(scene->window, mouse_hook, scene);
 	mlx_loop(scene->mlx);

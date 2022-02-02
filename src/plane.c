@@ -76,7 +76,7 @@ t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color)
 	if (plane == NULL)
 		ft_error(-1);
 	plane->position = position;
-	plane->orient = orient;
+	plane->orient = vector3_normalise(orient);
 	plane->color = color;
 	plane->next = NULL;
 	return (plane);

@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/01 08:29:44 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 00:15:51 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,32 @@ t_vector3	vector3_rotate(t_vector3 a, t_vector2 rotate)
 	a.y = b.y;
 	a.z = b.x * sin(rotate.u) + b.z * cos(rotate.u);
 	return (a);
+}
+
+t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
+{
+	t_vector2	c;
+	t_vector2	r;
+
+	(void)b;
+	c.u = 0;
+	c.v = 0;
+	r.v = -90;
+	while (r.v <= 90)
+	{
+		r.u = 0;
+		while (r.u < 360)
+		{
+			if (vector3_scalar(a, vector3_rotate(b, r)) > vector3_scalar(a, vector3_rotate(b, c)))
+			{
+				printf("%f %f\n", vector3_scalar(a, vector3_rotate(b, r)), vector3_scalar(a, vector3_rotate(b, c)));
+				c = r;
+			}
+			r.u++;
+		}
+		r.v++;
+	}
+	return (c);
 }
 
 t_vector3	new_vector3(double x, double y, double z)
