@@ -63,7 +63,7 @@ t_vector3	vector3_multiply(t_vector3 direction, double multiply)
 	direction.z *= multiply;
 	return (direction);
 }
-
+//сумма квадратов координат
 double	vector3_sumpow2(t_vector3 a)
 {
 	return(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));

@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 01:28:54 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 22:48:58 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,17 @@ static double	math_discriminant(double a, double b, double c)
 	return (pow(b, 2) - 4 * a * c);
 }
 
+//https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
 static void	intersect_plane(t_plane *plane, t_ray *ray)
 {
 	double		denominator;
 	double		distance;
 
+	//l⋅n
 	denominator = vector3_scalar(plane->orient, ray->orientation);
 	if (denominator > EPSILON)
 	{
+		//t =
 		distance = vector3_scalar(matrix3_subtract(plane->position, ray->position), plane->orient) / denominator;
 		if (distance < EPSILON || (ray->distance < distance && ray->distance))
 			return ;
@@ -42,9 +45,11 @@ static void	intersect_plane(t_plane *plane, t_ray *ray)
 		return ;
 	ray->color = plane->color;
 	ray->distance = distance;
+	//l0+l∗t=p
 	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orientation, distance));
 }
 
+//https://www.ccs.neu.edu/home/fell/CS4300/Lectures/Ray-TracingFormulas.pdf
 static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 {
 	t_vector3	d;
@@ -54,8 +59,10 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 
 	kd_memset(&q, 0, sizeof(t_quad));
 	new_ray = *ray;
-	d = vector3_multiply(ray->orientation, 1); //max_distance
+	//x0-cx ; y0-cy ; z0-cz
+	d = ray->orientation; //vector3_multiply(ray->orientation, 1); //max_distance
 	p = matrix3_subtract(ray->position, sphere->position);
+	//сумма квадратов координат
 	q.a = vector3_sumpow2(d);
 	q.b = 2 * d.x * p.x + 2 * d.y * p.y + 2 * d.z * p.z;
 	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(ray->position) - 2 * vector3_scalar(sphere->position, ray->position) - pow(sphere->radius, 2);
@@ -93,13 +100,14 @@ static void	intersect(t_ray *ray, t_scene *scene)
 	}
 }
 
-static t_bool compute_shadow(t_light *light, t_ray *ray, t_scene *scene)
+static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *scene)
 {
 	t_ray	new_ray;
 
 	kd_memset(&new_ray, 0, sizeof(t_ray));
 	new_ray.position = ray->coordinates;
-	new_ray.orientation = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
+//	l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
+	new_ray.orientation = l;
 	intersect(&new_ray, scene);
 	if (new_ray.distance && new_ray.distance < vector3_distance(light->position, ray->coordinates))
 		return (TRUE);
@@ -113,6 +121,12 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 	double		fctr;
 	t_color		color;
 
+//	new_ray = compute_mirror_angle(ray);
+//	intersect(new_ray, scene);
+//	new_ray == ray из камеры
+//	new_ray.color == цвет объекта в отражении шара
+
+//	если пересечений не было, то distance по дефолту = 0
 	if (!ray->distance)
 		return (new_color(DEFAULT_BG_COLOR));
 	color = colour_matrix_amplify(ray->color, colour_amplify(scene->ambient->color, scene->ambient->bright));
@@ -121,7 +135,8 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 	{
 		l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 		fctr = vector3_scalar(ray->normal, l);
-		if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, ray, scene)))
+		//перпендикулярный нормаль к свету = 0, параллельный = 1
+		if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, l, ray, scene)))
 			fctr = 0;
 		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), fctr));
 		light = light->next;
@@ -131,15 +146,7 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 	return (color);
 }
 
-static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray)
-{
-	ray->position = camera->position;
-	step.u = camera->fov / 2 * step.u;
-	step.v = camera->fov / 2 * step.v;
-	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), step);
-	ray->orientation = vector3_rotate(ray->orientation, camera->rotate);
-}
-
+//пересчет fov в координаты сцены через тангенс
 static void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray)
 {
 	ray->position = camera->position;
@@ -149,6 +156,17 @@ static void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray)
 	ray->orientation = vector3_rotate(ray->orientation, camera->rotate);
 }
 
+//обсчет системы координат через сферу.
+static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	ray->position = camera->position;
+	step.u = camera->fov / 2 * step.u;
+	step.v = camera->fov / 2 * step.v;
+	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate(ray->orientation, camera->rotate);
+}
+
+//вид без перспективы (ортографический)
 static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 {
 	ray->position.x = camera->position.x + step.u * camera->zoom;
@@ -158,10 +176,12 @@ static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), camera->rotate);
 }
 
+// лучи из камеры, поиск места пересечения с фигурами
+// в функцию приходит пустой ray, функция считает шаг в отосительных координатах и формирует
 static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 {
 	t_vector2	step;
-
+	//step -- перевод из координат mlx в координаты сцены (из обсолютных координат пиксельной матрицы, а относительным координатам сцены [-1; 1])
 	step = new_vector2((pixel.x - scene->width / (double)2) / scene->width * (double)2, -(pixel.y - scene->height / (double)2) / scene->width * (double)2);
 	if (scene->view == 0)
 		ray_perspective_tan(scene->camera, step, ray);
@@ -172,6 +192,7 @@ static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 	intersect(ray, scene);
 }
 
+// включает поворот камеры, если флаг play активирован
 static void	animate(t_scene *scene)
 {
 	t_vector2	q;
@@ -193,15 +214,34 @@ static void	animate(t_scene *scene)
 	scene->camera->rotate.u = q.u;
 	scene->camera->rotate.v = q.v;
 }
+#include <sys/time.h>
+long	mtv(void)
+{
+	struct timeval	tv;
+	static long		start;
+
+	gettimeofday(&tv, NULL);
+	if (!start)
+	{
+		start = (long) tv.tv_sec * 1000 + tv.tv_usec / 1000;
+		return (0);
+	}
+	return (((long)tv.tv_sec * 1000 + tv.tv_usec / 1000) - start);
+}
 
 int	render_next_frame(t_scene *scene)
 {
 	t_xy	pixel;
 	t_ray	ray;
+	long	time1;
+	static long	time2;
 
 	animate(scene);
 	kd_free(scene->hud);
-	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
+//	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
+	time1 = mtv();
+	scene->hud = kd_strf("%d", (int)time1 - (int)time2);
+	time2 = time1;
 	pixel.y = 0;
 	while (pixel.y < scene->height)
 	{
