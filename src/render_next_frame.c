@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 01:28:54 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 22:49:07 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static void	intersect_plane(t_plane *plane, t_ray *ray)
 	denominator = vector3_scalar(plane->orient, ray->orientation);
 	if (denominator > EPSILON)
 	{
+		//t =
 		distance = vector3_scalar(matrix3_subtract(plane->position, ray->position), plane->orient) / denominator;
 		if (distance < EPSILON || (ray->distance < distance && ray->distance))
 			return ;
@@ -54,7 +55,8 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 
 	kd_memset(&q, 0, sizeof(t_quad));
 	new_ray = *ray;
-	d = vector3_multiply(ray->orientation, 1); //max_distance
+	//x0-cx ; y0-cy ; z0-cz
+	d = ray->orientation; //vector3_multiply(ray->orientation, 1); //max_distance
 	p = matrix3_subtract(ray->position, sphere->position);
 	q.a = vector3_sumpow2(d);
 	q.b = 2 * d.x * p.x + 2 * d.y * p.y + 2 * d.z * p.z;
@@ -93,7 +95,7 @@ static void	intersect(t_ray *ray, t_scene *scene)
 	}
 }
 
-static t_bool compute_shadow(t_light *light, t_ray *ray, t_scene *scene)
+static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *scene)
 {
 	t_ray	new_ray;
 
@@ -113,6 +115,12 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 	double		fctr;
 	t_color		color;
 
+//	new_ray = compute_mirror_angle(ray);
+//	intersect(new_ray, scene);
+//	new_ray == ray из камеры
+//	new_ray.color == цвет объекта в отражении шара
+
+//	если пересечений не было, то distance по дефолту = 0
 	if (!ray->distance)
 		return (new_color(DEFAULT_BG_COLOR));
 	color = colour_matrix_amplify(ray->color, colour_amplify(scene->ambient->color, scene->ambient->bright));
@@ -193,15 +201,34 @@ static void	animate(t_scene *scene)
 	scene->camera->rotate.u = q.u;
 	scene->camera->rotate.v = q.v;
 }
+#include <sys/time.h>
+long	mtv(void)
+{
+	struct timeval	tv;
+	static long		start;
+
+	gettimeofday(&tv, NULL);
+	if (!start)
+	{
+		start = (long) tv.tv_sec * 1000 + tv.tv_usec / 1000;
+		return (0);
+	}
+	return (((long)tv.tv_sec * 1000 + tv.tv_usec / 1000) - start);
+}
 
 int	render_next_frame(t_scene *scene)
 {
 	t_xy	pixel;
 	t_ray	ray;
+	long	time1;
+	static long	time2;
 
 	animate(scene);
 	kd_free(scene->hud);
-	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
+//	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
+	time1 = mtv();
+	scene->hud = kd_strf("%d", (int)time1 - (int)time2);
+	time2 = time1;
 	pixel.y = 0;
 	while (pixel.y < scene->height)
 	{
