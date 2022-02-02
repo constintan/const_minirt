@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 22:34:39 by                  ###   ########.fr       */
+/*   Updated: 2022/02/01 08:29:44 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_vector3	vector3_multiply(t_vector3 direction, double multiply)
 	direction.z *= multiply;
 	return (direction);
 }
-
+//сумма квадратов координат
 double	vector3_sumpow2(t_vector3 a)
 {
 	return(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
