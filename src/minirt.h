@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/04 22:18:52 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 01:47:44 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ typedef struct	s_scene
 	void	*mlx;
 	void	*window;
 	t_img	*img;
+	t_img	*img2;
 
 	//содержимое t_img:
 
@@ -175,6 +176,7 @@ typedef struct	s_scene
 	t_bool		one_light;
 	t_bool		no_lights;
 	int			view;
+	int			oddframe;
 
 }	t_scene;
 

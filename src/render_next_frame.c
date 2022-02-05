@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/05 01:37:31 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 03:28:10 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,6 +262,21 @@ long	mtv(void)
 	return (((long)tv.tv_sec * 1000 + tv.tv_usec / 1000) - start);
 }
 
+static	void update_window(t_scene *scene)
+{
+	if (!scene->oddframe)
+	{
+		mlx_put_image_to_window(scene->mlx, scene->window, scene->img->img, 0, 0);
+		scene->oddframe = 1;
+	}
+	else
+	{
+		mlx_put_image_to_window(scene->mlx, scene->window, scene->img2->img, 0, 0);
+		scene->oddframe = 0;
+	}
+	hud(scene);
+}
+
 int	render_next_frame(t_scene *scene)
 {
 	t_xy	pixel;
@@ -283,12 +298,14 @@ int	render_next_frame(t_scene *scene)
 		{
 			kd_memset(&ray, 0, sizeof(t_ray));
 			raytrace(pixel, &ray, scene);
-			draw_pixel(scene->img, pixel.x, pixel.y, compute_light(&ray, scene));
+			if (!scene->oddframe)
+				draw_pixel(scene->img, pixel.x, pixel.y, compute_light(&ray, scene));
+			else
+				draw_pixel(scene->img2, pixel.x, pixel.y, compute_light(&ray, scene));
 			pixel.x++;
 		}
 		pixel.y++;
 	}
-	mlx_put_image_to_window(scene->mlx, scene->window, scene->img->img, 0, 0);
-	hud(scene);
+	update_window(scene);
 	return (0);
 }

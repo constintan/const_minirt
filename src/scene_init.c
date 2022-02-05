@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 22:21:45 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 01:50:04 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,18 @@ t_scene	*new_scene(void)
 	if (scene->img->img == NULL)
 		ft_error(-1);
 	scene->img->addr = mlx_get_data_addr(scene->img->img, &scene->img->bits_per_pixel,
-			&scene->img->bytes_per_line, &scene->img->endian);
+										 &scene->img->bytes_per_line, &scene->img->endian);
 	if (scene->img->addr == NULL)
+		ft_error(-1);
+	scene->img2 = kd_calloc(1, sizeof(t_img));
+	if (scene->img2 == NULL)
+		ft_error(-1);
+	scene->img2->img = mlx_new_image(scene->mlx, scene->width, scene->height);
+	if (scene->img2->img == NULL)
+		ft_error(-1);
+	scene->img2->addr = mlx_get_data_addr(scene->img2->img, &scene->img2->bits_per_pixel,
+										 &scene->img2->bytes_per_line, &scene->img2->endian);
+	if (scene->img2->addr == NULL)
 		ft_error(-1);
 	return (scene);
 	// mlx_put_image_to_window(scene->mlx, scene->window, scene->img, 0, 0);
