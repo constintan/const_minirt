@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 00:47:44 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 14:08:35 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ t_vector3	vector3_normalise(t_vector3 direction)
 {
 	double	magnitude;
 
+	magnitude = vector3_sumpow2(direction);
+	if (magnitude == 1)
+		return (direction);
 	magnitude = sqrt(vector3_sumpow2(direction));
 	if (magnitude > 0)
 	{
