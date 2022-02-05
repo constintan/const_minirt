@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/05 01:47:44 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,14 @@ typedef struct	s_vector3
 	double	y;
 	double	z;
 }	t_vector3;
+
+typedef struct	s_quaternion
+{
+	double	w;
+	double	i;
+	double	j;
+	double	k;
+}	t_quaternion;
 
 typedef struct s_color
 {
@@ -322,11 +330,17 @@ t_vector3	vector3_normalise(t_vector3 direction);
 t_vector3	vector3_multiply(t_vector3 direction, double multiply);
 double		vector3_sumpow2(t_vector3 a);
 double		vector3_scalar(t_vector3 a, t_vector3 b);
+t_vector3	vector3_qrotate(t_vector3 a, double theta, t_vector3 axis);
 t_vector3	vector3_rotate_yx(t_vector3 a, t_vector2 rotate);
 t_vector3	vector3_rotate_xy(t_vector3 b, t_vector2 rotate);
 t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
 t_vector3	new_vector3(double x, double y, double z);
 t_vector2	new_vector2(double u, double v);
 t_vector3	vector3_negate(t_vector3 a);
+
+//quaternion
+double	quaternion_sumpow2(t_quaternion q);
+t_quaternion	quaternion_normalise(t_quaternion q);
+t_quaternion	new_quaternion(double theta, t_vector3 axis);
 
 #endif

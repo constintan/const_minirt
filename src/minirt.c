@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/05 01:29:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 01:31:00 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	key_hook(int key, t_scene *scene)
 	else if (key == KEY_R)
 	{
 		scene->view++;
-		if (scene->view >= 5 || scene->view < 0)
+		if (scene->view >= 6 || scene->view < 0)
 			scene->view = 0;
 //		reset_game(mlx);
 	} else if (key == KEY_ENTER || key == KEY_TAB)
@@ -39,13 +39,13 @@ static int	key_hook(int key, t_scene *scene)
 //		next_level(mlx);
 //	if (check_move(key, mlx) && scene->hud)
 //		scene->hud = kd_free(scene->hud);
-	else if (key == KEY_OPENBRACKET && scene->view != 4)
+	else if (key == KEY_OPENBRACKET && scene->view)
 		scene->camera->fov -= 5;
-	else if (key == KEY_OPENBRACKET && scene->view == 4)
+	else if (key == KEY_OPENBRACKET && !scene->view)
 		scene->camera->zoom -= 5;
-	else if (key == KEY_CLOSEBRACKET && scene->view != 4)
+	else if (key == KEY_CLOSEBRACKET && scene->view)
 		scene->camera->fov += 5;
-	else if (key == KEY_CLOSEBRACKET && scene->view == 4)
+	else if (key == KEY_CLOSEBRACKET && !scene->view)
 		scene->camera->zoom += 5;
 	printf("key %d\n", key);
 	return (0);
@@ -83,6 +83,7 @@ int	main(int argc, char **argv)
 			scene->no_lights = TRUE;
 	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
+	scene->view = 1;
 	mlx_loop_hook(scene->mlx, render_next_frame, scene);
 	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
 	mlx_hook(scene->window, 17, 0, close_minirt, scene);

@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/05 03:28:10 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,49 +146,6 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 	return (color);
 }
 
-//пересчет fov в координаты сцены через тангенс
-static void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray)
-{
-	ray->position = camera->position;
-	ray->orientation = new_vector3(tan(camera->fov / 2 * (M_PI / 180))
-			* step.u, tan(camera->fov / 2 * (M_PI / 180)) * step.v, 1);
-	ray->orientation = vector3_normalise(ray->orientation);
-	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
-}
-
-//обсчет системы координат через сферу.
-static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray)
-{
-	ray->position = camera->position;
-	step.v = camera->fov / 2 * step.v;
-	step.u = camera->fov / 2 * step.u;
-	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
-	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
-}
-
-//обсчет системы координат через сферу.
-static void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray)
-{
-	ray->position = camera->position;
-	step.v = camera->fov / 2 * step.v * (0.5 + 0.5 * cos(M_PI / 2 * fabs(step.u)));
-	step.u = camera->fov / 2 * step.u;
-	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
-	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
-}
-
-//обсчет системы координат через сферу.
-static void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *ray)
-{
-	t_vector3	tempy;
-	t_vector3	tempx;
-
-	ray->position = camera->position;
-	step.v = camera->fov / 2 * step.v;
-	step.u = camera->fov / 2 * step.u;
-	tempy = vector3_rotate_yx(new_vector3(0, 0, 1), step);
-	tempx = vector3_rotate_xy(new_vector3(0, 0, 1), step);
-	ray->orientation = vector3_rotate_yx(vector3_normalise(matrix3_addition(tempx, tempy)), camera->rotate);
-}
 //вид без перспективы (ортографический)
 static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 {
@@ -201,6 +158,63 @@ static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), camera->rotate);
 }
 
+//пересчет fov в координаты сцены через тангенс
+static void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	ray->position = camera->position;
+	ray->orientation = new_vector3(tan(camera->fov / 2 * (M_PI / 180))
+			* step.u, tan(camera->fov / 2 * (M_PI / 180)) * step.v, 1);
+	ray->orientation = vector3_normalise(ray->orientation);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+}
+
+//пересчет fov в координаты сцены через сферу
+static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	ray->position = camera->position;
+	step.v = camera->fov / 2 * step.v;
+	step.u = camera->fov / 2 * step.u;
+	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+}
+
+//пересчет fov в координаты сцены через с глобальной поправкой искажения
+static void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	ray->position = camera->position;
+	step.v = camera->fov / 2 * step.v * (0.5 + 0.5 * cos(M_PI / 2 * fabs(step.u)));
+	step.u = camera->fov / 2 * step.u;
+	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+}
+
+//пересчет fov в координаты сцены через складывание векторов по 2 осям
+static void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	t_vector3	tempy;
+	t_vector3	tempx;
+
+	ray->position = camera->position;
+	step.v = camera->fov / 2 * step.v;
+	step.u = camera->fov / 2 * step.u;
+	tempy = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	tempx = vector3_rotate_xy(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(vector3_normalise(matrix3_addition(tempx, tempy)), camera->rotate);
+}
+
+//пересчет fov в координаты сцены через кватернионы
+static void	ray_perspective_quaternion(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	double		theta;
+	t_vector3	axis;
+
+	ray->position = camera->position;
+	theta = fmax(step.u, step.v) * camera->fov / 2;
+	axis = vector3_normalise(new_vector3(step.v, step.u, 0));
+	ray->orientation = vector3_qrotate(new_vector3(0, 0, 1), theta, axis);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+}
+
 // лучи из камеры, поиск места пересечения с фигурами
 // в функцию приходит пустой ray, функция считает шаг в отосительных координатах и формирует
 static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
@@ -209,15 +223,17 @@ static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 	//step -- перевод из координат mlx в координаты сцены (из обсолютных координат пиксельной матрицы, а относительным координатам сцены [-1; 1])
 	step = new_vector2((pixel.x - scene->width / (double)2) / scene->width * (double)2, -(pixel.y - scene->height / (double)2) / scene->width * (double)2);
 	if (scene->view == 0)
-		ray_perspective_tan(scene->camera, step, ray);
-	else if (scene->view == 1)
-		ray_perspective_spherise(scene->camera, step, ray);
-	else if (scene->view == 2)
-		ray_perspective_spherise2(scene->camera, step, ray);
-	else if (scene->view == 3)
-		ray_perspective_spherise3(scene->camera, step, ray);
-	else if (scene->view == 4)
 		ray_orthographic(scene->camera, step, ray);
+	if (scene->view == 1)
+		ray_perspective_tan(scene->camera, step, ray);
+	else if (scene->view == 2)
+		ray_perspective_spherise(scene->camera, step, ray);
+	else if (scene->view == 3)
+		ray_perspective_spherise2(scene->camera, step, ray);
+	else if (scene->view == 4)
+		ray_perspective_spherise3(scene->camera, step, ray);
+	else if (scene->view == 5)
+		ray_perspective_quaternion(scene->camera, step, ray);
 	intersect(ray, scene);
 }
 

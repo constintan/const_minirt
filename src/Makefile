@@ -19,6 +19,7 @@ libft.c \
 libft2.c \
 light.c \
 plane.c \
+quaternion.c \
 ray_tracing.c \
 scene_init.c \
 sphere.c \
