@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 01:35:44 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 01:29:29 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	key_hook(int key, t_scene *scene)
 	else if (key == KEY_R)
 	{
 		scene->view++;
-		if (scene->view >= 3 || scene->view < 0)
+		if (scene->view >= 5 || scene->view < 0)
 			scene->view = 0;
 //		reset_game(mlx);
 	} else if (key == KEY_ENTER || key == KEY_TAB)
@@ -39,6 +39,15 @@ static int	key_hook(int key, t_scene *scene)
 //		next_level(mlx);
 //	if (check_move(key, mlx) && scene->hud)
 //		scene->hud = kd_free(scene->hud);
+	else if (key == KEY_OPENBRACKET && scene->view != 4)
+		scene->camera->fov -= 5;
+	else if (key == KEY_OPENBRACKET && scene->view == 4)
+		scene->camera->zoom -= 5;
+	else if (key == KEY_CLOSEBRACKET && scene->view != 4)
+		scene->camera->fov += 5;
+	else if (key == KEY_CLOSEBRACKET && scene->view == 4)
+		scene->camera->zoom += 5;
+	printf("key %d\n", key);
 	return (0);
 }
 

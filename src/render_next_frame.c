@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 22:48:58 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 01:37:31 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,27 +153,52 @@ static void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray)
 	ray->orientation = new_vector3(tan(camera->fov / 2 * (M_PI / 180))
 			* step.u, tan(camera->fov / 2 * (M_PI / 180)) * step.v, 1);
 	ray->orientation = vector3_normalise(ray->orientation);
-	ray->orientation = vector3_rotate(ray->orientation, camera->rotate);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
 }
 
 //обсчет системы координат через сферу.
 static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray)
 {
 	ray->position = camera->position;
-	step.u = camera->fov / 2 * step.u;
 	step.v = camera->fov / 2 * step.v;
-	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), step);
-	ray->orientation = vector3_rotate(ray->orientation, camera->rotate);
+	step.u = camera->fov / 2 * step.u;
+	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
 }
 
+//обсчет системы координат через сферу.
+static void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	ray->position = camera->position;
+	step.v = camera->fov / 2 * step.v * (0.5 + 0.5 * cos(M_PI / 2 * fabs(step.u)));
+	step.u = camera->fov / 2 * step.u;
+	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+}
+
+//обсчет системы координат через сферу.
+static void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *ray)
+{
+	t_vector3	tempy;
+	t_vector3	tempx;
+
+	ray->position = camera->position;
+	step.v = camera->fov / 2 * step.v;
+	step.u = camera->fov / 2 * step.u;
+	tempy = vector3_rotate_yx(new_vector3(0, 0, 1), step);
+	tempx = vector3_rotate_xy(new_vector3(0, 0, 1), step);
+	ray->orientation = vector3_rotate_yx(vector3_normalise(matrix3_addition(tempx, tempy)), camera->rotate);
+}
 //вид без перспективы (ортографический)
 static void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray)
 {
 	ray->position.x = camera->position.x + step.u * camera->zoom;
 	ray->position.y = camera->position.y + step.v * camera->zoom;
 	ray->position.z = camera->position.z;
-	ray->position = matrix3_addition(vector3_rotate(matrix3_subtract(ray->position, camera->position), camera->rotate), camera->position);
-	ray->orientation = vector3_rotate(new_vector3(0, 0, 1), camera->rotate);
+	ray->position = matrix3_addition(
+			vector3_rotate_yx(matrix3_subtract(ray->position, camera->position),
+							  camera->rotate), camera->position);
+	ray->orientation = vector3_rotate_yx(new_vector3(0, 0, 1), camera->rotate);
 }
 
 // лучи из камеры, поиск места пересечения с фигурами
@@ -188,6 +213,10 @@ static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 	else if (scene->view == 1)
 		ray_perspective_spherise(scene->camera, step, ray);
 	else if (scene->view == 2)
+		ray_perspective_spherise2(scene->camera, step, ray);
+	else if (scene->view == 3)
+		ray_perspective_spherise3(scene->camera, step, ray);
+	else if (scene->view == 4)
 		ray_orthographic(scene->camera, step, ray);
 	intersect(ray, scene);
 }
@@ -209,7 +238,11 @@ static void	animate(t_scene *scene)
 		else if (q.u < 720 && q.v < 720)
 			q.u += 10;
 		else
+		{
+			q.u = 0;
+			q.v = 0;
 			scene->play = FALSE;
+		}
 	}
 	scene->camera->rotate.u = q.u;
 	scene->camera->rotate.v = q.v;
@@ -240,7 +273,7 @@ int	render_next_frame(t_scene *scene)
 	kd_free(scene->hud);
 //	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
 	time1 = mtv();
-	scene->hud = kd_strf("%d", (int)time1 - (int)time2);
+	scene->hud = kd_strf("view %d fov %d zoom %d frame %dms", scene->view, (int)scene->camera->fov, (int)scene->camera->zoom, (int)time1 - (int)time2);
 	time2 = time1;
 	pixel.y = 0;
 	while (pixel.y < scene->height)

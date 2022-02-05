@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/02 00:15:51 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 00:47:44 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ double	vector3_scalar(t_vector3 a, t_vector3 b)
 	return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
-t_vector3	vector3_rotate(t_vector3 a, t_vector2 rotate)
+t_vector3	vector3_rotate_yx(t_vector3 a, t_vector2 rotate)
 {
 	t_vector3	b;
 
@@ -87,6 +87,21 @@ t_vector3	vector3_rotate(t_vector3 a, t_vector2 rotate)
 	a.y = b.y;
 	a.z = b.x * sin(rotate.u) + b.z * cos(rotate.u);
 	return (a);
+}
+
+t_vector3	vector3_rotate_xy(t_vector3 b, t_vector2 rotate)
+{
+	t_vector3	a;
+
+	rotate.u = M_PI / 180 * -rotate.u;
+	a.x = b.x * cos(rotate.u) - b.z * sin(rotate.u);
+	a.y = b.y;
+	a.z = b.x * sin(rotate.u) + b.z * cos(rotate.u);
+	rotate.v = M_PI / 180 * -rotate.v;
+	b.x = a.x;
+	b.y = a.y * cos(rotate.v) - a.z * sin(rotate.v);
+	b.z = a.y * sin(rotate.v) + a.z * cos(rotate.v);
+	return (b);
 }
 
 t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
@@ -103,9 +118,15 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 		r.u = 0;
 		while (r.u < 360)
 		{
-			if (vector3_scalar(a, vector3_rotate(b, r)) > vector3_scalar(a, vector3_rotate(b, c)))
+			if (vector3_scalar(a, vector3_rotate_yx(b, r)) > vector3_scalar(a,
+																			vector3_rotate_yx(
+																				 b,
+																				 c)))
 			{
-				printf("%f %f\n", vector3_scalar(a, vector3_rotate(b, r)), vector3_scalar(a, vector3_rotate(b, c)));
+				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a,
+																							 vector3_rotate_yx(
+																								  b,
+																								  c)));
 				c = r;
 			}
 			r.u++;

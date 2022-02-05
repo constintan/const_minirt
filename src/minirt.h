@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 00:29:00 by                  ###   ########.fr       */
+/*   Updated: 2022/02/04 22:18:52 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <fcntl.h>
 # include "../libkd/libkd.h"
 
-# define WINDOW_WIDTH 800
-# define WINDOW_HEIGHT 600
+# define WINDOW_WIDTH 400
+# define WINDOW_HEIGHT 400
 # define WINDOW_NAME "miniRT window"
 # define DEFAULT_BG_COLOR 128, 128, 128
 # define DEFAULT_ZOOM 32
@@ -59,7 +59,9 @@ enum e_keycode
 	KEY_3 = 20,
 	KEY_4 = 21,
 	KEY_ENTER = 36,
-	KEY_TAB = 48
+	KEY_TAB = 48,
+	KEY_OPENBRACKET = 33,
+	KEY_CLOSEBRACKET = 30
 }	t_keycode;
 
 typedef struct s_vector2
@@ -318,7 +320,8 @@ t_vector3	vector3_normalise(t_vector3 direction);
 t_vector3	vector3_multiply(t_vector3 direction, double multiply);
 double		vector3_sumpow2(t_vector3 a);
 double		vector3_scalar(t_vector3 a, t_vector3 b);
-t_vector3	vector3_rotate(t_vector3 a, t_vector2 rotate);
+t_vector3	vector3_rotate_yx(t_vector3 a, t_vector2 rotate);
+t_vector3	vector3_rotate_xy(t_vector3 b, t_vector2 rotate);
 t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
 t_vector3	new_vector3(double x, double y, double z);
 t_vector2	new_vector2(double u, double v);
