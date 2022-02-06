@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 02:31:16 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 12:34:47 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,28 @@ static int	key_hook(int key, t_scene *scene)
 		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
 //		printf("c %f %f %f -> %f %f %f\n", )
 	}
+	else if (key == KEY_1)
+		scene->minquality = 1;
+	else if (key == KEY_2)
+		scene->minquality = 2;
+	else if (key == KEY_3)
+		scene->minquality = 3;
+	else if (key == KEY_4)
+		scene->minquality = 4;
+	else if (key == KEY_5)
+		scene->minquality = 5;
+	else if (key == KEY_6)
+		scene->minquality = 6;
+	else if (key == KEY_7)
+		scene->minquality = 7;
+	else if (key == KEY_8)
+		scene->minquality = 8;
+	else if (key == KEY_9)
+		scene->minquality = 9;
+	else if (key == KEY_0)
+		scene->minquality = kd_max(scene->win_w, scene->win_h) / 20;
+	scene->everynframe = scene->minquality;
+	scene->idle = 0;
 	printf("key %d\n", key);
 	return (0);
 }
@@ -132,6 +154,10 @@ int	main(int argc, char **argv)
 //	scene->cones->radius = 5;
 //	scene->cones->height = 10;
 //	scene->cones->color = new_color(228, 128, 128);
+	scene->win_w = scene->width;
+	scene->win_h = scene->height;
+	scene->minquality = kd_max(scene->win_w, scene->win_h) / 20;
+	scene->everynframe = scene->minquality;
 	mlx_loop_hook(scene->mlx, render_next_frame, scene);
 	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
 	mlx_hook(scene->window, 17, 0, close_minirt, scene);

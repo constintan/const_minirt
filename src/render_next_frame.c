@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/06 02:42:20 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 12:57:29 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,6 +342,8 @@ static void	animate(t_scene *scene)
 	q = scene->camera->rotate;
 	if (scene->play)
 	{
+		scene->everynframe = scene->minquality;
+		scene->idle = 0;
 		if (q.v >= 360 && q.u < 720 && q.v < 720)
 		{
 			q.u += 10;
@@ -395,14 +397,25 @@ int	render_next_frame(t_scene *scene)
 	t_xy	pixel;
 	t_ray	ray;
 	long	time1;
-	static long	time2;
+	long	time2;
 
 	animate(scene);
+	if (scene->idle > 0)
+	{
+		scene->idle--;
+		return (0);
+	}
+	else if (scene->idle < 0)
+		return (0);
+	scene->width = scene->win_w / scene->everynframe;
+	if (scene->win_w % scene->everynframe)
+		scene->width++;
+	scene->height = scene->win_h / scene->everynframe;
+	if (scene->win_h % scene->everynframe)
+		scene->height++;
+	time1 = mtv();
 	kd_free(scene->hud);
 //	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
-	time1 = mtv();
-	scene->hud = kd_strf("view %d fov %d zoom %d frame %dms", scene->view, (int)scene->camera->fov, (int)scene->camera->zoom, (int)time1 - (int)time2);
-	time2 = time1;
 	pixel.y = 0;
 	while (pixel.y < scene->height)
 	{
@@ -411,14 +424,22 @@ int	render_next_frame(t_scene *scene)
 		{
 			kd_memset(&ray, 0, sizeof(t_ray));
 			raytrace(pixel, &ray, scene);
-			if (!scene->oddframe)
-				draw_pixel(scene->img, pixel.x, pixel.y, compute_light(&ray, scene));
-			else
-				draw_pixel(scene->img2, pixel.x, pixel.y, compute_light(&ray, scene));
+			draw_pixel(scene, pixel.x, pixel.y, compute_light(&ray, scene));
 			pixel.x++;
 		}
 		pixel.y++;
 	}
+	time2 = mtv() - time1;
+	scene->hud = kd_strf("quality %d/%d view %d fov %d zoom %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov, (int)scene->camera->zoom, (int)time2);
 	update_window(scene);
+	scene->idle = 1;
+	if (scene->everynframe >= 20)
+		scene->everynframe /= 2;
+	else if (scene->everynframe > 10)
+		scene->everynframe = 10;
+	else if (scene->everynframe > 1)
+		scene->everynframe--;
+	else
+		scene->idle = -1;
 	return (0);
 }

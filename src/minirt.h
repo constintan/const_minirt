@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 01:52:59 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 12:23:19 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <fcntl.h>
 # include "../libkd/libkd.h"
 
-# define WINDOW_WIDTH 400
-# define WINDOW_HEIGHT 400
+# define WINDOW_WIDTH 1200
+# define WINDOW_HEIGHT 1200
 # define WINDOW_NAME "miniRT window"
 # define DEFAULT_BG_COLOR 128, 128, 128
 # define DEFAULT_ZOOM 32
@@ -60,6 +60,12 @@ enum e_keycode
 	KEY_2 = 19,
 	KEY_3 = 20,
 	KEY_4 = 21,
+	KEY_5 = 23,
+	KEY_6 = 22,
+	KEY_7 = 26,
+	KEY_8 = 28,
+	KEY_9 = 25,
+	KEY_0 = 29,
 	KEY_ENTER = 36,
 	KEY_TAB = 48,
 	KEY_OPENBRACKET = 33,
@@ -183,6 +189,8 @@ typedef struct	s_scene
 	// int		bytes_per_line;
 	// int		endian;
 
+	int		win_w;
+	int		win_h;
 	int		width;
 	int		height;
 	char		*hud;
@@ -198,7 +206,9 @@ typedef struct	s_scene
 	t_bool		no_lights;
 	int			view;
 	int			oddframe;
-
+	int			minquality;
+	int			everynframe;
+	int		idle;
 }	t_scene;
 
 // typedef struct	s_shapes
@@ -303,7 +313,7 @@ void			ray_tracing(t_scene *scene);
 
 //draw.c
 int				color_to_int(t_color color);
-void			draw_pixel(t_img *img, int x, int y, t_color color);
+void	draw_pixel(t_scene *scene, int x, int y, t_color color);
 
 //get_next_line.c
 char			*get_next_line(int fd);
