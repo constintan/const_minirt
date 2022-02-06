@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 23:29:14 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ t_quaternion	new_quaternion(double theta, t_vector3 axis)
 
 	theta /= 2;
 	st = sin(theta);
+	axis = vector3_normalise(axis);
 	q.w = cos(theta);
 	q.i = axis.x * st;
 	q.j = axis.y * st;

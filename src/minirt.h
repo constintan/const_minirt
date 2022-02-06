@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 01:52:59 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ enum e_keycode
 	KEY_S = 1,
 	KEY_A = 0,
 	KEY_D = 2,
+	KEY_SHIFT = 257,
+	KEY_SPACE = 49,
 	KEY_UP = 126,
 	KEY_DOWN = 125,
 	KEY_LEFT = 123,
@@ -118,6 +120,16 @@ typedef struct	s_cylinder
 	struct s_cylinder	*next;
 }	t_cylinder;
 
+typedef struct	s_cone
+{
+	t_vector3	position;
+	t_vector3	orient;
+	double		radius;
+	double		height;
+	t_color		color;
+	struct s_cone	*next;
+}	t_cone;
+
 typedef struct	s_camera
 {
 	t_vector3	position;
@@ -178,6 +190,7 @@ typedef struct	s_scene
 	t_sphere *spheres;
 	t_plane *planes;
 	t_cylinder *cylinders;
+	t_cone	*cones;
 //	t_obj		*obj;
 	t_bool		play;
 	t_bool		no_shadows;

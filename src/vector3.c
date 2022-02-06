@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/05 20:23:34 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ double	vector3_distance(t_vector3 a, t_vector3 b)
 	t_vector3	difference;
 
 	difference = matrix3_subtract(a, b);
-	distance = sqrt(pow(difference.x, 2) + pow(difference.y, 2) + pow(difference.z, 2));
+	distance = sqrt(vector3_sumpow2(difference));
 	return (distance);
 }
 

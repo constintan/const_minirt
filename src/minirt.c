@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/05 01:31:00 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 02:31:16 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	key_hook(int key, t_scene *scene)
 	else if (key == KEY_R)
 	{
 		scene->view++;
-		if (scene->view >= 6 || scene->view < 0)
+		if (scene->view >= 7 || scene->view < 0)
 			scene->view = 0;
 //		reset_game(mlx);
 	} else if (key == KEY_ENTER || key == KEY_TAB)
@@ -47,6 +47,47 @@ static int	key_hook(int key, t_scene *scene)
 		scene->camera->fov += 5;
 	else if (key == KEY_CLOSEBRACKET && !scene->view)
 		scene->camera->zoom += 5;
+	else if (key == KEY_UP)
+		scene->camera->rotate.v += 5;
+	else if (key == KEY_DOWN)
+		scene->camera->rotate.v -= 5;
+	else if (key == KEY_LEFT)
+		scene->camera->rotate.u -= 5;
+	else if (key == KEY_RIGHT)
+		scene->camera->rotate.u += 5;
+	else if (key == KEY_W)
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, scene->camera->rotate), 5));
+	else if (key == KEY_S)
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, scene->camera->rotate), -5));
+	else if (key == KEY_A)
+	{
+		t_vector2	rotate;
+		rotate.u = scene->camera->rotate.u - 90;
+		rotate.v = 0;
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
+	}
+	else if (key == KEY_D)
+	{
+		t_vector2	rotate;
+		rotate.u = scene->camera->rotate.u + 90;
+		rotate.v = 0;
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
+	}
+	else if (key == KEY_SHIFT)
+	{
+		t_vector2	rotate;
+		rotate.u = scene->camera->rotate.u;
+		rotate.v = scene->camera->rotate.v - 90;
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
+	}
+	else if (key == KEY_SPACE)
+	{
+		t_vector2	rotate;
+		rotate.u = scene->camera->rotate.u;
+		rotate.v = scene->camera->rotate.v + 90;
+		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
+//		printf("c %f %f %f -> %f %f %f\n", )
+	}
 	printf("key %d\n", key);
 	return (0);
 }
@@ -83,7 +124,14 @@ int	main(int argc, char **argv)
 			scene->no_lights = TRUE;
 	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
-	scene->view = 1;
+	scene->view = 5;
+//	scene->cones = kd_calloc(1, sizeof(t_cone));
+//	scene->cones->position.y = 10;
+//	scene->cones->position.z = 10;
+//	scene->cones->orient.y = -1;
+//	scene->cones->radius = 5;
+//	scene->cones->height = 10;
+//	scene->cones->color = new_color(228, 128, 128);
 	mlx_loop_hook(scene->mlx, render_next_frame, scene);
 	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
 	mlx_hook(scene->window, 17, 0, close_minirt, scene);

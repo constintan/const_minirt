@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/05 20:03:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 02:42:20 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,65 @@ static void	intersect_plane(t_plane *plane, t_ray *ray)
 	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orientation, distance));
 }
 
+static void	intersect_cone(t_cone *cone, t_ray *ray)
+{
+	t_ray	new_ray;
+	t_plane	cap;
+
+//	cap.position = matrix3_subtract(vector3_multiply(cone->orient, cone->height), cone->position); //-40
+	cap.position = matrix3_addition(cone->position, vector3_multiply(cone->orient, cone->height)); //40
+//	cap.position = vector3_multiply(cone->orient, cone->height); //-20
+//	printf("c %f %f\n", cap.position.y, cone->position.y);
+	cap.orient = cone->orient;
+	cap.color = cone->color;
+	new_ray = *ray;
+	intersect_plane(&cap, &new_ray);
+	if (new_ray.distance)
+	{
+		if (vector3_sumpow2(matrix3_subtract(new_ray.coordinates, cap.position)) <= pow(cone->radius, 2))
+		{
+			if (vector3_scalar(new_ray.orientation, cap.orient) < 0)
+			{
+				*ray = new_ray;
+				return ;
+			}
+		}
+	}
+	t_vector3	d;
+	t_vector3	p;
+	t_quad		q;
+	double		theta;
+
+	theta = atan(cone->radius / cone->height);
+	new_ray = *ray;
+	d = ray->orientation; //vector3_multiply(ray->orientation, 1); //max_distance
+	p = matrix3_subtract(ray->position, cone->position);
+	q.a = pow(vector3_scalar(new_ray.orientation, cone->orient), 2) - pow(cos(theta), 2);
+	q.b = 2 * (vector3_scalar(new_ray.orientation, cone->orient) *
+			vector3_scalar(matrix3_subtract(new_ray.position, cone->position), cone->orient) -
+								   vector3_scalar(new_ray.orientation,
+												  matrix3_subtract(new_ray.position, cone->position)) * pow(cos(theta), 2));
+	q.c = pow(vector3_scalar(matrix3_subtract(new_ray.position, cone->position), cone->orient), 2) -
+			vector3_scalar(matrix3_subtract(new_ray.position, cone->position), matrix3_subtract(new_ray.position, cone->position)) * pow(cos(theta), 2);
+	q.d = math_discriminant(q.a, q.b, q.c);
+	if (q.d < 0)
+		return ;
+	new_ray.t = (-q.b + sqrt(q.d)) / (2 * q.a);
+	if (new_ray.t < EPSILON)
+		new_ray.t = (-q.b - sqrt(q.d)) / (2 * q.a);
+	new_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(d, new_ray.t));
+	if (!(theta < M_PI / 2 && vector3_scalar(matrix3_subtract(new_ray.coordinates, cone->position), cone->orient) > 0))
+		return ; // отрезает конус-двойник, но страдает отрисовка изнутри
+	if (vector3_distance(new_ray.coordinates, cone->position) > cone->height / cos(theta))
+		return ;
+	new_ray.distance = vector3_distance(ray->position, new_ray.coordinates);
+	if (new_ray.distance < EPSILON || (ray->distance < new_ray.distance && ray->distance))
+		return ;
+	*ray = new_ray;
+	ray->normal = vector3_normalise(matrix3_subtract(new_ray.coordinates, vector3_multiply(cone->orient, vector3_distance(new_ray.coordinates, cone->position) / cos(theta))));
+	ray->color = cone->color;
+}
+
 //https://www.ccs.neu.edu/home/fell/CS4300/Lectures/Ray-TracingFormulas.pdf
 static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 {
@@ -57,7 +116,6 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 	t_quad		q;
 	t_ray		new_ray;
 
-	kd_memset(&q, 0, sizeof(t_quad));
 	new_ray = *ray;
 	//x0-cx ; y0-cy ; z0-cz
 	d = ray->orientation; //vector3_multiply(ray->orientation, 1); //max_distance
@@ -70,14 +128,18 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 	if (q.d < 0)
 		return ;
 	new_ray.t = (-q.b - sqrt(q.d)) / (2 * q.a);
-	if (new_ray.t < EPSILON)
-		new_ray.t = (-q.b + sqrt(q.d)) / (2 * q.a);
 	new_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(d, new_ray.t));
+	new_ray.normal = vector3_normalise(matrix3_subtract(new_ray.coordinates, sphere->position));
+	if (new_ray.t < EPSILON)
+	{
+		new_ray.t = (-q.b + sqrt(q.d)) / (2 * q.a);
+		new_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(d, new_ray.t));
+		new_ray.normal = vector3_normalise(matrix3_subtract(sphere->position, new_ray.coordinates));
+	}
 	new_ray.distance = vector3_distance(ray->position, new_ray.coordinates);
 	if (new_ray.t < EPSILON || (ray->distance < new_ray.distance && ray->distance))
 		return ;
 	*ray = new_ray;
-	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, sphere->position));
 	ray->color = sphere->color;
 }
 
@@ -85,6 +147,7 @@ static void	intersect(t_ray *ray, t_scene *scene)
 {
 	t_plane		*plane;
 	t_sphere	*sphere;
+	t_cone		*cone;
 
 	plane = scene->planes;
 	while (plane)
@@ -98,6 +161,12 @@ static void	intersect(t_ray *ray, t_scene *scene)
 		intersect_sphere(sphere, ray);
 		sphere = sphere->next;
 	}
+	cone = scene->cones;
+	while (cone)
+	{
+		intersect_cone(cone, ray);
+		cone = cone->next;
+	}
 }
 
 static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *scene)
@@ -109,7 +178,7 @@ static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *s
 //	l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 	new_ray.orientation = l;
 	intersect(&new_ray, scene);
-	if (new_ray.distance && new_ray.distance < vector3_distance(light->position, ray->coordinates))
+	if (new_ray.distance && new_ray.distance + EPSILON < vector3_distance(light->position, ray->coordinates))
 		return (TRUE);
 	return (FALSE);
 }
@@ -202,19 +271,45 @@ static void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *r
 	ray->orientation = vector3_rotate_yx(vector3_normalise(matrix3_addition(tempx, tempy)), camera->rotate);
 }
 
-//пересчет fov в координаты сцены через кватернионы
-static void	ray_perspective_quaternion(t_camera *camera, t_vector2 step, t_ray *ray)
+//пересчет fov в координаты сцены через кватернионы, где fov == обзору по диагонали
+static void	ray_perspective_quaternion(t_scene *scene, t_xy pixel, t_ray *ray)
 {
 	double		theta;
 	t_vector3	axis;
+	double		radius;
+	t_vector2	step;
 
-	ray->position = camera->position;
-	theta = fmax(step.u, step.v) * camera->fov / 2;
+	ray->position = scene->camera->position;
+	radius = sqrt(pow(scene->width / (double)2, 2) + pow(scene->height / (double)2, 2));
+	step.u = (pixel.x - scene->width / (double)2) / radius;
+	step.v = (pixel.y - scene->height / (double)2) / radius;
+	theta = sqrt(pow(step.u, 2) + pow(step.v, 2)) * scene->camera->fov / 2;
 	axis = vector3_normalise(new_vector3(step.v, step.u, 0));
+//	if (pixel.x == 0 && pixel.y == 0)
+//		printf("radius %f step.u %f step.v %f theta %f axis %f %f %f\n", radius, step.u, step.v, theta, axis.x, axis.y, axis.z);
 	ray->orientation = vector3_qrotate(new_vector3(0, 0, 1), theta, axis);
-	ray->orientation = vector3_rotate_yx(ray->orientation, camera->rotate);
+	ray->orientation = vector3_rotate_yx(ray->orientation, scene->camera->rotate);
 }
 
+//пересчет fov в координаты сцены через кватернионы, где fov == обзору по наибольшей стороне, в таком случае по диагонали обзор > fov
+static void	ray_perspective_quaternion2(t_scene *scene, t_xy pixel, t_ray *ray)
+{
+	double		theta;
+	t_vector3	axis;
+	double		radius;
+	t_vector2	step;
+
+	ray->position = scene->camera->position;
+	radius = fmax(scene->width / (double)2, scene->height / (double)2);
+	step.u = (pixel.x - scene->width / (double)2) / radius;
+	step.v = (pixel.y - scene->height / (double)2) / radius;
+	theta = sqrt(pow(step.u, 2) + pow(step.v, 2)) * scene->camera->fov / 2;
+	axis = vector3_normalise(new_vector3(step.v, step.u, 0));
+//	if (pixel.x == 0 && pixel.y == 0)
+//		printf("radius %f step.u %f step.v %f theta %f axis %f %f %f\n", radius, step.u, step.v, theta, axis.x, axis.y, axis.z);
+	ray->orientation = vector3_qrotate(new_vector3(0, 0, 1), theta, axis);
+	ray->orientation = vector3_rotate_yx(ray->orientation, scene->camera->rotate);
+}
 // лучи из камеры, поиск места пересечения с фигурами
 // в функцию приходит пустой ray, функция считает шаг в отосительных координатах и формирует
 static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
@@ -233,7 +328,9 @@ static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 	else if (scene->view == 4)
 		ray_perspective_spherise3(scene->camera, step, ray);
 	else if (scene->view == 5)
-		ray_perspective_quaternion(scene->camera, step, ray);
+		ray_perspective_quaternion(scene, pixel, ray);
+	else if (scene->view == 6)
+		ray_perspective_quaternion2(scene, pixel, ray);
 	intersect(ray, scene);
 }
 
