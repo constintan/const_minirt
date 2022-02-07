@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 12:23:19 by                  ###   ########.fr       */
+/*   Updated: 2022/02/06 23:55:24 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,15 @@ typedef struct	s_plane
 	struct s_plane	*next;
 }	t_plane;
 
+typedef struct	s_disc
+{
+	t_vector3		position;
+	t_vector3		orient;
+	double			radius;
+	t_color			color;
+	struct s_plane	*next;
+}	t_disc;
+
 typedef struct	s_cylinder
 {
 	t_vector3		position;
@@ -133,6 +142,10 @@ typedef struct	s_cone
 	double		radius;
 	double		height;
 	t_color		color;
+	t_disc		cap;
+	double		theta;
+	double		costheta;
+	double		pow2costheta;
 	struct s_cone	*next;
 }	t_cone;
 
@@ -231,10 +244,8 @@ typedef struct	s_screen
 typedef struct s_ray
 {
 	t_vector3	position;
-	t_vector3	orientation;
-//	t_obj		*obj;
+	t_vector3	orient;
 	double		t;
-	double		distance;
 	t_vector3	coordinates;
 	t_vector3	normal;
 	t_color		color;
@@ -246,6 +257,9 @@ typedef struct s_quad {
 	double		b;
 	double		c;
 	double		d;
+	double		sqrt_d;
+	double		t1;
+	double		t2;
 }	t_quad;
 
 //libft.c

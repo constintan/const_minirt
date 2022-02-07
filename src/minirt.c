@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 12:34:47 by                  ###   ########.fr       */
+/*   Updated: 2022/02/07 00:13:30 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,16 @@ int	main(int argc, char **argv)
 //	scene->cones->position.y = 10;
 //	scene->cones->position.z = 10;
 //	scene->cones->orient.y = -1;
-//	scene->cones->radius = 5;
-//	scene->cones->height = 10;
+//	scene->cones->radius = 15;
+//	scene->cones->height = 30;
 //	scene->cones->color = new_color(228, 128, 128);
+//	scene->cones->cap.position = matrix3_addition(scene->cones->position, vector3_multiply(scene->cones->orient, scene->cones->height));
+//	scene->cones->cap.orient = scene->cones->orient;
+//	scene->cones->cap.radius = scene->cones->radius;
+//	scene->cones->cap.color = scene->cones->color;
+//	scene->cones->theta = atan(scene->cones->radius / scene->cones->height);
+//	scene->cones->costheta = cos(scene->cones->theta);
+//	scene->cones->pow2costheta = pow(scene->cones->costheta, 2);
 	scene->win_w = scene->width;
 	scene->win_h = scene->height;
 	scene->minquality = kd_max(scene->win_w, scene->win_h) / 20;
