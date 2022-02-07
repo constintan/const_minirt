@@ -24,6 +24,7 @@ ray_tracing.c \
 scene_init.c \
 sphere.c \
 vector.c \
+cone.c \
 
 HDR			= \
 minirt.h \

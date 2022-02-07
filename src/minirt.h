@@ -301,6 +301,8 @@ t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color);
 t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, double height, t_color color);
 void			add_cylinder(t_scene *scene, char *str);
 
+void intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
+
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
 void			add_camera(t_scene *scene, char *str);
@@ -349,13 +351,16 @@ t_color		colour_add(t_color colour1, t_color colour_add);
 t_color		colour_clamp(t_color colour);
 t_color		colour_matrix_amplify(t_color colour, t_color colour_amplifier);
 
+//cone.c
+t_cone		*new_cone(t_vector3 position, t_vector3 orient, double radius, double height, t_color color);
+void	add_cone(t_scene *scene, char *str);
 
 int	close_minirt(void);
 
 char	*kd_strf(char const *format, ...);
 
 int	render_next_frame(t_scene *scene);
-
+void	intersect_plane(t_plane *plane, t_ray *ray);
 
 void	hud(t_scene *scene);
 
