@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/29 01:31:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 01:27:53 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 01:35:22 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,11 @@ t_light	*new_light(t_vector3 position, double bright, t_color color)
 {
 	t_light	*light;
 
-	light = (t_light *)malloc(sizeof(t_light));
+	light = kd_calloc(1, sizeof(t_light));
 	if (light == NULL)
 		ft_error(-1);
 	light->position = position;
 	light->bright = bright;
 	light->color = color;
-	light->next = NULL;
 	return (light);
 }

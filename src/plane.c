@@ -72,12 +72,11 @@ t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color)
 {
 	t_plane	*plane;
 
-	plane = (t_plane *)malloc(sizeof(t_plane));
+	plane = kd_calloc(1, sizeof(t_plane));
 	if (plane == NULL)
 		ft_error(-1);
 	plane->position = position;
 	plane->orient = vector3_normalise(orient);
 	plane->color = color;
-	plane->next = NULL;
 	return (plane);
 }

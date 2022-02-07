@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:35:11 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 00:29:00 by                  ###   ########.fr       */
+/*   Updated: 2022/02/02 00:37:54 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
 {
 	t_camera	*camera;
 
-	camera = (t_camera *)malloc(sizeof(t_camera));
+	camera = kd_calloc(1, sizeof(t_camera));
 	if (camera == NULL)
 		ft_error(-1);
 	camera->position = position;

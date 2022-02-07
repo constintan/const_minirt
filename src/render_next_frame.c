@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/07 02:16:07 by                  ###   ########.fr       */
+/*   Updated: 2022/02/07 02:39:03 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static double	math_quadratic_equation(t_quad *q)
 }
 
 //https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
-static void	intersect_plane(t_plane *plane, t_ray *ray)
+void	intersect_plane(t_plane *plane, t_ray *ray)
 {
 	double		denominator;
 	double		distance;

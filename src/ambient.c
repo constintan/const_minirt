@@ -52,7 +52,7 @@ t_ambient	*new_ambient(double bright, t_color color)
 {
 	t_ambient	*ambient;
 
-	ambient = (t_ambient *)malloc(sizeof(t_ambient));
+	ambient = kd_calloc(1, sizeof(t_ambient));
 	if (ambient == NULL)
 		ft_error(-1);
 	ambient->bright = bright;
