@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/07 01:15:37 by                  ###   ########.fr       */
+/*   Updated: 2022/02/07 02:16:07 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,9 @@ static void	intersect_plane(t_plane *plane, t_ray *ray)
 	double		denominator;
 	double		distance;
 
-	//l⋅n
 	denominator = vector3_scalar(plane->orient, ray->orient);
 	if (denominator > EPSILON)
 	{
-		//t =
 		distance = vector3_scalar(matrix3_subtract(plane->position, ray->position), plane->orient) / denominator;
 		if (distance < EPSILON || (distance + EPSILON > ray->t))
 			return ;
@@ -53,86 +51,79 @@ static void	intersect_plane(t_plane *plane, t_ray *ray)
 	}
 	else
 		return ;
-	ray->color = plane->color;
 	ray->t = distance;
-//	ray->distance = distance;
-	//l0+l∗t=p
 	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, distance));
+	ray->color = plane->color;
 }
 
 static void intersect_disc(t_disc *disc, t_ray *ray)
 {
-	t_ray	new_ray;
+	t_ray	tmp_ray;
 	t_plane	plane;
 
-	new_ray = *ray;
 	plane.position = disc->position;
 	plane.orient = vector3_negate(disc->orient);
 	plane.color = disc->color;
-	intersect_plane(&plane, &new_ray);
-	if (new_ray.t + EPSILON > ray->t)
+	tmp_ray = *ray;
+	intersect_plane(&plane, &tmp_ray);
+	if (tmp_ray.t + EPSILON > ray->t)
 		return ;
-	if (vector3_sumpow2(matrix3_subtract(new_ray.coordinates, disc->position)) <= pow(disc->radius, 2))
-		*ray = new_ray;
+	if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, disc->position)) > pow(disc->radius, 2))
+		return ;
+	*ray = tmp_ray;
 }
 
 static void	intersect_cone(t_cone *cone, t_ray *ray)
 {
-	t_ray		new_ray;
+	t_ray		tmp_ray;
 	t_quad		q;
 	t_vector3	v_c2r;
 
-	new_ray = *ray;
 	intersect_disc(&cone->cap, ray);
-	v_c2r = matrix3_subtract(new_ray.position, cone->position);
-	q.a = pow(vector3_scalar(new_ray.orient, cone->orient), 2) - cone->pow2costheta;
-	q.b = 2 * (vector3_scalar(new_ray.orient, cone->orient) * vector3_scalar(v_c2r, cone->orient) - vector3_scalar(new_ray.orient, v_c2r) * cone->pow2costheta);
+	v_c2r = matrix3_subtract(ray->position, cone->position);
+	q.a = pow(vector3_scalar(ray->orient, cone->orient), 2) - cone->pow2costheta;
+	q.b = 2 * (vector3_scalar(ray->orient, cone->orient) * vector3_scalar(v_c2r, cone->orient) - vector3_scalar(ray->orient, v_c2r) * cone->pow2costheta);
 	q.c = pow(vector3_scalar(v_c2r, cone->orient), 2) - vector3_scalar(v_c2r, v_c2r) * cone->pow2costheta;
-	new_ray.t = math_quadratic_equation(&q);
-	if (new_ray.t < EPSILON)
-		return ; // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание
-	if (q.t1 > EPSILON && q.t2 > EPSILON && vector3_scalar(new_ray.orient, cone->orient) > 0)
-		new_ray.t = q.t2;
-	new_ray.coordinates = matrix3_addition(new_ray.position, vector3_multiply(new_ray.orient, new_ray.t));
-	if (!(cone->theta < M_PI / 2 && vector3_scalar(matrix3_subtract(new_ray.coordinates, cone->position), cone->orient) > -EPSILON))
+	tmp_ray = *ray;
+	tmp_ray.t = math_quadratic_equation(&q);
+	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
+		return ; // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание || удаляет результат если ранее был найден объект с пересечением ближе конуса
+	*ray = tmp_ray;
+	if (q.t1 > EPSILON && q.t2 > EPSILON && vector3_scalar(ray->orient, cone->orient) > 0)
+		ray->t = q.t2;
+	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, ray->t));
+	if (!(cone->theta < M_PI / 2 && vector3_scalar(matrix3_subtract(ray->coordinates, cone->position), cone->orient) > -EPSILON))
 		return ; // отрезает конус-двойник
-	if (vector3_sumpow2(matrix3_subtract(new_ray.coordinates, cone->position)) > pow(cone->height / cone->costheta, 2))
+	if (vector3_sumpow2(matrix3_subtract(ray->coordinates, cone->position)) > pow(cone->height / cone->costheta, 2))
 		return ; // ограничевает конус по высоте
-	new_ray.normal = vector3_normalise(matrix3_subtract(new_ray.coordinates, vector3_multiply(cone->orient, vector3_distance(new_ray.coordinates, cone->position) / cone->costheta)));
-	new_ray.color = cone->color;
-//	new_ray.distance = vector3_distance(new_ray.position, new_ray.coordinates);
-	if (new_ray.t + EPSILON > ray->t)
-		return ; // удаляет результат если ранее был найден объект с пересечением ближе конуса
-	*ray = new_ray;
+	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, vector3_multiply(cone->orient, vector3_distance(ray->coordinates, cone->position) / cone->costheta)));
+	ray->color = cone->color;
 }
 
 //https://www.ccs.neu.edu/home/fell/CS4300/Lectures/Ray-TracingFormulas.pdf
 static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 {
-	t_ray		new_ray;
+	t_ray		tmp_ray;
 	t_vector3	d;
 	t_vector3	p;
 	t_quad		q;
 
-	new_ray = *ray;
 	d = ray->orient;
 	p = matrix3_subtract(ray->position, sphere->position);
 	q.a = vector3_sumpow2(d);
 	q.b = 2 * d.x * p.x + 2 * d.y * p.y + 2 * d.z * p.z;
 	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(ray->position) - 2 * vector3_scalar(sphere->position, ray->position) - pow(sphere->radius, 2);
-	new_ray.t = math_quadratic_equation(&q);
-	if (new_ray.t < EPSILON)
+	tmp_ray = *ray;
+	tmp_ray.t = math_quadratic_equation(&q);
+	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
 		return ;
-	new_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(d, new_ray.t));
+	*ray = tmp_ray;
+	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(d, ray->t));
 	if (fmin(q.t1, q.t2) > EPSILON)
-		new_ray.normal = vector3_normalise(matrix3_subtract(new_ray.coordinates, sphere->position));
+		ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, sphere->position));
 	else
-		new_ray.normal = vector3_normalise(matrix3_subtract(sphere->position, new_ray.coordinates));
-	new_ray.color = sphere->color;
-//	new_ray.distance = vector3_distance(ray->position, new_ray.coordinates);
-	if (new_ray.t + EPSILON > ray->t)
-		return ;
-	*ray = new_ray;
+		ray->normal = vector3_normalise(matrix3_subtract(sphere->position, ray->coordinates));
+	ray->color = sphere->color;
 }
 
 static void	intersect(t_ray *ray, t_scene *scene)
@@ -166,6 +157,7 @@ static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *s
 	t_ray	new_ray;
 
 	kd_memset(&new_ray, 0, sizeof(t_ray));
+	new_ray.t = INFINITY;
 	new_ray.position = ray->coordinates;
 //	l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 	new_ray.orient = l;
