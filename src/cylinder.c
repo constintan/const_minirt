@@ -94,7 +94,7 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	result_ray = *ray;
 	tmp_ray = *ray;
 	intersect_plane(&cap, &tmp_ray);
-	if (tmp_ray.distance)
+	if (tmp_ray.t)
 	{
 		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))
 		{//			if (vector3_scalar(new_ray.orientation, cap1.orient) < 0)
@@ -107,11 +107,11 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	cap.orient = cylinder->orient;
 	cap.color = cylinder->color;
 	intersect_plane(&cap, &tmp_ray);
-	if (tmp_ray.distance)
+	if (tmp_ray.t)
 	{
 		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))
 		{//			if (vector3_scalar(new_ray.orientation, cap1.orient) < 0)
-			if (tmp_ray.distance < result_ray.distance || result_ray.distance < EPSILON)
+			if (tmp_ray.t + EPSILON < result_ray.t || result_ray.t < EPSILON)
 			{
 				result_ray = tmp_ray;
 			}
@@ -124,17 +124,17 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 
 	tmp_ray = *ray;
 	p = matrix3_subtract(tmp_ray.position, cylinder->position);
-	q.a = vector3_sumpow2(matrix3_subtract(tmp_ray.orientation,
+	q.a = vector3_sumpow2(matrix3_subtract(tmp_ray.orient,
 										   vector3_multiply(
 												   cylinder->orient,
 												   vector3_scalar(
-														   tmp_ray.orientation,
+														   tmp_ray.orient,
 														   cylinder->orient))));
-	q.b = 2 * (vector3_scalar(matrix3_subtract(tmp_ray.orientation,
+	q.b = 2 * (vector3_scalar(matrix3_subtract(tmp_ray.orient,
 											   vector3_multiply(
 													   cylinder->orient,
 													   vector3_scalar(
-															   tmp_ray.orientation,
+															   tmp_ray.orient,
 															   cylinder->orient))),
 							  matrix3_subtract(p, vector3_multiply(
 									  cylinder->orient,
@@ -153,11 +153,11 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	if (tmp_ray.t < EPSILON)
 		tmp_ray.t = (-q.b - sqrt(q.d)) / (2 * q.a);
 		//может ли здесь быть меньше нуля ?
-	if (tmp_ray.distance > result_ray.distance)
-		return;
+//	if (tmp_ray.distance > result_ray.distance)
+//		return;
 
 	/*проверка что оно лежит внутри **обрезанного** цилиндра*/
-	t_vector3 qq = matrix3_addition(tmp_ray.position, vector3_multiply(tmp_ray.orientation, tmp_ray.t));
+	t_vector3 qq = matrix3_addition(tmp_ray.position, vector3_multiply(tmp_ray.orient, tmp_ray.t));
 	if (vector3_scalar(cylinder->orient, matrix3_subtract(qq, cylinder->position)) <= 0)
 		return;
 	if (vector3_scalar(cylinder->orient,
@@ -166,8 +166,8 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 		return;
 
 	tmp_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(
-			ray->orientation, tmp_ray.t));
-	tmp_ray.distance = vector3_distance(ray->position, tmp_ray.coordinates);
+			ray->orient, tmp_ray.t));
+//	tmp_ray.distance = vector3_distance(ray->position, tmp_ray.coordinates);
 //		if (tmp_ray.distance < EPSILON || (ray->distance < tmp_ray.distance && ray->distance))
 //			return ; //зачеееем
 	*ray = tmp_ray;
@@ -189,6 +189,5 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	ray->normal = matrix3_subtract(op, vector3_multiply(cylinder->orient, vector3_scalar(cylinder->orient, op)));
 
 	ray->color = cylinder->color;
-	ray->color = new_color(200,200,200);
 
 }
