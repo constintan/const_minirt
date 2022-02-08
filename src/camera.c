@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:35:11 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 00:37:54 by                  ###   ########.fr       */
+/*   Updated: 2022/02/07 11:17:04 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
 	camera->rotate = vector3_arotate(vector3_normalise(orient), camera->orient);
 	camera->fov = fov;
 	camera->zoom = DEFAULT_ZOOM;
+	camera->default_position = position;
 	return (camera);
 }

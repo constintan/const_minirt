@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/07 00:13:30 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 02:20:13 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	key_hook(int key, t_scene *scene)
 		if (scene->view >= 7 || scene->view < 0)
 			scene->view = 0;
 //		reset_game(mlx);
-	} else if (key == KEY_ENTER || key == KEY_TAB)
+	} else if (key == KEY_ENTER)
 		scene->play = TRUE;
 //		next_level(mlx);
 //	if (check_move(key, mlx) && scene->hud)
@@ -73,14 +73,14 @@ static int	key_hook(int key, t_scene *scene)
 		rotate.v = 0;
 		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
 	}
-	else if (key == KEY_SHIFT)
+	else if (key == KEY_Q)
 	{
 		t_vector2	rotate;
 		rotate.u = scene->camera->rotate.u;
 		rotate.v = scene->camera->rotate.v - 90;
 		scene->camera->position = matrix3_addition(scene->camera->position, vector3_multiply(vector3_rotate_yx(scene->camera->orient, rotate), 5));
 	}
-	else if (key == KEY_SPACE)
+	else if (key == KEY_E)
 	{
 		t_vector2	rotate;
 		rotate.u = scene->camera->rotate.u;
@@ -89,27 +89,53 @@ static int	key_hook(int key, t_scene *scene)
 //		printf("c %f %f %f -> %f %f %f\n", )
 	}
 	else if (key == KEY_1)
-		scene->minquality = 1;
+		scene->maxquality = 1;
 	else if (key == KEY_2)
-		scene->minquality = 2;
+		scene->maxquality = 2;
 	else if (key == KEY_3)
-		scene->minquality = 3;
+		scene->maxquality = 3;
 	else if (key == KEY_4)
-		scene->minquality = 4;
+		scene->maxquality = 4;
 	else if (key == KEY_5)
-		scene->minquality = 5;
+		scene->maxquality = 5;
 	else if (key == KEY_6)
-		scene->minquality = 6;
+		scene->minquality = kd_max(scene->width, scene->height) / 240;
 	else if (key == KEY_7)
-		scene->minquality = 7;
+		scene->minquality = kd_max(scene->width, scene->height) / 120;
 	else if (key == KEY_8)
-		scene->minquality = 8;
+		scene->minquality = kd_max(scene->width, scene->height) / 60;
 	else if (key == KEY_9)
-		scene->minquality = 9;
+		scene->minquality = kd_max(scene->width, scene->height) / 40;
 	else if (key == KEY_0)
-		scene->minquality = kd_max(scene->win_w, scene->win_h) / 20;
-	scene->everynframe = scene->minquality;
+		scene->minquality = kd_max(scene->width, scene->height) / 20;
+	else if (key == KEY_Z && !scene->no_shadows)
+		scene->no_shadows = TRUE;
+	else if (key == KEY_Z && scene->no_shadows)
+		scene->no_shadows = FALSE;
+	else if (key == KEY_X && !scene->one_light)
+		scene->one_light = TRUE;
+	else if (key == KEY_X && scene->one_light)
+		scene->one_light = FALSE;
+	else if (key == KEY_C && !scene->no_lights)
+		scene->no_lights = TRUE;
+	else if (key == KEY_C && scene->no_lights)
+		scene->no_lights = FALSE;
+	else if (key == KEY_V)
+	{
+		scene->camera->rotate.u = 0;
+		scene->camera->rotate.v = 0;
+	}
+	else if (key == KEY_F)
+		scene->camera->position = scene->camera->default_position;
+	if (key == KEY_1 || key == KEY_2 || key == KEY_3 || key == KEY_4 || key == KEY_5)
+	{
+		if (scene->everynframe < scene->maxquality)
+			scene->everynframe = scene->maxquality;
+	}
+	else if (key == KEY_Z || key == KEY_X || key == KEY_C || key == KEY_V || key == KEY_F || key == KEY_W || key == KEY_S || key == KEY_A || key == KEY_D || key == KEY_Q || key == KEY_E || key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_R || key == KEY_OPENBRACKET || key == KEY_CLOSEBRACKET)
+		scene->everynframe = scene->minquality;
 	scene->idle = 0;
+	scene->rays_set = FALSE;
 	printf("key %d\n", key);
 	return (0);
 }
@@ -161,10 +187,10 @@ int	main(int argc, char **argv)
 //	scene->cones->theta = atan(scene->cones->radius / scene->cones->height);
 //	scene->cones->costheta = cos(scene->cones->theta);
 //	scene->cones->pow2costheta = pow(scene->cones->costheta, 2);
-	scene->win_w = scene->width;
-	scene->win_h = scene->height;
-	scene->minquality = kd_max(scene->win_w, scene->win_h) / 20;
+	scene->maxquality = 1;
+	scene->minquality = kd_max(scene->width, scene->height) / 20;
 	scene->everynframe = scene->minquality;
+	scene->rays = kd_calloc(scene->width * scene->height, sizeof(t_ray));
 	mlx_loop_hook(scene->mlx, render_next_frame, scene);
 	mlx_hook(scene->window, 2, (1L << 0), key_hook, scene);
 	mlx_hook(scene->window, 17, 0, close_minirt, scene);

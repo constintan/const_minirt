@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/07 02:39:03 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 02:07:28 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static void	intersect_cone(t_cone *cone, t_ray *ray)
 	if (q.t1 > EPSILON && q.t2 > EPSILON && vector3_scalar(ray->orient, cone->orient) > 0)
 		ray->t = q.t2;
 	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, ray->t));
-	if (!(cone->theta < M_PI / 2 && vector3_scalar(matrix3_subtract(ray->coordinates, cone->position), cone->orient) > -EPSILON))
+	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(ray->coordinates, cone->position), cone->orient) > -EPSILON))
 		return ; // отрезает конус-двойник
 	if (vector3_sumpow2(matrix3_subtract(ray->coordinates, cone->position)) > pow(cone->height / cone->costheta, 2))
 		return ; // ограничевает конус по высоте
@@ -156,18 +156,16 @@ static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *s
 {
 	t_ray	new_ray;
 
-	kd_memset(&new_ray, 0, sizeof(t_ray));
-	new_ray.t = INFINITY;
 	new_ray.position = ray->coordinates;
-//	l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 	new_ray.orient = l;
+	new_ray.t = INFINITY;
 	intersect(&new_ray, scene);
 	if (new_ray.t > EPSILON && pow(new_ray.t, 2) + EPSILON < vector3_sumpow2(matrix3_subtract(light->position, ray->coordinates)))
 		return (TRUE);
 	return (FALSE);
 }
 
-static t_color	compute_light(t_ray *ray, t_scene *scene)
+static void	compute_light(t_ray *ray, t_scene *scene)
 {
 	t_light		*light;
 	t_vector3	l;
@@ -179,9 +177,12 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 //	new_ray == ray из камеры
 //	new_ray.color == цвет объекта в отражении шара
 
-//	если пересечений не было, то distance по дефолту = 0
+//	если пересечений не было, то distance по дефолту = INFINITY
 	if (ray->t == INFINITY)
-		return (new_color(DEFAULT_BG_COLOR));
+	{
+		ray->color = new_color(DEFAULT_BG_COLOR);
+		return ;
+	}
 	color = colour_matrix_amplify(ray->color, colour_amplify(scene->ambient->color, scene->ambient->bright));
 	light = scene->light;
 	while (light && !scene->no_lights)
@@ -196,7 +197,7 @@ static t_color	compute_light(t_ray *ray, t_scene *scene)
 		if (scene->one_light)
 			light = NULL;
 	}
-	return (color);
+	ray->color = color;
 }
 
 //вид без перспективы (ортографический)
@@ -235,7 +236,7 @@ static void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ra
 static void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray)
 {
 	ray->position = camera->position;
-	step.v = camera->fov / 2 * step.v * (0.5 + 0.5 * cos(M_PI / 2 * fabs(step.u)));
+	step.v = camera->fov / 2 * step.v * (0.5 + 0.5 * cos(M_PI_2 * fabs(step.u)));
 	step.u = camera->fov / 2 * step.u;
 	ray->orient = vector3_rotate_yx(new_vector3(0, 0, 1), step);
 	ray->orient = vector3_rotate_yx(ray->orient, camera->rotate);
@@ -328,6 +329,7 @@ static void	animate(t_scene *scene)
 	{
 		scene->everynframe = scene->minquality;
 		scene->idle = 0;
+		scene->rays_set = FALSE;
 		if (q.v >= 360 && q.u < 720 && q.v < 720)
 		{
 			q.u += 10;
@@ -376,10 +378,48 @@ static	void update_window(t_scene *scene)
 	hud(scene);
 }
 
-int	render_next_frame(t_scene *scene)
+static void	iterate_pixels(t_scene *scene)
 {
 	t_xy	pixel;
-	t_ray	ray;
+	t_ray	*ray;
+
+	pixel.y = 0;
+	while (pixel.y < scene->height)
+	{
+		pixel.x = 0;
+		while (pixel.x < scene->width)
+		{
+			ray = &scene->rays[pixel.y * scene->width + pixel.x];
+			if (pixel.x % scene->everynframe == 0 &&
+				pixel.y % scene->everynframe == 0)
+			{
+//				printf("p.x %d p.y %d\n", pixel.x, pixel.y);
+				if (!ray->t)
+				{
+					ray->t = INFINITY;
+					raytrace(pixel, ray, scene);
+					compute_light(ray, scene);
+				}
+				draw_pixel(scene, pixel.x, pixel.y, ray->color);
+			}
+			pixel.x++;
+		}
+		pixel.y++;
+	}
+}
+
+static void	reset_rays(t_scene *scene)
+{
+	int	i;
+
+	i = 0;
+	while (i < scene->width * scene->height)
+		scene->rays[i++].t = 0;
+	scene->rays_set = TRUE;
+}
+
+int	render_next_frame(t_scene *scene)
+{
 	long	time1;
 	long	time2;
 
@@ -391,29 +431,12 @@ int	render_next_frame(t_scene *scene)
 	}
 	else if (scene->idle < 0)
 		return (0);
-	scene->width = scene->win_w / scene->everynframe;
-	if (scene->win_w % scene->everynframe)
-		scene->width++;
-	scene->height = scene->win_h / scene->everynframe;
-	if (scene->win_h % scene->everynframe)
-		scene->height++;
 	time1 = mtv();
 	kd_free(scene->hud);
 //	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
-	pixel.y = 0;
-	while (pixel.y < scene->height)
-	{
-		pixel.x = 0;
-		while (pixel.x < scene->width)
-		{
-			kd_memset(&ray, 0, sizeof(t_ray));
-			ray.t = INFINITY;
-			raytrace(pixel, &ray, scene);
-			draw_pixel(scene, pixel.x, pixel.y, compute_light(&ray, scene));
-			pixel.x++;
-		}
-		pixel.y++;
-	}
+	if (!scene->rays_set)
+		reset_rays(scene);
+	iterate_pixels(scene);
 	time2 = mtv() - time1;
 	scene->hud = kd_strf("quality %d/%d view %d fov %d zoom %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov, (int)scene->camera->zoom, (int)time2);
 	update_window(scene);
@@ -422,7 +445,7 @@ int	render_next_frame(t_scene *scene)
 		scene->everynframe /= 2;
 	else if (scene->everynframe > 10)
 		scene->everynframe = 10;
-	else if (scene->everynframe > 1)
+	else if (scene->everynframe > scene->maxquality)
 		scene->everynframe--;
 	else
 		scene->idle = -1;

@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 23:55:24 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 02:18:01 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ enum e_keycode
 	KEY_S = 1,
 	KEY_A = 0,
 	KEY_D = 2,
+	KEY_Q = 12,
+	KEY_E = 14,
+	KEY_Z = 6,
+	KEY_X = 7,
+	KEY_C = 8,
+	KEY_V = 9,
+	KEY_F = 3,
+	KEY_CMD = 259,
 	KEY_SHIFT = 257,
 	KEY_SPACE = 49,
 	KEY_UP = 126,
@@ -156,6 +164,7 @@ typedef struct	s_camera
 	t_vector2	rotate;
 	double		fov;
 	double		zoom;
+	t_vector3	default_position;
 }	t_camera;
 
 typedef struct s_light
@@ -182,6 +191,16 @@ typedef struct	s_img
 	int		endian;
 }	t_img;
 
+typedef struct s_ray
+{
+	t_vector3	position;
+	t_vector3	orient;
+	double		t;
+	t_vector3	coordinates;
+	t_vector3	normal;
+	t_color		color;
+}	t_ray;
+
 typedef struct	s_scene
 {
 	t_camera	*camera;
@@ -202,8 +221,6 @@ typedef struct	s_scene
 	// int		bytes_per_line;
 	// int		endian;
 
-	int		win_w;
-	int		win_h;
 	int		width;
 	int		height;
 	char		*hud;
@@ -219,9 +236,12 @@ typedef struct	s_scene
 	t_bool		no_lights;
 	int			view;
 	int			oddframe;
+	int			maxquality;
 	int			minquality;
 	int			everynframe;
 	int		idle;
+	t_bool		rays_set;
+	t_ray		*rays;
 }	t_scene;
 
 // typedef struct	s_shapes
@@ -239,17 +259,6 @@ typedef struct	s_screen
 	double	x_step;
 	double	y_step;
 }	t_screen;
-
-
-typedef struct s_ray
-{
-	t_vector3	position;
-	t_vector3	orient;
-	double		t;
-	t_vector3	coordinates;
-	t_vector3	normal;
-	t_color		color;
-}	t_ray;
 
 //quadratic function, d - discriminant
 typedef struct s_quad {
