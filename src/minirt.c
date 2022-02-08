@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 02:20:13 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 11:58:24 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,22 +120,25 @@ static int	key_hook(int key, t_scene *scene)
 		scene->no_lights = TRUE;
 	else if (key == KEY_C && scene->no_lights)
 		scene->no_lights = FALSE;
-	else if (key == KEY_V)
-	{
-		scene->camera->rotate.u = 0;
-		scene->camera->rotate.v = 0;
-	}
+	else if (key == KEY_V && !scene->no_specular)
+		scene->no_specular = TRUE;
+	else if (key == KEY_V && scene->no_specular)
+		scene->no_specular = FALSE;
 	else if (key == KEY_F)
-		scene->camera->position = scene->camera->default_position;
+		reset_camera(scene);
 	if (key == KEY_1 || key == KEY_2 || key == KEY_3 || key == KEY_4 || key == KEY_5)
 	{
 		if (scene->everynframe < scene->maxquality)
 			scene->everynframe = scene->maxquality;
+		scene->idle = 0;
+
 	}
 	else if (key == KEY_Z || key == KEY_X || key == KEY_C || key == KEY_V || key == KEY_F || key == KEY_W || key == KEY_S || key == KEY_A || key == KEY_D || key == KEY_Q || key == KEY_E || key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_R || key == KEY_OPENBRACKET || key == KEY_CLOSEBRACKET)
+	{
 		scene->everynframe = scene->minquality;
-	scene->idle = 0;
-	scene->rays_set = FALSE;
+		scene->rays_set = FALSE;
+		scene->idle = 0;
+	}
 	printf("key %d\n", key);
 	return (0);
 }

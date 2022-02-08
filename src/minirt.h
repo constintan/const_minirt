@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 02:18:01 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 11:58:24 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ typedef struct	s_camera
 	t_vector2	rotate;
 	double		fov;
 	double		zoom;
-	t_vector3	default_position;
+	struct s_camera	*defaults;
 }	t_camera;
 
 typedef struct s_light
@@ -234,6 +234,7 @@ typedef struct	s_scene
 	t_bool		no_shadows;
 	t_bool		one_light;
 	t_bool		no_lights;
+	t_bool		no_specular;
 	int			view;
 	int			oddframe;
 	int			maxquality;
@@ -316,6 +317,7 @@ void intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
 void			add_camera(t_scene *scene, char *str);
 void			check_direction_limits(t_vector3 orient, int *err);
+void			reset_camera(t_scene *scene);
 
 //ambient.c
 t_ambient		*new_ambient(double bright, t_color color);

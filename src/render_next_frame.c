@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/08 03:00:13 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 12:01:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,12 +165,20 @@ static t_bool compute_shadow(t_light *light, t_vector3 l, t_ray *ray, t_scene *s
 	return (FALSE);
 }
 
+static t_color	apply_light(t_color object, t_color light, double intensity)
+{
+	return (colour_matrix_amplify(object, colour_amplify(light, intensity)));
+}
+
 static void	compute_light(t_ray *ray, t_scene *scene)
 {
 	t_light		*light;
 	t_vector3	l;
 	double		fctr;
 	t_color		color;
+	double		hf;
+	t_vector3	h;
+	double		n;
 
 //	new_ray = compute_mirror_angle(ray);
 //	intersect(new_ray, scene);
@@ -183,26 +191,29 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 		ray->color = new_color(DEFAULT_BG_COLOR);
 		return ;
 	}
-	color = colour_matrix_amplify(ray->color, colour_amplify(scene->ambient->color, scene->ambient->bright));
+	color = apply_light(ray->color, scene->ambient->color, scene->ambient->bright);
 	light = scene->light;
 	while (light && !scene->no_lights)
 	{
-		l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
-		fctr = vector3_scalar(ray->normal, l);
-		//перпендикулярный нормаль к свету = 0, параллельный = 1
-		if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, l, ray, scene)))
-			fctr = 0;
-		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), fctr));
-		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), pow(fctr, 32)));
-//		Ks * (N dot ( L + V / 2))^n
-//		if (fctr)
-//			color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), pow(vector3_scalar(ray->normal,
-//																																			  vector3_normalise(vector3_multiply(matrix3_addition(l, ray->position), 0.5))), 2)));
+			l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
+			fctr = vector3_scalar(ray->normal, l);
+			//перпендикулярный нормаль к свету = 0, параллельный = 1
+			if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, l, ray, scene)))
+				fctr = 0;
+			color = colour_add(color, colour_amplify(apply_light(ray->color, light->color, light->bright), fctr));
+			if (!scene->no_specular && vector3_scalar(ray->normal, l) > 0)
+			{
+				h = vector3_normalise(matrix3_addition(vector3_negate(ray->orient), l));
+				n = 16;
+				hf = vector3_scalar(h, ray->normal) * sin(M_PI_2 * sin(M_PI_2 * sin(M_PI_2 * sin(M_PI_2 * fctr))));
+				if (hf > 0)
+					color = colour_add(color, colour_amplify(apply_light(color, light->color, light->bright), pow(hf, n)));
+			}
 		light = light->next;
 		if (scene->one_light)
 			light = NULL;
 	}
-	ray->color = color;
+	ray->color = colour_clamp(color);
 }
 
 //вид без перспективы (ортографический)

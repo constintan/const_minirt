@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:35:11 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/07 11:17:04 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 02:20:13 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,16 @@ void	add_camera(t_scene *scene, char *str)
 	if (err)
 		ft_error(4);
 	scene->camera = new_camera(origin, direction, fov);
+	scene->camera->defaults = new_camera(origin, direction, fov);
+}
+
+void	reset_camera(t_scene *scene)
+{
+	scene->camera->position = scene->camera->defaults->position;
+	scene->camera->orient = scene->camera->defaults->orient;
+	scene->camera->rotate = scene->camera->defaults->rotate;
+	scene->camera->fov = scene->camera->defaults->fov;
+	scene->camera->zoom = scene->camera->defaults->zoom;
 }
 
 t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
@@ -74,6 +84,6 @@ t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
 	camera->rotate = vector3_arotate(vector3_normalise(orient), camera->orient);
 	camera->fov = fov;
 	camera->zoom = DEFAULT_ZOOM;
-	camera->default_position = position;
+
 	return (camera);
 }

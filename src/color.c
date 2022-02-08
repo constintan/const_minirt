@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 23:22:20 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 21:42:33 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 11:06:18 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_color	colour_amplify(t_color colour, double amplifier)
 	colour.r *= amplifier;
 	colour.g *= amplifier;
 	colour.b *= amplifier;
-	return (colour_clamp(colour));
+	return (colour);
 }
 
 t_color	colour_add(t_color colour, t_color colour_add)
@@ -80,16 +80,19 @@ t_color	colour_add(t_color colour, t_color colour_add)
 	colour.r += colour_add.r;
 	colour.g += colour_add.g;
 	colour.b += colour_add.b;
-	return (colour_clamp(colour));
+	return (colour);
 }
 
 t_color	colour_matrix_amplify(t_color colour, t_color colour_amplifier)
 {
+	int	mix;
+
+	mix = 10;
 	colour.r = colour.r * colour_amplifier.r / 255
-			   + colour_amplifier.g / 10 + colour_amplifier.b / 10;
+			   + colour_amplifier.g / mix + colour_amplifier.b / mix;
 	colour.g = colour.g * colour_amplifier.g / 255
-			   + colour_amplifier.r / 10 + colour_amplifier.b / 10;
+			   + colour_amplifier.r / mix + colour_amplifier.b / mix;
 	colour.b = colour.b * colour_amplifier.b / 255
-			   + colour_amplifier.r / 10 + colour_amplifier.g / 10;
+			   + colour_amplifier.r / mix + colour_amplifier.g / mix;
 	return (colour);
 }
