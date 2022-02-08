@@ -12,16 +12,6 @@
 
 #include "minirt.h"
 
-// float	get_sp_radius(char **str)
-// {
-// 	float	res;
-
-// 	res = ft_atof(*str);
-// }
-
-// sp 0,0,20.6 12.6 10,0,255
-//return -1 in case of invalid data
-
 void	add_cylinder(t_scene *scene, char *str)
 {
 	t_cylinder	*cylinder;
@@ -75,7 +65,6 @@ void	add_cylinder(t_scene *scene, char *str)
 	cylinder->next = scene->cylinders;
 	scene->cylinders = cylinder;
 
-	// return (1);
 }
 
 t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, double height, t_color color)
@@ -92,4 +81,115 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, d
 	cylinder->color = color;
 	cylinder->next = NULL;
 	return (cylinder);
+}
+
+void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
+{
+	t_ray	result_ray;
+	t_ray	tmp_ray;
+	t_plane	cap;
+
+	cap.position = cylinder->position;
+	cap.orient = cylinder->orient;
+	cap.color = cylinder->color;
+	result_ray = *ray;
+	tmp_ray = *ray;
+	intersect_plane(&cap, &tmp_ray);
+	if (tmp_ray.distance)
+	{
+		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))
+		{//			if (vector3_scalar(new_ray.orientation, cap1.orient) < 0)
+			result_ray = tmp_ray;
+//				return ;
+		}
+	}
+	tmp_ray = *ray;
+	cap.position = matrix3_addition(cylinder->position, vector3_multiply(cylinder->orient, cylinder->height));
+	cap.orient = cylinder->orient;
+	cap.color = cylinder->color;
+	intersect_plane(&cap, &tmp_ray);
+	if (tmp_ray.distance)
+	{
+		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))
+		{//			if (vector3_scalar(new_ray.orientation, cap1.orient) < 0)
+			if (tmp_ray.distance < result_ray.distance || result_ray.distance < EPSILON)
+			{
+				result_ray = tmp_ray;
+			}
+//			return ;
+		}
+	}
+
+	t_vector3 p;
+	t_quad q;
+
+	tmp_ray = *ray;
+	p = matrix3_subtract(tmp_ray.position, cylinder->position);
+	q.a = vector3_sumpow2(matrix3_subtract(tmp_ray.orientation,
+										   vector3_multiply(
+												   cylinder->orient,
+												   vector3_scalar(
+														   tmp_ray.orientation,
+														   cylinder->orient))));
+	q.b = 2 * (vector3_scalar(matrix3_subtract(tmp_ray.orientation,
+											   vector3_multiply(
+													   cylinder->orient,
+													   vector3_scalar(
+															   tmp_ray.orientation,
+															   cylinder->orient))),
+							  matrix3_subtract(p, vector3_multiply(
+									  cylinder->orient,
+									  vector3_scalar(p,
+													 cylinder->orient)))));
+	q.c = vector3_sumpow2(
+			matrix3_subtract(p, vector3_multiply(cylinder->orient,
+												 vector3_scalar(p,
+																cylinder->orient)))) -
+		  pow(cylinder->radius, 2);
+	q.d = math_discriminant(q.a, q.b, q.c);
+	*ray = result_ray;
+	if (q.d < 0)
+		return;
+	tmp_ray.t = (-q.b + sqrt(q.d)) / (2 * q.a);
+	if (tmp_ray.t < EPSILON)
+		tmp_ray.t = (-q.b - sqrt(q.d)) / (2 * q.a);
+		//может ли здесь быть меньше нуля ?
+	if (tmp_ray.distance > result_ray.distance)
+		return;
+
+	/*проверка что оно лежит внутри **обрезанного** цилиндра*/
+	t_vector3 qq = matrix3_addition(tmp_ray.position, vector3_multiply(tmp_ray.orientation, tmp_ray.t));
+	if (vector3_scalar(cylinder->orient, matrix3_subtract(qq, cylinder->position)) <= 0)
+		return;
+	if (vector3_scalar(cylinder->orient,
+					   matrix3_subtract(qq,
+										cap.position)) >= EPSILON)
+		return;
+
+	tmp_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(
+			ray->orientation, tmp_ray.t));
+	tmp_ray.distance = vector3_distance(ray->position, tmp_ray.coordinates);
+//		if (tmp_ray.distance < EPSILON || (ray->distance < tmp_ray.distance && ray->distance))
+//			return ; //зачеееем
+	*ray = tmp_ray;
+
+/*подсчет нормали 1 вариант*/
+
+//	t = dot((hit_pt - cy.bottom_center), cy.ori); // cy.ori should be normalized and so has the length of 1.
+//	pt = cy.bottom_center + t * cy.ori;
+//	surface_normal = normalize(hit_pt - pt)));
+
+//	double t = vector3_scalar(matrix3_subtract(tmp_ray.coordinates, cylinder->position), cylinder->orient); // cy.ori should be normalized and so has the length of 1.
+//	t_vector3 pt = matrix3_addition(cylinder->position, vector3_multiply(cylinder->orient, t));
+//	ray->normal = vector3_normalise(matrix3_subtract(tmp_ray.coordinates, pt));
+//	printf("ray->normal:%f\n", vec_length(ray->normal));
+
+/*подсчет нормали 2 вариант*/
+
+	t_vector3 op = matrix3_subtract(ray->coordinates, cylinder->position);
+	ray->normal = matrix3_subtract(op, vector3_multiply(cylinder->orient, vector3_scalar(cylinder->orient, op)));
+
+	ray->color = cylinder->color;
+	ray->color = new_color(200,200,200);
+
 }

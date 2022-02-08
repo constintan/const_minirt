@@ -12,13 +12,13 @@
 
 #include "minirt.h"
 
-static double	math_discriminant(double a, double b, double c)
+double	math_discriminant(double a, double b, double c)
 {
 	return (pow(b, 2) - 4 * a * c);
 }
 
 //https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
-static void	intersect_plane(t_plane *plane, t_ray *ray)
+void	intersect_plane(t_plane *plane, t_ray *ray)
 {
 	double		denominator;
 	double		distance;
@@ -148,6 +148,7 @@ static void	intersect(t_ray *ray, t_scene *scene)
 	t_plane		*plane;
 	t_sphere	*sphere;
 	t_cone		*cone;
+	t_cylinder 	*cylinder;
 
 	plane = scene->planes;
 	while (plane)
@@ -166,6 +167,12 @@ static void	intersect(t_ray *ray, t_scene *scene)
 	{
 		intersect_cone(cone, ray);
 		cone = cone->next;
+	}
+	cylinder = scene->cylinders;
+	while (cylinder)
+	{
+		intersect_cylinder(cylinder, ray);
+		cylinder = cylinder->next;
 	}
 }
 

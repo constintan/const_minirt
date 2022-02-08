@@ -347,6 +347,7 @@ char	*kd_strf(char const *format, ...);
 
 int	render_next_frame(t_scene *scene);
 void	intersect_plane(t_plane *plane, t_ray *ray);
+double	math_discriminant(double a, double b, double c);
 
 void	hud(t_scene *scene);
 
