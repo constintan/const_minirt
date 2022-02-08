@@ -73,7 +73,9 @@ void	parse_line(t_scene *scene, char *str)
 	// subs = ft_split(str, ' ');
 	while (ft_isspace(*str))
 		str++;
-	if (str[0] == 's' && str[1] == 'p')
+	if (str[0] == '\0' || str[0] == '#' || (str[0] == '/' && str[1] == '/'))
+		;
+	else if (str[0] == 's' && str[1] == 'p')
 		add_sphere(scene, &str[2]);
 	else if (str[0] == 'p' && str[1] == 'l')
 		add_plane(scene, &str[2]);
@@ -90,8 +92,6 @@ void	parse_line(t_scene *scene, char *str)
 
 
 
-	else if (str[0] == '\0')
-		;
 	else
 		ft_error(5);
 
