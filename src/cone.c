@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 22:16:53 by                  ###   ########.fr       */
+/*   Updated: 2022/02/07 11:17:04 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_cone		*new_cone(t_vector3 position, t_vector3 orient, double radius, double he
 {
 	t_cone	*cone;
 
-	cone = (t_cone *)malloc(sizeof(t_cone));
+	cone = kd_calloc(1, sizeof(t_cone));
 	if (cone == NULL)
 		ft_error(-1);
 	cone->position = position;
@@ -80,6 +80,12 @@ t_cone		*new_cone(t_vector3 position, t_vector3 orient, double radius, double he
 	cone->radius = radius;
 	cone->height = height;
 	cone->color = color;
-	cone->next = NULL;
+	cone->cap.position = matrix3_addition(cone->position, vector3_multiply(cone->orient, cone->height));
+	cone->cap.orient = cone->orient;
+	cone->cap.radius = cone->radius;
+	cone->cap.color = cone->color;
+	cone->theta = atan(cone->radius / cone->height);
+	cone->costheta = cos(cone->theta);
+	cone->pow2costheta = pow(cone->costheta, 2);
 	return (cone);
 }

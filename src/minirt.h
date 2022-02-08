@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/06 12:23:19 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 15:26:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,16 @@ enum e_keycode
 	KEY_S = 1,
 	KEY_A = 0,
 	KEY_D = 2,
+	KEY_Q = 12,
+	KEY_E = 14,
+	KEY_Z = 6,
+	KEY_X = 7,
+	KEY_C = 8,
+	KEY_V = 9,
+	KEY_B = 11,
+	KEY_N = 45,
+	KEY_F = 3,
+	KEY_CMD = 259,
 	KEY_SHIFT = 257,
 	KEY_SPACE = 49,
 	KEY_UP = 126,
@@ -116,6 +126,15 @@ typedef struct	s_plane
 	struct s_plane	*next;
 }	t_plane;
 
+typedef struct	s_disc
+{
+	t_vector3		position;
+	t_vector3		orient;
+	double			radius;
+	t_color			color;
+	struct s_plane	*next;
+}	t_disc;
+
 typedef struct	s_cylinder
 {
 	t_vector3		position;
@@ -133,6 +152,10 @@ typedef struct	s_cone
 	double		radius;
 	double		height;
 	t_color		color;
+	t_disc		cap;
+	double		theta;
+	double		costheta;
+	double		pow2costheta;
 	struct s_cone	*next;
 }	t_cone;
 
@@ -143,6 +166,7 @@ typedef struct	s_camera
 	t_vector2	rotate;
 	double		fov;
 	double		zoom;
+	struct s_camera	*defaults;
 }	t_camera;
 
 typedef struct s_light
@@ -169,6 +193,16 @@ typedef struct	s_img
 	int		endian;
 }	t_img;
 
+typedef struct s_ray
+{
+	t_vector3	position;
+	t_vector3	orient;
+	double		t;
+	t_vector3	coordinates;
+	t_vector3	normal;
+	t_color		color;
+}	t_ray;
+
 typedef struct	s_scene
 {
 	t_camera	*camera;
@@ -189,8 +223,6 @@ typedef struct	s_scene
 	// int		bytes_per_line;
 	// int		endian;
 
-	int		win_w;
-	int		win_h;
 	int		width;
 	int		height;
 	char		*hud;
@@ -204,11 +236,17 @@ typedef struct	s_scene
 	t_bool		no_shadows;
 	t_bool		one_light;
 	t_bool		no_lights;
+	t_bool		no_specular;
 	int			view;
 	int			oddframe;
+	int			maxquality;
 	int			minquality;
 	int			everynframe;
 	int		idle;
+	t_bool		rays_set;
+	t_ray		*rays;
+	t_bool		checkerboard;
+	t_bool		bump;
 }	t_scene;
 
 // typedef struct	s_shapes
@@ -227,25 +265,15 @@ typedef struct	s_screen
 	double	y_step;
 }	t_screen;
 
-
-typedef struct s_ray
-{
-	t_vector3	position;
-	t_vector3	orientation;
-//	t_obj		*obj;
-	double		t;
-	double		distance;
-	t_vector3	coordinates;
-	t_vector3	normal;
-	t_color		color;
-}	t_ray;
-
 //quadratic function, d - discriminant
 typedef struct s_quad {
 	double		a;
 	double		b;
 	double		c;
 	double		d;
+	double		sqrt_d;
+	double		t1;
+	double		t2;
 }	t_quad;
 
 //libft.c
@@ -293,6 +321,7 @@ void intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
 void			add_camera(t_scene *scene, char *str);
 void			check_direction_limits(t_vector3 orient, int *err);
+void			reset_camera(t_scene *scene);
 
 //ambient.c
 t_ambient		*new_ambient(double bright, t_color color);
@@ -366,6 +395,8 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
 t_vector3	new_vector3(double x, double y, double z);
 t_vector2	new_vector2(double u, double v);
 t_vector3	vector3_negate(t_vector3 a);
+t_vector3	vector3_cw(t_vector3 a);
+t_vector3	vector3_ccw(t_vector3 a);
 
 //quaternion
 double	quaternion_sumpow2(t_quaternion q);

@@ -64,12 +64,11 @@ t_sphere	*new_sphere(t_vector3 position, double radius, t_color color)
 {
 	t_sphere	*sphere;
 
-	sphere = (t_sphere *)malloc(sizeof(t_sphere));
+	sphere = kd_calloc(1, sizeof(t_sphere));
 	if (sphere == NULL)
 		ft_error(-1);
 	sphere->position = position;
 	sphere->radius = radius;
-	sphere->next = NULL;
 	sphere->color = color;
 	return (sphere);
 }

@@ -71,7 +71,7 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, d
 {
 	t_cylinder	*cylinder;
 
-	cylinder = (t_cylinder *)malloc(sizeof(t_cylinder));
+	cylinder = kd_calloc(1, sizeof(t_cylinder));
 	if (cylinder == NULL)
 		ft_error(-1);
 	cylinder->position = position;
@@ -79,7 +79,6 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, d
 	cylinder->radius = radius;
 	cylinder->height = height;
 	cylinder->color = color;
-	cylinder->next = NULL;
 	return (cylinder);
 }
 
