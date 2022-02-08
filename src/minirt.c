@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 11:58:24 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 15:15:32 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,15 @@ int	close_minirt(void)
 void	reset_game(t_scene *scene)
 {
 	(void)scene;
+}
+
+static t_bool	toggle(t_bool *b)
+{
+	if (!*b)
+		*b = TRUE;
+	else
+		*b = FALSE;
+	return (*b);
 }
 
 static int	key_hook(int key, t_scene *scene)
@@ -108,22 +117,18 @@ static int	key_hook(int key, t_scene *scene)
 		scene->minquality = kd_max(scene->width, scene->height) / 40;
 	else if (key == KEY_0)
 		scene->minquality = kd_max(scene->width, scene->height) / 20;
-	else if (key == KEY_Z && !scene->no_shadows)
-		scene->no_shadows = TRUE;
-	else if (key == KEY_Z && scene->no_shadows)
-		scene->no_shadows = FALSE;
-	else if (key == KEY_X && !scene->one_light)
-		scene->one_light = TRUE;
-	else if (key == KEY_X && scene->one_light)
-		scene->one_light = FALSE;
-	else if (key == KEY_C && !scene->no_lights)
-		scene->no_lights = TRUE;
-	else if (key == KEY_C && scene->no_lights)
-		scene->no_lights = FALSE;
-	else if (key == KEY_V && !scene->no_specular)
-		scene->no_specular = TRUE;
-	else if (key == KEY_V && scene->no_specular)
-		scene->no_specular = FALSE;
+	else if (key == KEY_Z)
+		toggle(&scene->no_shadows);
+	else if (key == KEY_X)
+		toggle(&scene->one_light);
+	else if (key == KEY_C)
+		toggle(&scene->no_lights);
+	else if (key == KEY_V)
+		toggle(&scene->no_specular);
+	else if (key == KEY_B)
+		toggle(&scene->checkerboard);
+	else if (key == KEY_N)
+		toggle(&scene->bump);
 	else if (key == KEY_F)
 		reset_camera(scene);
 	if (key == KEY_1 || key == KEY_2 || key == KEY_3 || key == KEY_4 || key == KEY_5)
@@ -133,7 +138,7 @@ static int	key_hook(int key, t_scene *scene)
 		scene->idle = 0;
 
 	}
-	else if (key == KEY_Z || key == KEY_X || key == KEY_C || key == KEY_V || key == KEY_F || key == KEY_W || key == KEY_S || key == KEY_A || key == KEY_D || key == KEY_Q || key == KEY_E || key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_R || key == KEY_OPENBRACKET || key == KEY_CLOSEBRACKET)
+	else if (key == KEY_Z || key == KEY_X || key == KEY_C || key == KEY_V || key == KEY_B || key == KEY_N || key == KEY_F || key == KEY_W || key == KEY_S || key == KEY_A || key == KEY_D || key == KEY_Q || key == KEY_E || key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_R || key == KEY_OPENBRACKET || key == KEY_CLOSEBRACKET)
 	{
 		scene->everynframe = scene->minquality;
 		scene->rays_set = FALSE;

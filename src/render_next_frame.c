@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/08 12:01:23 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 15:58:11 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,53 @@ static void	intersect_cone(t_cone *cone, t_ray *ray)
 	ray->color = cone->color;
 }
 
+static void	bump(t_ray *ray, t_scene *scene)
+{
+	t_vector3		axis;
+
+	return ;
+	(void)scene;
+	axis = vector3_cw(ray->normal);
+//	printf("1n %f %f %f\n", ray->normal.x, ray->normal.y, ray->normal.z);
+	ray->normal = vector3_qrotate(ray->normal, 10, axis);
+//	printf("2n %f %f %f\n", ray->normal.x, ray->normal.y, ray->normal.z);
+}
+
+static t_color	texture_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
+{
+	double	uf;
+	double	vf;
+	double	u;
+	double	v;
+	t_color	color;
+
+	if (scene->bump)
+		bump(ray, scene);
+	if (!scene->checkerboard && !scene->bump)
+		return (sphere->color);
+	u = 0.5 + atan2((ray->coordinates.z - sphere->position.z) / sphere->radius, (ray->coordinates.x - sphere->position.x) / sphere->radius) / (2 * M_PI);
+	v = 0.5 - asin((ray->coordinates.y - sphere->position.y) / sphere->radius) / M_PI;
+	uf = floor(fmod(u * 18, 2));
+	vf = floor(fmod(v * 9, 2));
+
+	color = sphere->color;
+	if ((uf && vf) || (!uf && !vf))
+	{
+		if (scene->bump)
+			ray->normal = vector3_qrotate(ray->normal, 10, vector3_cw(ray->normal));
+		if (scene->checkerboard)
+			color = new_color(255, 255, 255);
+	}
+	else
+	{
+		if (scene->checkerboard)
+			color = new_color(0, 0, 0);
+	}
+	return (color);
+}
+
 //https://www.ccs.neu.edu/home/fell/CS4300/Lectures/Ray-TracingFormulas.pdf
-static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
+static void	intersect_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
 {
 	t_ray		tmp_ray;
 	t_vector3	d;
@@ -123,7 +168,7 @@ static void	intersect_sphere(t_sphere *sphere, t_ray *ray)
 		ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, sphere->position));
 	else
 		ray->normal = vector3_normalise(matrix3_subtract(sphere->position, ray->coordinates));
-	ray->color = sphere->color;
+	ray->color = texture_sphere(sphere, ray, scene);
 }
 
 static void	intersect(t_ray *ray, t_scene *scene)
@@ -141,7 +186,7 @@ static void	intersect(t_ray *ray, t_scene *scene)
 	sphere = scene->spheres;
 	while (sphere)
 	{
-		intersect_sphere(sphere, ray);
+		intersect_sphere(sphere, ray, scene);
 		sphere = sphere->next;
 	}
 	cone = scene->cones;

@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 11:58:24 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 15:26:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ enum e_keycode
 	KEY_X = 7,
 	KEY_C = 8,
 	KEY_V = 9,
+	KEY_B = 11,
+	KEY_N = 45,
 	KEY_F = 3,
 	KEY_CMD = 259,
 	KEY_SHIFT = 257,
@@ -243,6 +245,8 @@ typedef struct	s_scene
 	int		idle;
 	t_bool		rays_set;
 	t_ray		*rays;
+	t_bool		checkerboard;
+	t_bool		bump;
 }	t_scene;
 
 // typedef struct	s_shapes
@@ -390,6 +394,8 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
 t_vector3	new_vector3(double x, double y, double z);
 t_vector2	new_vector2(double u, double v);
 t_vector3	vector3_negate(t_vector3 a);
+t_vector3	vector3_cw(t_vector3 a);
+t_vector3	vector3_ccw(t_vector3 a);
 
 //quaternion
 double	quaternion_sumpow2(t_quaternion q);
