@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/08 02:07:28 by                  ###   ########.fr       */
+/*   Updated: 2022/02/08 03:00:13 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,11 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 		if (fctr < 0 || (!scene->no_shadows && compute_shadow(light, l, ray, scene)))
 			fctr = 0;
 		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), fctr));
+		color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), pow(fctr, 32)));
+//		Ks * (N dot ( L + V / 2))^n
+//		if (fctr)
+//			color = colour_add(color, colour_amplify(colour_matrix_amplify(ray->color, colour_amplify(light->color, light->bright)), pow(vector3_scalar(ray->normal,
+//																																			  vector3_normalise(vector3_multiply(matrix3_addition(l, ray->position), 0.5))), 2)));
 		light = light->next;
 		if (scene->one_light)
 			light = NULL;
