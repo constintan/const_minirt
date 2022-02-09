@@ -12,11 +12,11 @@
 
 #include "minirt.h"
 
-t_vector3 new_vector_atof(char **str, int *err)
+t_vector3	new_vector_atof(char **str, int *err)
 {
-	double x;
-	double y;
-	double z;
+	double	x;
+	double	y;
+	double	z;
 
 	x = ft_atof(str, err);
 	while (ft_isspace(**str))

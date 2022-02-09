@@ -22,27 +22,15 @@ void	add_ambient(t_scene *scene, char *str)
 {
 	double	bright;
 	t_color	color;
-	int			err;
+	int		err;
 
 	if (scene->ambient != NULL)
 		ft_error(6);
 	err = 0;
 	bright = ft_atof(&str, &err);
-	printf("***add_ambient***\n");
-	printf("bright:%f\n", bright);
-	printf("err:%d\n", err);
 	check_ratio_limits(bright, &err);
-	printf("err:%d\n", err);
 	color = new_color_atoc(&str, &err);
-	printf("color->r:%d\n", color.r);
-	printf("err:%d\n", err);
-	printf("color->g:%d\n", color.g);
-	printf("err:%d\n", err);
-	printf("color->b:%d\n", color.b);
-	printf("err:%d\n", err);
-
 	check_endline(&str, &err);
-	printf("err:%d\n", err);
 	if (err)
 		ft_error(6);
 	scene->ambient = new_ambient(bright, color);
@@ -59,4 +47,3 @@ t_ambient	*new_ambient(double bright, t_color color)
 	ambient->color = color;
 	return (ambient);
 }
-
