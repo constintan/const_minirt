@@ -12,6 +12,7 @@ ambient.c \
 camera.c \
 color.c \
 cylinder.c \
+cylinder_raytrace.c \
 draw.c \
 error_managment.c \
 ft_atox.c \

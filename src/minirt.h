@@ -24,8 +24,10 @@
 
 # define WINDOW_WIDTH 1200
 # define WINDOW_HEIGHT 1200
-# define WINDOW_NAME "miniRT window"
-# define DEFAULT_BG_COLOR 128, 128, 128
+# define WN "miniRT window"
+# define DEF_BG_COLOR_R 128
+# define DEF_BG_COLOR_G 128
+# define DEF_BG_COLOR_B 128
 # define DEFAULT_ZOOM 32
 # define EPSILON 1e-6
 
@@ -40,7 +42,6 @@ typedef struct s_xy
 	int	x;
 	int	y;
 }	t_xy;
-
 
 enum e_keycode
 {
@@ -94,14 +95,14 @@ typedef struct s_vector2
 	double		v;
 }	t_vector2;
 
-typedef struct	s_vector3
+typedef struct s_vector3
 {
 	double	x;
 	double	y;
 	double	z;
 }	t_vector3;
 
-typedef struct	s_quaternion
+typedef struct s_quaternion
 {
 	double	w;
 	double	i;
@@ -116,7 +117,7 @@ typedef struct s_color
 	int	b;
 }	t_color;
 
-typedef struct	s_sphere
+typedef struct s_sphere
 {
 	t_vector3		position;
 	double			radius;
@@ -124,7 +125,7 @@ typedef struct	s_sphere
 	struct s_sphere	*next;
 }	t_sphere;
 
-typedef struct	s_plane
+typedef struct s_plane
 {
 	t_vector3		position;
 	t_vector3		orient;
@@ -132,7 +133,7 @@ typedef struct	s_plane
 	struct s_plane	*next;
 }	t_plane;
 
-typedef struct	s_disc
+typedef struct s_disc
 {
 	t_vector3		position;
 	t_vector3		orient;
@@ -141,39 +142,39 @@ typedef struct	s_disc
 	struct s_plane	*next;
 }	t_disc;
 
-typedef struct	s_cylinder
+typedef struct s_cylinder
+{
+	t_vector3			position;
+	t_vector3			orient;
+	double				radius;
+	double				height;
+	t_disc				cap_bot;
+	t_disc				cap_top;
+	t_color				color;
+	struct s_cylinder	*next;
+}	t_cylinder;
+
+typedef struct s_cone
 {
 	t_vector3		position;
 	t_vector3		orient;
 	double			radius;
 	double			height;
-	t_disc			cap_bot;
-	t_disc			cap_top;
 	t_color			color;
-	struct s_cylinder	*next;
-}	t_cylinder;
-
-typedef struct	s_cone
-{
-	t_vector3	position;
-	t_vector3	orient;
-	double		radius;
-	double		height;
-	t_color		color;
-	t_disc		cap;
-	double		theta;
-	double		costheta;
-	double		pow2costheta;
+	t_disc			cap;
+	double			theta;
+	double			costheta;
+	double			pow2costheta;
 	struct s_cone	*next;
 }	t_cone;
 
-typedef struct	s_camera
+typedef struct s_camera
 {
-	t_vector3	position;
-	t_vector3	orient;
-	t_vector2	rotate;
-	double		fov;
-	double		zoom;
+	t_vector3		position;
+	t_vector3		orient;
+	t_vector2		rotate;
+	double			fov;
+	double			zoom;
 	struct s_camera	*defaults;
 }	t_camera;
 
@@ -185,13 +186,13 @@ typedef struct s_light
 	struct s_light	*next;
 }	t_light;
 
-typedef struct	s_ambient
+typedef struct s_ambient
 {
 	double	bright;
 	t_color	color;
 }	t_ambient;
 
-typedef struct	s_img
+typedef struct s_img
 {
 	void	*img;
 	char	*addr;
@@ -211,35 +212,22 @@ typedef struct s_ray
 	t_color		color;
 }	t_ray;
 
-typedef struct	s_scene
+typedef struct s_scene
 {
 	t_camera	*camera;
 	t_ambient	*ambient;
 	t_light		*light;
-
-	void	*mlx;
-	void	*window;
-	t_img	*img;
-	t_img	*img2;
-
-	//содержимое t_img:
-
-	// void		*img;
-	// char		*addr;
-	// int		bits_per_pixel;
-	// int		line_length;
-	// int		bytes_per_line;
-	// int		endian;
-
-	int		width;
-	int		height;
+	void		*mlx;
+	void		*window;
+	t_img		*img;
+	t_img		*img2;
+	int			width;
+	int			height;
 	char		*hud;
-
-	t_sphere *spheres;
-	t_plane *planes;
-	t_cylinder *cylinders;
-	t_cone	*cones;
-//	t_obj		*obj;
+	t_sphere	*spheres;
+	t_plane		*planes;
+	t_cylinder	*cylinders;
+	t_cone		*cones;
 	t_bool		play;
 	t_bool		no_shadows;
 	t_bool		one_light;
@@ -250,14 +238,14 @@ typedef struct	s_scene
 	int			maxquality;
 	int			minquality;
 	int			everynframe;
-	int		idle;
+	int			idle;
 	t_bool		rays_set;
 	t_ray		*rays;
 	t_bool		checkerboard;
 	t_bool		bump;
 }	t_scene;
 
-typedef struct	s_screen
+typedef struct s_screen
 {
 	double	width;
 	double	height;
@@ -288,29 +276,34 @@ int				ft_isspace(char c);
 int				ft_isdigit(int c);
 void			check_endline(char **str, int *err);
 
-
 //error_managment.c
 void			ft_error(int er);
-int 			invalid_filename(char *filename);
+int				invalid_filename(char *filename);
 
 //parse_utils.c
 t_vector3		new_vector_atof(char **str, int *err);
 
-
 //sphere.c
 void			add_sphere(t_scene *scene, char *str);
 t_sphere		*new_sphere(t_vector3 position, double radius, t_color color);
-int				sphere_intersect(t_camera *camera, t_vector3 ray, t_sphere *sphere);
+int				sphere_intersect(t_camera *camera, t_vector3 ray,
+					t_sphere *sphere);
 
 //plane.c
 void			add_plane(t_scene *scene, char *str);
 t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color);
 
 //cylinder.c
-t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, double height, t_color color);
+t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient,
+					double radius);
+void			add_cylinder_props(t_cylinder *cylinder, char *str);
 void			add_cylinder(t_scene *scene, char *str);
 
-void intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
+//cylinder_raytrace.c
+int				is_in_cutted_cylinder(t_cylinder *cylinder, t_ray *ray,
+					t_quad q);
+void			init_cylinder_q(t_cylinder *cylinder, t_ray	*ray, t_quad *q);
+void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
 
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
@@ -339,7 +332,7 @@ void			ray_tracing(t_scene *scene);
 
 //draw.c
 int				color_to_int(t_color color);
-void	draw_pixel(t_scene *scene, int x, int y, t_color color);
+void			draw_pixel(t_scene *scene, int x, int y, t_color color);
 
 //get_next_line.c
 char			*get_next_line(int fd);
@@ -351,53 +344,53 @@ char			**ft_split(char const *s, char c);
 double			ft_atof(char **str, int *err);
 unsigned char	ft_atoc(char **str, int *err);
 
-
 //color.c
-t_color	new_color(int r, int g, int b);
+t_color			new_color(int r, int g, int b);
 t_color			new_color_atoc(char **str, int *err);
 
-t_color		colour_amplify(t_color colour, double amplifier);
-t_color		colour_add(t_color colour1, t_color colour_add);
-t_color		colour_clamp(t_color colour);
-t_color		colour_matrix_amplify(t_color colour, t_color colour_amplifier);
+t_color			colour_amplify(t_color colour, double amplifier);
+t_color			colour_add(t_color colour1, t_color colour_add);
+t_color			colour_clamp(t_color colour);
+t_color			colour_matrix_amplify(t_color colour, t_color colour_amplifier);
 
 //cone.c
-t_cone		*new_cone(t_vector3 position, t_vector3 orient, double radius, double height, t_color color);
-void	add_cone(t_scene *scene, char *str);
+t_cone			*new_cone(t_vector3 position, t_vector3 orient, double radius);
+void			add_cone_props(t_cone *cone, char *str);
+void			add_cone(t_scene *scene, char *str);
 
-int	close_minirt(void);
+int				close_minirt(void);
 
-char	*kd_strf(char const *format, ...);
+char			*kd_strf(char const *format, ...);
 
 //render_next_frame.c
-int		render_next_frame(t_scene *scene);
-void	intersect_plane(t_plane *plane, t_ray *ray);
-double	math_discriminant(double a, double b, double c);
-void	intersect_disc(t_disc *disc, t_ray *ray);
-double	math_quadratic_equation(t_quad *q);
+int				render_next_frame(t_scene *scene);
+void			intersect_plane(t_plane *plane, t_ray *ray);
+double			math_discriminant(double a, double b, double c);
+void			intersect_disc(t_disc *disc, t_ray *ray);
+double			math_quadratic_equation(t_quad *q);
 
-void	hud(t_scene *scene);
+void			hud(t_scene *scene);
 
 //vector3
-t_vector3	matrix3_subtract(t_vector3 a, t_vector3 b);
-t_vector3	matrix3_addition(t_vector3 a, t_vector3 b);
-double		vector3_distance(t_vector3 a, t_vector3 b);
-t_vector3	vector3_normalise(t_vector3 direction);
-t_vector3	vector3_multiply(t_vector3 direction, double multiply);
-double		vector3_sumpow2(t_vector3 a);
-double		vector3_scalar(t_vector3 a, t_vector3 b);
-t_vector3	vector3_qrotate(t_vector3 a, double theta, t_vector3 axis);
-t_vector3	vector3_rotate_yx(t_vector3 a, t_vector2 rotate);
-t_vector3	vector3_rotate_xy(t_vector3 b, t_vector2 rotate);
-t_vector2	vector3_arotate(t_vector3 a, t_vector3 b);
-t_vector3	new_vector3(double x, double y, double z);
-t_vector2	new_vector2(double u, double v);
-t_vector3	vector3_negate(t_vector3 a);
-t_vector3	vector3_cw(t_vector3 a);
-t_vector3	vector3_ccw(t_vector3 a);
+t_vector3		matrix3_subtract(t_vector3 a, t_vector3 b);
+t_vector3		matrix3_addition(t_vector3 a, t_vector3 b);
+double			vector3_distance(t_vector3 a, t_vector3 b);
+t_vector3		vector3_normalise(t_vector3 direction);
+t_vector3		vector3_multiply(t_vector3 direction, double multiply);
+double			vector3_sumpow2(t_vector3 a);
+double			vector3_scalar(t_vector3 a, t_vector3 b);
+t_vector3		vector3_qrotate(t_vector3 a, double theta, t_vector3 axis);
+t_vector3		vector3_rotate_yx(t_vector3 a, t_vector2 rotate);
+t_vector3		vector3_rotate_xy(t_vector3 b, t_vector2 rotate);
+t_vector2		vector3_arotate(t_vector3 a, t_vector3 b);
+t_vector3		new_vector3(double x, double y, double z);
+t_vector2		new_vector2(double u, double v);
+t_vector3		vector3_negate(t_vector3 a);
+t_vector3		vector3_cw(t_vector3 a);
+t_vector3		vector3_ccw(t_vector3 a);
 
 //quaternion
-double	quaternion_sumpow2(t_quaternion q);
+double			quaternion_sumpow2(t_quaternion q);
 t_quaternion	quaternion_normalise(t_quaternion q);
 t_quaternion	new_quaternion(double theta, t_vector3 axis);
 

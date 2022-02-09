@@ -249,7 +249,7 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 //	если пересечений не было, то distance по дефолту = INFINITY
 	if (ray->t == INFINITY)
 	{
-		ray->color = new_color(DEFAULT_BG_COLOR);
+		ray->color = new_color(DEF_BG_COLOR_R, DEF_BG_COLOR_G, DEF_BG_COLOR_B);
 		return ;
 	}
 	color = apply_light(ray->color, scene->ambient->color, scene->ambient->bright);
