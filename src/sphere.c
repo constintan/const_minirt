@@ -12,15 +12,6 @@
 
 #include "minirt.h"
 
-// float	get_sp_radius(char **str)
-// {
-// 	float	res;
-
-// 	res = ft_atof(*str);
-// }
-
-// sp 0,0,20.6 12.6 10,0,255
-//return -1 in case of invalid data
 void	add_sphere(t_scene *scene, char *str)
 {
 	t_sphere	*sphere;
@@ -57,7 +48,6 @@ void	add_sphere(t_scene *scene, char *str)
 	sphere->next = scene->spheres;
 	scene->spheres = sphere;
 
-	// return (1);
 }
 
 t_sphere	*new_sphere(t_vector3 position, double radius, t_color color)
@@ -71,29 +61,4 @@ t_sphere	*new_sphere(t_vector3 position, double radius, t_color color)
 	sphere->radius = radius;
 	sphere->color = color;
 	return (sphere);
-}
-
-int	sphere_intersect(t_camera *camera, t_vector3 ray, t_sphere *sphere)
-{
-	float		b;
-	float		c;
-	float		dist1;
-	float		dist2;
-	float		discrem;
-	t_vector3	cam_sphere;
-
-	dist1 = 0;
-	dist2 = 0;
-	cam_sphere = vec_subtract(camera->position, sphere->position);
-	b = 2 * vec_dot_product(cam_sphere, ray);
-	c = vec_dot_product(cam_sphere, cam_sphere) - pow(sphere->radius, 2);
-	discrem = pow(b, 2) - 4 * c;
-//	free(cam_sphere);
-	if (discrem < 0)
-		return (0);
-	dist1 = -b - sqrt(discrem) / 2;
-	dist2 = -b + sqrt(discrem) / 2;
-	if (dist1 > 0)
-		return (1);
-	return (0);
 }

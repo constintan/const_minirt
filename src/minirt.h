@@ -255,14 +255,6 @@ typedef struct	s_scene
 	t_bool		bump;
 }	t_scene;
 
-// typedef struct	s_shapes
-// {
-// 	int type;
-// 	void *params;
-// 	struct s_shapes next;
-// }
-// доделать!!!!!!!!!!
-
 typedef struct	s_screen
 {
 	double	width;
@@ -299,13 +291,8 @@ void			check_endline(char **str, int *err);
 void			ft_error(int er);
 int 			invalid_filename(char *filename);
 
-//vector.c
-t_vector3 new_vector_atof(char **str, int *err);
-t_vector3 new_vector(double x, double y, double z);
-t_vector3 vec_subtract(t_vector3 vec1, t_vector3 vec2);
-double	vec_length(t_vector3	vec);
-void			vec_normalize(t_vector3 vec);
-double			vec_dot_product(t_vector3 v1, t_vector3 v2);
+//parse_utils.c
+t_vector3		new_vector_atof(char **str, int *err);
 
 
 //sphere.c

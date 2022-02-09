@@ -65,7 +65,6 @@ void	add_cone(t_scene *scene, char *str)
 	cone->next = scene->cones;
 	scene->cones = cone;
 
-	// return (1);
 }
 
 t_cone		*new_cone(t_vector3 position, t_vector3 orient, double radius, double height, t_color color)

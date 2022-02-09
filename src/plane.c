@@ -12,15 +12,6 @@
 
 #include "minirt.h"
 
-// float	get_sp_radius(char **str)
-// {
-// 	float	res;
-
-// 	res = ft_atof(*str);
-// }
-
-// sp 0,0,20.6 12.6 10,0,255
-//return -1 in case of invalid data
 void	add_plane(t_scene *scene, char *str)
 {
 	t_plane	*plane;
@@ -38,7 +29,6 @@ void	add_plane(t_scene *scene, char *str)
 	printf("err:%d\n", err);
 	printf("position.z:%f\n", position.z);
 	printf("err:%d\n", err);
-	// center = new_vector(3, 2, -32.8);
 
 	orient = new_vector_atof(&str, &err);
 	printf("orient.x:%f\n", orient.x);
@@ -65,7 +55,6 @@ void	add_plane(t_scene *scene, char *str)
 	plane->next = scene->planes;
 	scene->planes = plane;
 
-	// return (1);
 }
 
 t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color)

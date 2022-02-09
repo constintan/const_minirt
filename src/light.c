@@ -65,7 +65,6 @@ void	add_light(t_scene *scene, char *str)
 	printf("err:%d\n", err);
 	if (err)
 		ft_error(7);
-//	scene->light = new_light(position, bright, color);
 	add_light_back(&scene->light, new_light(position, bright, color));
 }
 

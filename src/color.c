@@ -22,7 +22,6 @@ t_color	new_color(int r, int g, int b)
 	return (colour_clamp(result));
 }
 
-// color = new_color_atof(ft_atoc(&str, &err), ft_atoc(&str, &err), ft_atoc(&str, &err));
 t_color	new_color_atoc(char **str, int *err)
 {
 	int	r;

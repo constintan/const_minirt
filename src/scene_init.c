@@ -95,7 +95,6 @@ void	parse_line(t_scene *scene, char *str)
 	else
 		ft_error(5);
 
-	// free_after_split(subs);
 }
 
 t_scene	*scene_init(char *filename)
