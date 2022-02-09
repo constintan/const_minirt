@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/08 15:58:11 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 02:10:15 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,15 +92,15 @@ static void	intersect_cone(t_cone *cone, t_ray *ray)
 	tmp_ray.t = math_quadratic_equation(&q);
 	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
 		return ; // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание || удаляет результат если ранее был найден объект с пересечением ближе конуса
-	*ray = tmp_ray;
 	if (q.t1 > EPSILON && q.t2 > EPSILON && vector3_scalar(ray->orient, cone->orient) > 0)
-		ray->t = q.t2;
-	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, ray->t));
-	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(ray->coordinates, cone->position), cone->orient) > -EPSILON))
+		tmp_ray.t = q.t2;
+	tmp_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, tmp_ray.t));
+	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(tmp_ray.coordinates, cone->position), cone->orient) > -EPSILON))
 		return ; // отрезает конус-двойник
-	if (vector3_sumpow2(matrix3_subtract(ray->coordinates, cone->position)) > pow(cone->height / cone->costheta, 2))
+	if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cone->position)) > pow(cone->height / cone->costheta, 2))
 		return ; // ограничевает конус по высоте
-	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, vector3_multiply(cone->orient, vector3_distance(ray->coordinates, cone->position) / cone->costheta)));
+	*ray = tmp_ray;
+	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, matrix3_addition(cone->position, vector3_multiply(cone->orient, vector3_distance(ray->coordinates, cone->position) / cone->costheta))));
 	ray->color = cone->color;
 }
 
@@ -133,11 +133,16 @@ static t_color	texture_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
 	uf = floor(fmod(u * 18, 2));
 	vf = floor(fmod(v * 9, 2));
 
+	if (scene->bump)
+	{
+		ray->normal = vector3_qrotate(ray->normal, sin(u * M_PI_2 * 360) * 10,
+									  vector3_cw(ray->normal));
+		ray->normal = vector3_qrotate(ray->normal, sin(v * M_PI_2 * 180) * 10,
+									  vector3_cw(ray->normal));
+	}
 	color = sphere->color;
 	if ((uf && vf) || (!uf && !vf))
 	{
-		if (scene->bump)
-			ray->normal = vector3_qrotate(ray->normal, 10, vector3_cw(ray->normal));
 		if (scene->checkerboard)
 			color = new_color(255, 255, 255);
 	}
