@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 15:26:25 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 00:47:29 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,12 @@ enum e_keycode
 	KEY_B = 11,
 	KEY_N = 45,
 	KEY_F = 3,
+	KEY_I = 34,
+	KEY_J = 38,
+	KEY_K = 40,
+	KEY_L = 37,
+	KEY_U = 32,
+	KEY_O = 31,
 	KEY_CMD = 259,
 	KEY_SHIFT = 257,
 	KEY_SPACE = 49,
