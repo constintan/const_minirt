@@ -17,7 +17,7 @@ double	math_discriminant(double a, double b, double c)
 	return (pow(b, 2) - 4 * a * c);
 }
 
-static double	math_quadratic_equation(t_quad *q)
+double	math_quadratic_equation(t_quad *q)
 {
 	q->d = pow(q->b, 2) - 4 * q->a * q->c;
 	if (q->d < 0 && q->d > -EPSILON)
@@ -60,13 +60,13 @@ void	intersect_plane(t_plane *plane, t_ray *ray)
 	ray->color = plane->color;
 }
 
-static void intersect_disc(t_disc *disc, t_ray *ray)
+void intersect_disc(t_disc *disc, t_ray *ray)
 {
 	t_ray	tmp_ray;
 	t_plane	plane;
 
 	plane.position = disc->position;
-	plane.orient = vector3_negate(disc->orient);
+	plane.orient = disc->orient;
 	plane.color = disc->color;
 	tmp_ray = *ray;
 	intersect_plane(&plane, &tmp_ray);

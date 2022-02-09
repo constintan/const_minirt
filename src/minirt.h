@@ -147,6 +147,8 @@ typedef struct	s_cylinder
 	t_vector3		orient;
 	double			radius;
 	double			height;
+	t_disc			cap_bot;
+	t_disc			cap_top;
 	t_color			color;
 	struct s_cylinder	*next;
 }	t_cylinder;
@@ -367,9 +369,12 @@ int	close_minirt(void);
 
 char	*kd_strf(char const *format, ...);
 
-int	render_next_frame(t_scene *scene);
+//render_next_frame.c
+int		render_next_frame(t_scene *scene);
 void	intersect_plane(t_plane *plane, t_ray *ray);
 double	math_discriminant(double a, double b, double c);
+void	intersect_disc(t_disc *disc, t_ray *ray);
+double	math_quadratic_equation(t_quad *q);
 
 void	hud(t_scene *scene);
 
