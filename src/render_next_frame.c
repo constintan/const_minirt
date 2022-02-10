@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/09 02:10:15 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 00:37:05 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene)
 	texture_plane(plane, ray, bump, scene);
 }
 
-static void intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
+void intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
 {
 	t_ray	tmp_ray;
 	t_plane	plane;

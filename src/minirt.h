@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/09 00:47:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 00:30:49 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,12 +302,11 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient,
 void			add_cylinder_props(t_cylinder *cylinder, char *str);
 void			add_cylinder(t_scene *scene, char *str);
 
-void intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene);
 //cylinder_raytrace.c
 int				is_in_cutted_cylinder(t_cylinder *cylinder, t_ray *ray,
 					t_quad q);
 void			init_cylinder_q(t_cylinder *cylinder, t_ray	*ray, t_quad *q);
-void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
+void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene);
 
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
@@ -368,9 +367,9 @@ char			*kd_strf(char const *format, ...);
 
 //render_next_frame.c
 int				render_next_frame(t_scene *scene);
-void			intersect_plane(t_plane *plane, t_ray *ray);
+void			intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene);
 double			math_discriminant(double a, double b, double c);
-void			intersect_disc(t_disc *disc, t_ray *ray);
+void			intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene);
 double			math_quadratic_equation(t_quad *q);
 
 void			hud(t_scene *scene);
