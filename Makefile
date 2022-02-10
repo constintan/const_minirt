@@ -26,7 +26,6 @@ vector3.c \
 
 SRC_BON		= \
 
-
 HDR			= \
 minirt.h \
 
@@ -52,12 +51,16 @@ LIBKD_PATH	= libkd/
 GNL			= libgnl.a
 GNL_PATH	= gnl/
 
+bonus: BONUS = -D BONUS=1
+
 %.o:		%.c $(HDRS)
-			$(CC) $(CFLAGS) -D BONUS=1 -c $< -o $@
+			$(CC) $(CFLAGS) $(BONUS) -c $< -o $@
 
 all:		mlx libkd gnl $(NAME)
+			echo $(BONUS)
 
 bonus:		mlx libkd gnl .bonus
+			echo $(BONUS)
 
 mlx:
 			@echo "Making $(MLX_PATH)$(MLX)"
