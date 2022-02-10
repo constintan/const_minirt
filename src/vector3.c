@@ -139,10 +139,10 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 																				 b,
 																				 c)))
 			{
-				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a,
-																							 vector3_rotate_yx(
-																								  b,
-																								  c)));
+//				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a,
+//																							 vector3_rotate_yx(
+//																								  b,
+//																								  c)));
 				c = r;
 			}
 			r.u++;

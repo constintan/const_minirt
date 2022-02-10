@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/10 00:30:49 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 13:34:19 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@
 # include "../gnl/get_next_line.h"
 # include <fcntl.h>
 # include "../libkd/libkd.h"
+
+# ifndef BONUS
+#  define BONUS 0
+# endif
 
 # define WINDOW_WIDTH 1200
 # define WINDOW_HEIGHT 1200

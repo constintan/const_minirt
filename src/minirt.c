@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/09 03:41:22 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 13:34:36 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,8 +209,9 @@ int	main(int argc, char **argv)
 	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
 	scene->view = 5;
-	scene->bumpmap = new_image("../sprites/plane_bump_map.xpm", scene);
-	scene->texturemap = new_image("../sprites/textureground.xpm", scene);
+	scene->bumpmap = new_image("sprites/plane_bump_map.xpm", scene);
+	scene->texturemap = new_image("sprites/textureground.xpm", scene);
+	printf("bonus = %d\n", BONUS);
 	scene->maxquality = 1;
 	scene->minquality = kd_max(scene->width, scene->height) / 20;
 	scene->everynframe = scene->minquality;

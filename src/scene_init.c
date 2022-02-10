@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/10 00:30:59 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 14:02:26 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ t_scene	*scene_init(char *filename)
 	{
 		parse_line(scene, str);
 		kd_free(str);
-		str = get_next_line(fd);
+		str = kd_malloc_add(get_next_line(fd));
 	}
 	return (scene);
 }
