@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 22:16:53 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 21:18:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, d
 	return (cylinder);
 }
 
-void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
+void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene)
 {
 	t_ray	result_ray;
 	t_ray	tmp_ray;
@@ -93,7 +93,7 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	cap.color = cylinder->color;
 	result_ray = *ray;
 	tmp_ray = *ray;
-	intersect_plane(&cap, &tmp_ray);
+	intersect_plane(&cap, &tmp_ray, FALSE, scene);
 	if (tmp_ray.t)
 	{
 		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))
@@ -106,7 +106,7 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
 	cap.position = matrix3_addition(cylinder->position, vector3_multiply(cylinder->orient, cylinder->height));
 	cap.orient = cylinder->orient;
 	cap.color = cylinder->color;
-	intersect_plane(&cap, &tmp_ray);
+	intersect_plane(&cap, &tmp_ray, FALSE, scene);
 	if (tmp_ray.t)
 	{
 		if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cap.position)) <= pow(cylinder->radius, 2))

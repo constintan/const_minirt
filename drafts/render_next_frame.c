@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/09 23:58:57 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 23:56:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,28 @@ void	intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene)
 	ray->t = distance;
 	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, distance));
 	ray->color = plane->color;
+if (ray->fade > 0)
+{
+	t_ray tmp_ray;
+	tmp_ray.position = ray->coordinates;
+	tmp_ray.orient = matrix3_subtract(ray->orient, vector3_multiply(ray->normal,
+																	vector3_scalar(
+																			ray->normal,
+																			ray->orient) *
+																	2));
+	tmp_ray.t = INFINITY;
+	tmp_ray.fade = ray->fade - 1;
+	intersect(&tmp_ray, scene);
+	tmp_ray.position = ray->position;
+	tmp_ray.orient = ray->orient;
+	tmp_ray.t = ray->t;
+	tmp_ray.coordinates = ray->coordinates;
+	tmp_ray.normal = ray->normal;
+	tmp_ray.color = ray->color;
+	*ray = tmp_ray;
+	ray->color = colour_add(ray->color, new_color(255, 0, 0));
+	return;
+}
 	texture_plane(plane, ray, bump, scene);
 }
 
@@ -514,6 +536,7 @@ static void	iterate_pixels(t_scene *scene)
 				if (!ray->t)
 				{
 					ray->t = INFINITY;
+					ray->fade = 3;
 					raytrace(pixel, ray, scene);
 					compute_light(ray, scene);
 				}

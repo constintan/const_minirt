@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/09 00:47:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 23:26:50 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,9 +192,10 @@ typedef struct	s_ambient
 typedef struct	s_img
 {
 	void	*img;
+	int		width;
+	int		height;
 	char	*addr;
 	int		bits_per_pixel;
-	int		line_length;
 	int		bytes_per_line;
 	int		endian;
 }	t_img;
@@ -253,6 +254,8 @@ typedef struct	s_scene
 	t_ray		*rays;
 	t_bool		checkerboard;
 	t_bool		bump;
+	t_img 		*bumpmap;
+	t_img 		*texturemap;
 }	t_scene;
 
 // typedef struct	s_shapes
@@ -321,7 +324,7 @@ t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color);
 t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient, double radius, double height, t_color color);
 void			add_cylinder(t_scene *scene, char *str);
 
-void intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
+void intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene);
 
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
@@ -381,7 +384,7 @@ int	close_minirt(void);
 char	*kd_strf(char const *format, ...);
 
 int	render_next_frame(t_scene *scene);
-void	intersect_plane(t_plane *plane, t_ray *ray);
+void	intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene);
 double	math_discriminant(double a, double b, double c);
 
 void	hud(t_scene *scene);
@@ -408,5 +411,8 @@ t_vector3	vector3_ccw(t_vector3 a);
 double	quaternion_sumpow2(t_quaternion q);
 t_quaternion	quaternion_normalise(t_quaternion q);
 t_quaternion	new_quaternion(double theta, t_vector3 axis);
+
+
+void	intersect(t_ray *ray, t_scene *scene);
 
 #endif

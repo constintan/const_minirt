@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/09 02:22:23 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 03:41:22 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,22 @@ static int	key_hook(int key, t_scene *scene)
 // 	return (0);
 // }
 
+static t_img	*new_image(char *path, t_scene *scene)
+{
+	t_img	*img;
+
+	img = kd_calloc(1, sizeof(t_img));
+	if (!img)
+		ft_error(-1);
+	img->img = mlx_xpm_file_to_image(scene->mlx, path, &img->width, &img->height);
+	if (!img->img)
+		ft_error(-1);
+	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->bytes_per_line, &img->endian);
+	if (!img->addr)
+		ft_error(-1);
+	return (img);
+}
+
 int	main(int argc, char **argv)
 {
 	t_scene *scene;
@@ -193,20 +209,8 @@ int	main(int argc, char **argv)
 	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
 	scene->view = 5;
-//	scene->cones = kd_calloc(1, sizeof(t_cone));
-//	scene->cones->position.y = 10;
-//	scene->cones->position.z = 10;
-//	scene->cones->orient.y = -1;
-//	scene->cones->radius = 15;
-//	scene->cones->height = 30;
-//	scene->cones->color = new_color(228, 128, 128);
-//	scene->cones->cap.position = matrix3_addition(scene->cones->position, vector3_multiply(scene->cones->orient, scene->cones->height));
-//	scene->cones->cap.orient = scene->cones->orient;
-//	scene->cones->cap.radius = scene->cones->radius;
-//	scene->cones->cap.color = scene->cones->color;
-//	scene->cones->theta = atan(scene->cones->radius / scene->cones->height);
-//	scene->cones->costheta = cos(scene->cones->theta);
-//	scene->cones->pow2costheta = pow(scene->cones->costheta, 2);
+	scene->bumpmap = new_image("../sprites/plane_bump_map.xpm", scene);
+	scene->texturemap = new_image("../sprites/textureground.xpm", scene);
 	scene->maxquality = 1;
 	scene->minquality = kd_max(scene->width, scene->height) / 20;
 	scene->everynframe = scene->minquality;
