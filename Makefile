@@ -29,11 +29,13 @@ SRC_BON		= \
 HDR			= \
 minirt.h \
 
-SRCS		= $(addprefix $(FOLDER), $(SRC))
+HDR_BON		= \
+minirt_bonus.h \
 
+OBJS		= $(addprefix $(FOLDER), $(SRC:%.c=%.o))
+OBJS_BON	= $(addprefix $(FOLDER), $(SRC:%.c=%_bonus.o))
 HDRS		= $(addprefix $(FOLDER), $(HDR))
-
-OBJS		= $(SRCS:%.c=%.o)
+HDRS_BON	= $(addprefix $(FOLDER), $(HDR_BON))
 
 CC			= gcc
 
@@ -51,16 +53,15 @@ LIBKD_PATH	= libkd/
 GNL			= libgnl.a
 GNL_PATH	= gnl/
 
-bonus: BONUS = -D BONUS=1
-
 %.o:		%.c $(HDRS)
 			$(CC) $(CFLAGS) $(BONUS) -c $< -o $@
 
+%_bonus.o:	%.c $(HDRS) $(HDRS_BON)
+			$(CC) $(CFLAGS) -D BONUS=1 -c $< -o $@
+
 all:		mlx libkd gnl $(NAME)
-			echo $(BONUS)
 
 bonus:		mlx libkd gnl .bonus
-			echo $(BONUS)
 
 mlx:
 			@echo "Making $(MLX_PATH)$(MLX)"
@@ -78,12 +79,12 @@ $(NAME):	$(OBJS) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(MLX_PATH)$(MLX) $(MLX_FLAGS) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			@$(RM) .bonus
 
-.bonus:		$(OBJS) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
-			$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(MLX_PATH)$(MLX) $(MLX_FLAGS) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
+.bonus:		$(OBJS_BON) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
+			$(CC) $(CFLAGS) -o $(NAME) $(OBJS_BON) $(MLX_PATH)$(MLX) $(MLX_FLAGS) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			@touch .bonus
 
 clean:
-			@$(RM) $(OBJS)
+			@$(RM) $(OBJS) $(OBJS_BON)
 			@echo "clean is finished"
 
 mlx_clean:
@@ -101,7 +102,7 @@ gnl_clean:
 clean_all:	mlx_clean libkd_clean gnl_clean clean
 
 fclean:
-			@$(RM) $(OBJS) $(NAME)
+			@$(RM) $(OBJS) $(OBJS_BON) $(NAME) .bonus
 			@echo "fclean is finished"
 
 libkd_fclean:
