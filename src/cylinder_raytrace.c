@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/01 22:16:53 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 00:29:48 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ void	init_cylinder_q(t_cylinder *cylinder, t_ray	*ray, t_quad *q)
 		- pow(cylinder->radius, 2);
 }
 
-void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray)
+void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene)
 {
 	t_ray		tmp_ray;
 	t_quad		q;
 	t_vector3	op;
 
-	intersect_disc(&cylinder->cap_bot, ray);
-	intersect_disc(&cylinder->cap_top, ray);
+	intersect_disc(&cylinder->cap_bot, ray, scene);
+	intersect_disc(&cylinder->cap_top, ray, scene);
 	tmp_ray = *ray;
 	init_cylinder_q(cylinder, &tmp_ray, &q);
 	tmp_ray.t = math_quadratic_equation(&q);

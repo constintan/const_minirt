@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/09 00:47:29 by                  ###   ########.fr       */
+/*   Updated: 2022/02/10 13:34:19 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@
 # include "../gnl/get_next_line.h"
 # include <fcntl.h>
 # include "../libkd/libkd.h"
+
+# ifndef BONUS
+#  define BONUS 0
+# endif
 
 # define WINDOW_WIDTH 1200
 # define WINDOW_HEIGHT 1200
@@ -195,9 +199,10 @@ typedef struct s_ambient
 typedef struct s_img
 {
 	void	*img;
+	int		width;
+	int		height;
 	char	*addr;
 	int		bits_per_pixel;
-	int		line_length;
 	int		bytes_per_line;
 	int		endian;
 }	t_img;
@@ -243,6 +248,8 @@ typedef struct s_scene
 	t_ray		*rays;
 	t_bool		checkerboard;
 	t_bool		bump;
+	t_img 		*bumpmap;
+	t_img 		*texturemap;
 }	t_scene;
 
 typedef struct s_screen
@@ -303,7 +310,7 @@ void			add_cylinder(t_scene *scene, char *str);
 int				is_in_cutted_cylinder(t_cylinder *cylinder, t_ray *ray,
 					t_quad q);
 void			init_cylinder_q(t_cylinder *cylinder, t_ray	*ray, t_quad *q);
-void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray);
+void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene);
 
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
@@ -364,9 +371,9 @@ char			*kd_strf(char const *format, ...);
 
 //render_next_frame.c
 int				render_next_frame(t_scene *scene);
-void			intersect_plane(t_plane *plane, t_ray *ray);
+void			intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene);
 double			math_discriminant(double a, double b, double c);
-void			intersect_disc(t_disc *disc, t_ray *ray);
+void			intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene);
 double			math_quadratic_equation(t_quad *q);
 
 void			hud(t_scene *scene);
@@ -393,5 +400,8 @@ t_vector3		vector3_ccw(t_vector3 a);
 double			quaternion_sumpow2(t_quaternion q);
 t_quaternion	quaternion_normalise(t_quaternion q);
 t_quaternion	new_quaternion(double theta, t_vector3 axis);
+
+
+void	intersect(t_ray *ray, t_scene *scene);
 
 #endif
