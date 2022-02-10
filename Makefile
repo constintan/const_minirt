@@ -4,6 +4,7 @@ SRC			= \
 ambient.c \
 camera.c \
 color.c \
+color_utils.c \
 cone.c \
 cylinder.c \
 cylinder_raytrace.c \

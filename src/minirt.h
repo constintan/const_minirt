@@ -354,6 +354,7 @@ unsigned char	ft_atoc(char **str, int *err);
 //color.c
 t_color			new_color(int r, int g, int b);
 t_color			new_color_atoc(char **str, int *err);
+t_color			new_light_color_atoc(char **str, int *err);
 
 t_color			colour_amplify(t_color colour, double amplifier);
 t_color			colour_add(t_color colour1, t_color colour_add);

@@ -209,6 +209,8 @@ int	main(int argc, char **argv)
 	}
 	scene->hud = kd_strf("%s", "Press AWSD to move");
 	scene->view = 5;
+//	scene->bumpmap = new_image("sprites/kubiki.xpm", scene);
+//	scene->bumpmap = new_image("sprites/normal_map4.xpm", scene);
 	scene->bumpmap = new_image("sprites/plane_bump_map.xpm", scene);
 	scene->texturemap = new_image("sprites/textureground.xpm", scene);
 	printf("bonus = %d\n", BONUS);

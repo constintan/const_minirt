@@ -34,13 +34,13 @@ void	add_light(t_scene *scene, char *str)
 	t_color		color;
 	int			err;
 
-	if (scene->light != NULL)
+	if (!BONUS && scene->light != NULL)
 		ft_error(7);
 	err = 0;
 	position = new_vector_atof(&str, &err);
 	bright = ft_atof(&str, &err);
 	check_ratio_limits(bright, &err);
-	color = new_color_atoc(&str, &err);
+	color = new_light_color_atoc(&str, &err);
 	check_endline(&str, &err);
 	if (err)
 		ft_error(7);
