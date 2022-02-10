@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/09 23:58:57 by                  ###   ########.fr       */
+/*   Updated: 2022/02/09 02:10:15 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ double	math_discriminant(double a, double b, double c)
 	return (pow(b, 2) - 4 * a * c);
 }
 
-static double	math_quadratic_equation(t_quad *q)
+double	math_quadratic_equation(t_quad *q)
 {
 	q->d = pow(q->b, 2) - 4 * q->a * q->c;
 	if (q->d < 0 && q->d > -EPSILON)
@@ -105,7 +105,7 @@ static void intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
 	t_plane	plane;
 
 	plane.position = disc->position;
-	plane.orient = vector3_negate(disc->orient);
+	plane.orient = disc->orient;
 	plane.color = disc->color;
 	tmp_ray = *ray;
 	intersect_plane(&plane, &tmp_ray, FALSE, scene);
@@ -288,7 +288,7 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 //	если пересечений не было, то distance по дефолту = INFINITY
 	if (ray->t == INFINITY)
 	{
-		ray->color = new_color(DEFAULT_BG_COLOR);
+		ray->color = new_color(DEF_BG_COLOR_R, DEF_BG_COLOR_G, DEF_BG_COLOR_B);
 		return ;
 	}
 	color = apply_light(ray->color, scene->ambient->color, scene->ambient->bright);

@@ -85,4 +85,3 @@ unsigned char	ft_atoc(char **str, int *err)
 		*err = local_err;
 	return ((unsigned char) n);
 }
-

@@ -12,6 +12,7 @@ ambient.c \
 camera.c \
 color.c \
 cylinder.c \
+cylinder_raytrace.c \
 draw.c \
 error_managment.c \
 ft_atox.c \
@@ -20,10 +21,9 @@ libft2.c \
 light.c \
 plane.c \
 quaternion.c \
-ray_tracing.c \
 scene_init.c \
 sphere.c \
-vector.c \
+parse_utils.c \
 cone.c \
 
 HDR			= \
