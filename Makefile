@@ -21,6 +21,7 @@ libft2.c \
 light.c \
 minirt.c \
 mouse_hook.c \
+new_image.c \
 parse_utils.c \
 plane.c \
 quaternion.c \
@@ -60,12 +61,14 @@ GNL			= libgnl.a
 GNL_PATH	= gnl/
 
 %.o:		%.c $(HDRS)
-			$(CC) $(CFLAGS) $(BONUS) -c $< -o $@
+			$(CC) $(CFLAGS) -c $< -o $@
 
 %_bonus.o:	%.c $(HDRS) $(HDRS_BON)
 			$(CC) $(CFLAGS) -D BONUS=1 -c $< -o $@
 
-all:		mlx libkd gnl $(NAME)
+$(NAME):	all
+
+all:		mlx libkd gnl .main
 
 bonus:		mlx libkd gnl .bonus
 
@@ -81,13 +84,15 @@ gnl:
 			@echo "Making $(GNL_PATH)$(GNL)"
 			@make -C $(GNL_PATH)
 
-$(NAME):	$(OBJS) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
+.main:		$(OBJS) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(MLX_PATH)$(MLX) $(MLX_FLAGS) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
+			@touch .main
 			@$(RM) .bonus
 
 .bonus:		$(OBJS_BON) $(MLX_PATH)$(MLX) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			$(CC) $(CFLAGS) -o $(NAME) $(OBJS_BON) $(MLX_PATH)$(MLX) $(MLX_FLAGS) $(LIBKD_PATH)$(LIBKD) $(GNL_PATH)$(GNL)
 			@touch .bonus
+			@$(RM) .main
 
 clean:
 			@$(RM) $(OBJS) $(OBJS_BON)

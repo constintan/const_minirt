@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 16:18:34 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 16:29:49 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	change_fov(int key, t_scene *scene)
 	return (1);
 }
 
-void	move_camera_x(t_camera *camera, double distance)
+static void	move_camera_x(t_camera *camera, double distance)
 {
 	t_vector2	rotate;
 
@@ -82,7 +82,7 @@ void	move_camera_x(t_camera *camera, double distance)
 	camera->position = matrix3_addition(camera->position, vector3_multiply(vector3_rotate_yx(camera->orient, rotate), distance));
 }
 
-void	move_camera_y(t_camera *camera, double distance)
+static void	move_camera_y(t_camera *camera, double distance)
 {
 	t_vector2	rotate;
 
@@ -91,7 +91,7 @@ void	move_camera_y(t_camera *camera, double distance)
 	camera->position = matrix3_addition(camera->position, vector3_multiply(vector3_rotate_yx(camera->orient, rotate), distance));
 }
 
-void	move_camera_z(t_camera *camera, double distance)
+static void	move_camera_z(t_camera *camera, double distance)
 {
 	t_vector2	rotate;
 

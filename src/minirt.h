@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 16:01:48 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 17:35:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,9 +422,16 @@ t_bool	toggle(t_bool *b);
 int	key_hook(int key, t_scene *scene);
 //mouse_hook.c
 int	mouse_hook(int button, int x, int y, t_scene *scene);
+//new_image.c
+t_img	*new_image(char *path, t_scene *scene);
 //key_hook.c
-
+int		move_light(int key, t_scene *scene);
+int		toggle_flags(int key, t_scene *scene);
+int		change_minquality(int key, t_scene *scene);
+int		change_maxquality(int key, t_scene *scene);
+int		move_camera(int key, t_scene *scene);
 int		change_fov(int key, t_scene *scene);
+int		rotate_camera(int key, t_scene *scene);
 void	rotate_camera_xz(t_camera *camera, int theta);
 void	rotate_camera_y(t_camera *camera, int theta);
 void	redraw_frame(t_scene *scene);
