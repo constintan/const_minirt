@@ -6,19 +6,14 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/10 14:02:26 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 00:22:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-t_scene	*new_scene(void)
+void mlx_window_init(t_scene *scene)
 {
-	t_scene	*scene;
-
-	scene = (t_scene *)kd_calloc(1, sizeof(t_scene));
-	if (scene == NULL)
-		ft_error(-1);
 	scene->width = WINDOW_WIDTH;
 	scene->height = WINDOW_HEIGHT;
 	scene->mlx = mlx_init();
@@ -49,7 +44,6 @@ t_scene	*new_scene(void)
 			&scene->img2->bytes_per_line, &scene->img2->endian);
 	if (scene->img2->addr == NULL)
 		ft_error(-1);
-	return (scene);
 }
 // sp 0,0,20.6 12.6 10,0,255
 
@@ -83,7 +77,9 @@ t_scene	*scene_init(char *filename)
 	char	*str;
 	int		fd;
 
-	scene = new_scene();
+	scene = (t_scene *)kd_calloc(1, sizeof(t_scene));
+	if (scene == NULL)
+		ft_error(-1);
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		ft_error(2);
@@ -94,5 +90,6 @@ t_scene	*scene_init(char *filename)
 		kd_free(str);
 		str = kd_malloc_add(get_next_line(fd));
 	}
+	mlx_window_init(scene);
 	return (scene);
 }

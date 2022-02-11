@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/10 00:37:05 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 01:06:51 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,7 +374,7 @@ static void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *r
 }
 
 //пересчет fov в координаты сцены через кватернионы, где fov == обзору по диагонали
-static void	ray_perspective_quaternion(t_scene *scene, t_xy pixel, t_ray *ray)
+static void	ray_perspective_quaternion(t_scene *scene, int x, int y, t_ray *ray)
 {
 	double		theta;
 	t_vector3	axis;
@@ -383,8 +383,8 @@ static void	ray_perspective_quaternion(t_scene *scene, t_xy pixel, t_ray *ray)
 
 	ray->position = scene->camera->position;
 	radius = sqrt(pow(scene->width / (double)2, 2) + pow(scene->height / (double)2, 2));
-	step.u = (pixel.x - scene->width / (double)2) / radius;
-	step.v = (pixel.y - scene->height / (double)2) / radius;
+	step.u = (x - scene->width / (double)2) / radius;
+	step.v = (y - scene->height / (double)2) / radius;
 	theta = sqrt(pow(step.u, 2) + pow(step.v, 2)) * scene->camera->fov / 2;
 	axis = vector3_normalise(new_vector3(step.v, step.u, 0));
 //	if (pixel.x == 0 && pixel.y == 0)
@@ -394,7 +394,7 @@ static void	ray_perspective_quaternion(t_scene *scene, t_xy pixel, t_ray *ray)
 }
 
 //пересчет fov в координаты сцены через кватернионы, где fov == обзору по наибольшей стороне, в таком случае по диагонали обзор > fov
-static void	ray_perspective_quaternion2(t_scene *scene, t_xy pixel, t_ray *ray)
+static void	ray_perspective_quaternion2(t_scene *scene, int x, int y, t_ray *ray)
 {
 	double		theta;
 	t_vector3	axis;
@@ -403,8 +403,8 @@ static void	ray_perspective_quaternion2(t_scene *scene, t_xy pixel, t_ray *ray)
 
 	ray->position = scene->camera->position;
 	radius = fmax(scene->width / (double)2, scene->height / (double)2);
-	step.u = (pixel.x - scene->width / (double)2) / radius;
-	step.v = (pixel.y - scene->height / (double)2) / radius;
+	step.u = (x - scene->width / (double)2) / radius;
+	step.v = (y - scene->height / (double)2) / radius;
 	theta = sqrt(pow(step.u, 2) + pow(step.v, 2)) * scene->camera->fov / 2;
 	axis = vector3_normalise(new_vector3(step.v, step.u, 0));
 //	if (pixel.x == 0 && pixel.y == 0)
@@ -414,11 +414,11 @@ static void	ray_perspective_quaternion2(t_scene *scene, t_xy pixel, t_ray *ray)
 }
 // лучи из камеры, поиск места пересечения с фигурами
 // в функцию приходит пустой ray, функция считает шаг в отосительных координатах и формирует
-static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
+void	raytrace(int x, int y, t_ray *ray, t_scene *scene)
 {
 	t_vector2	step;
 	//step -- перевод из координат mlx в координаты сцены (из обсолютных координат пиксельной матрицы, а относительным координатам сцены [-1; 1])
-	step = new_vector2((pixel.x - scene->width / (double)2) / scene->width * (double)2, -(pixel.y - scene->height / (double)2) / scene->width * (double)2);
+	step = new_vector2((x - scene->width / (double)2) / scene->width * (double)2, -(y - scene->height / (double)2) / scene->width * (double)2);
 	if (scene->view == 0)
 		ray_orthographic(scene->camera, step, ray);
 	if (scene->view == 1)
@@ -430,9 +430,9 @@ static void	raytrace(t_xy pixel, t_ray *ray, t_scene *scene)
 	else if (scene->view == 4)
 		ray_perspective_spherise3(scene->camera, step, ray);
 	else if (scene->view == 5)
-		ray_perspective_quaternion(scene, pixel, ray);
+		ray_perspective_quaternion(scene, x, y, ray);
 	else if (scene->view == 6)
-		ray_perspective_quaternion2(scene, pixel, ray);
+		ray_perspective_quaternion2(scene, x, y, ray);
 	intersect(ray, scene);
 }
 
@@ -497,31 +497,32 @@ static	void update_window(t_scene *scene)
 
 static void	iterate_pixels(t_scene *scene)
 {
-	t_xy	pixel;
 	t_ray	*ray;
+	int		x;
+	int		y;
 
-	pixel.y = 0;
-	while (pixel.y < scene->height)
+	y = 0;
+	while (y < scene->height)
 	{
-		pixel.x = 0;
-		while (pixel.x < scene->width)
+		x = 0;
+		while (x < scene->width)
 		{
-			ray = &scene->rays[pixel.y * scene->width + pixel.x];
-			if (pixel.x % scene->everynframe == 0 &&
-				pixel.y % scene->everynframe == 0)
+			ray = &scene->rays[y * scene->width + x];
+			if (x % scene->everynframe == 0 &&
+				y % scene->everynframe == 0)
 			{
 //				printf("p.x %d p.y %d\n", pixel.x, pixel.y);
 				if (!ray->t)
 				{
 					ray->t = INFINITY;
-					raytrace(pixel, ray, scene);
+					raytrace(x, y, ray, scene);
 					compute_light(ray, scene);
 				}
-				draw_pixel(scene, pixel.x, pixel.y, ray->color);
+				draw_pixel(scene, x, y, ray->color);
 			}
-			pixel.x++;
+			x++;
 		}
-		pixel.y++;
+		y++;
 	}
 }
 

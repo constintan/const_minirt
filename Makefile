@@ -3,6 +3,7 @@ FOLDER		= src/
 SRC			= \
 ambient.c \
 camera.c \
+close_minirt.c \
 color.c \
 color_utils.c \
 cone.c \
@@ -11,18 +12,22 @@ cylinder_raytrace.c \
 draw.c \
 error_managment.c \
 ft_atox.c \
+ft_exit.c \
 hud.c \
 kd_strf.c \
+key_hook.c \
 libft.c \
 libft2.c \
 light.c \
 minirt.c \
+mouse_hook.c \
 parse_utils.c \
 plane.c \
 quaternion.c \
 render_next_frame.c \
 scene_init.c \
 sphere.c \
+toggle.c \
 vector3.c \
 
 SRC_BON		= \

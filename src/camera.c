@@ -64,6 +64,7 @@ t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
 	camera->position = position;
 	camera->orient = new_vector3(0, 0, 1);
 	camera->rotate = vector3_arotate(vector3_normalise(orient), camera->orient);
+	camera->rotate_origin = position;
 	camera->fov = fov;
 	camera->zoom = DEFAULT_ZOOM;
 	return (camera);

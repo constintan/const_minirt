@@ -49,5 +49,5 @@ void	ft_error(int err)
 	else if (err == 10)
 		ft_putstr_fd("Light color specified in the mandatory part\n",
 			STDERR_FILENO);
-	exit(err);
+	ft_exit(err);
 }

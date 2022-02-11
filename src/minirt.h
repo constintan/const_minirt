@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/10 13:34:19 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 01:04:50 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ typedef enum e_bool
 	FALSE = 0
 }	t_bool;
 
-typedef struct s_xy
-{
-	int	x;
-	int	y;
-}	t_xy;
+//typedef struct s_xy
+//{
+//	int	x;
+//	int	y;
+//}	t_xy;
 
 enum e_keycode
 {
@@ -177,6 +177,7 @@ typedef struct s_camera
 	t_vector3		position;
 	t_vector3		orient;
 	t_vector2		rotate;
+	t_vector3		rotate_origin;
 	double			fov;
 	double			zoom;
 	struct s_camera	*defaults;
@@ -328,7 +329,7 @@ t_light			*new_light(t_vector3 position, double bright, t_color color);
 void			add_light(t_scene *scene, char *str);
 
 //scene.c
-t_scene			*new_scene(void);
+void			mlx_window_init(t_scene *scene);
 
 //scene_init.c
 t_scene			*scene_init(char *filename);
@@ -404,5 +405,16 @@ t_quaternion	new_quaternion(double theta, t_vector3 axis);
 
 
 void	intersect(t_ray *ray, t_scene *scene);
+void	raytrace(int x, int y, t_ray *ray, t_scene *scene);
+//ft_exit.c
+void	ft_exit(int status);
+//close_minirt.c
+int	close_minirt(void);
+//toggle.c
+t_bool	toggle(t_bool *b);
+//key_hook.c
+int	key_hook(int key, t_scene *scene);
+//mouse_hook.c
+int	mouse_hook(int button, int x, int y, t_scene *scene);
 
 #endif
