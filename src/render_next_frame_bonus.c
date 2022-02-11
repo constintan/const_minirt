@@ -6,11 +6,12 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 22:08:20 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 23:16:35 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include "minirt_bonus.h"
 
 double	math_discriminant(double a, double b, double c)
 {
@@ -477,20 +478,6 @@ static void	animate(t_scene *scene)
 		q.v = 0;
 	}
 }
-#include <sys/time.h>
-long	mtv(void)
-{
-	struct timeval	tv;
-	static long		start;
-
-	gettimeofday(&tv, NULL);
-	if (!start)
-	{
-		start = (long) tv.tv_sec * 1000 + tv.tv_usec / 1000;
-		return (0);
-	}
-	return (((long)tv.tv_sec * 1000 + tv.tv_usec / 1000) - start);
-}
 
 static	void update_window(t_scene *scene)
 {
@@ -507,13 +494,13 @@ static	void update_window(t_scene *scene)
 	hud(scene);
 }
 
-static void	iterate_pixels(t_scene *scene)
+static void	iterate_pixels(t_scene *scene, t_thread *thread)
 {
 	t_ray	*ray;
 	int		x;
 	int		y;
 
-	y = 0;
+	y = thread->index * scene->everynframe;
 	while (y < scene->height)
 	{
 		x = 0;
@@ -532,7 +519,7 @@ static void	iterate_pixels(t_scene *scene)
 			}
 			x++;
 		}
-		y++;
+		y = y + THREADS * scene->everynframe;
 	}
 }
 
@@ -568,9 +555,44 @@ static void	reset_rays(t_scene *scene)
 	scene->rays_set = TRUE;
 }
 
-int	render_next_frame(t_scene *scene)
+void	*thread_loop(void *thread_void)
 {
+	t_scene *scene;
+	t_thread *thread;
+	t_bonus *bonus;
+
+	thread = thread_void;
+	scene = thread->scene;
+	bonus = scene->bonus;
+	while (1)
+	{
+//		printf("1\n");
+		sem_wait(bonus->threads1);
+//		printf("2\n");
+		sem_post(bonus->threads2);
+//		printf("3\n");
+		iterate_pixels(scene, thread);
+//		printf("4\n");
+		sem_wait(bonus->threads3);
+//		printf("5\n");
+		sem_post(bonus->threads4);
+//		printf("6\n");
+	}
+	return (NULL);
+}
+
+int	render_next_frame_bonus(t_scene *scene)
+{
+	int	i;
+	t_bonus	*bonus;
+
+//	printf("THREADS %d\n", THREADS);
+//	exit(0);
+//	printf("a\n");
+	bonus = scene->bonus;
+//	printf("b\n");
 	animate(scene);
+//	printf("c\n");
 	if (scene->idle > 0)
 	{
 		scene->idle--;
@@ -578,13 +600,34 @@ int	render_next_frame(t_scene *scene)
 	}
 	else if (scene->idle < 0)
 		return (0);
-//	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
+//	printf("d\n");
+	bonus->timestamp = mtv();
+//	printf("e\n");
 	if (!scene->rays_set)
 		reset_rays(scene);
-	iterate_pixels(scene);
+//	printf("f\n");
+	i = 0;
+	while (i++ < THREADS)
+		sem_post(bonus->threads1);
+//	printf("g\n");
+	i = 0;
+	while (i++ < THREADS)
+		sem_wait(bonus->threads2);
+//	printf("h\n");
+	i = 0;
+	while (i++ < THREADS)
+		sem_post(bonus->threads3);
+//	printf("i\n");
+	i = 0;
+	while (i++ < THREADS)
+		sem_wait(bonus->threads4);
+//	printf("j\n");
 	iterate_pixels_gamma_correction(scene);
+//	printf("k\n");
 	update_window(scene);
+//	printf("l\n");
 	scene->idle = 1;
+//	printf("m\n");
 	if (scene->everynframe >= 20)
 		scene->everynframe /= 2;
 	else if (scene->everynframe > 10)
@@ -593,5 +636,6 @@ int	render_next_frame(t_scene *scene)
 		scene->everynframe--;
 	else
 		scene->idle = -1;
+//	printf("n\n");
 	return (0);
 }

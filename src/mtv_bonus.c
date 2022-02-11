@@ -1,24 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   hud.c                                              :+:      :+:    :+:   */
+/*   mtv.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 22:17:56 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 14:41:01 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minirt.h"
+#include <sys/time.h>
 
-void	hud(t_scene *scene)
+long	mtv(void)
 {
-	kd_free(scene->hud);
-	if (!scene->view)
-		scene->hud = kd_strf("quality %d/%d view %d zoom %d", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->zoom);
-	else
-		scene->hud = kd_strf("quality %d/%d view %d fov %d", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov);
-	mlx_string_put(scene->mlx, scene->window, 20, 30, 0xFFFF00, scene->hud);
+	struct timeval	tv;
+	static long		start;
 
+	gettimeofday(&tv, NULL);
+	if (!start)
+	{
+		start = (long) tv.tv_sec * 1000 + tv.tv_usec / 1000;
+		return (0);
+	}
+	return (((long)tv.tv_sec * 1000 + tv.tv_usec / 1000) - start);
 }

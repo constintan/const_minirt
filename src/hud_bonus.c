@@ -11,14 +11,17 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include "minirt_bonus.h"
 
 void	hud(t_scene *scene)
 {
+	t_bonus	*bonus;
+
+	bonus = scene->bonus;
 	kd_free(scene->hud);
 	if (!scene->view)
-		scene->hud = kd_strf("quality %d/%d view %d zoom %d", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->zoom);
+		scene->hud = kd_strf("quality %d/%d view %d zoom %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->zoom, (int)mtv() - (int)bonus->timestamp);
 	else
-		scene->hud = kd_strf("quality %d/%d view %d fov %d", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov);
+		scene->hud = kd_strf("quality %d/%d view %d fov %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov, (int)mtv() - (int)bonus->timestamp);
 	mlx_string_put(scene->mlx, scene->window, 20, 30, 0xFFFF00, scene->hud);
-
 }

@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 17:35:23 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 22:08:20 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ typedef enum e_bool
 	FALSE = 0
 }	t_bool;
 
-//typedef struct s_xy
-//{
-//	int	x;
-//	int	y;
-//}	t_xy;
+typedef struct s_xy
+{
+	int	x;
+	int	y;
+}	t_xy;
 
 enum e_keycode
 {
@@ -255,6 +255,7 @@ typedef struct s_scene
 	t_img 		*texturemap;
 	t_bool		gamma_correction;
 	double		gamma;
+	void		*bonus;
 }	t_scene;
 
 typedef struct s_screen

@@ -31,7 +31,10 @@ sphere.c \
 toggle.c \
 vector3.c \
 
-SRC_BON		= \
+SRC_BON1		= $(patsubst minirt.c, minirt_bonus.c, $(SRC))
+SRC_BON2		= $(patsubst render_next_frame.c, render_next_frame.c, $(SRC_BON1))
+SRC_BON3		= $(patsubst hud.c, hud_bonus.c, $(SRC_BON2))
+SRC_BON		= $(SRC_BON3) mtv_bonus.c
 
 HDR			= \
 minirt.h \
@@ -40,7 +43,7 @@ HDR_BON		= \
 minirt_bonus.h \
 
 OBJS		= $(addprefix $(FOLDER), $(SRC:%.c=%.o))
-OBJS_BON	= $(addprefix $(FOLDER), $(SRC:%.c=%_bonus.o))
+OBJS_BON	= $(addprefix $(FOLDER), $(SRC_BON:%.c=%_bonus.o))
 HDRS		= $(addprefix $(FOLDER), $(HDR))
 HDRS_BON	= $(addprefix $(FOLDER), $(HDR_BON))
 
