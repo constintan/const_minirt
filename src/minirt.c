@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 00:15:08 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 11:59:42 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	main(int argc, char **argv)
 	scene->texturemap = new_image("sprites/textureground.xpm", scene);
 	printf("bonus = %d\n", BONUS);
 	scene->maxquality = 1;
+	scene->gamma = 1;
 	scene->minquality = kd_max(scene->width, scene->height) / 20;
 	scene->everynframe = scene->minquality;
 	scene->rays = kd_calloc(scene->width * scene->height, sizeof(t_ray));

@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:35:11 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 02:20:13 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 01:21:51 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	reset_camera(t_scene *scene)
 	scene->camera->rotate = scene->camera->defaults->rotate;
 	scene->camera->fov = scene->camera->defaults->fov;
 	scene->camera->zoom = scene->camera->defaults->zoom;
+	redraw_frame(scene);
 }
 
 t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)

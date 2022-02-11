@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 03:22:05 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 14:41:01 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,6 +295,8 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 	light = scene->light;
 	while (light && !scene->no_lights)
 	{
+		if (!scene->one_light || scene->current_light == light)
+		{
 			l = vector3_normalise(matrix3_subtract(light->position, ray->coordinates));
 			fctr = vector3_scalar(ray->normal, l);
 			//перпендикулярный нормаль к свету = 0, параллельный = 1
@@ -310,11 +312,10 @@ static void	compute_light(t_ray *ray, t_scene *scene)
 				if (hf > 0)
 					color = colour_add(color, colour_amplify(apply_light(color, light->color, light->bright), pow(hf, n)));
 			}
+		}
 		light = light->next;
-		if (scene->one_light)
-			light = NULL;
 	}
-	ray->color = colour_clamp(color);
+	ray->color = colour_gamma_collect(color, scene);
 }
 
 //вид без перспективы (ортографический)
@@ -443,7 +444,7 @@ static void	animate(t_scene *scene)
 
 	if (scene->play)
 	{
-		printf("c u %f v %f\n", scene->camera->rotate.u, scene->camera->rotate.v);
+//		printf("c u %f v %f\n", scene->camera->rotate.u, scene->camera->rotate.v);
 		scene->everynframe = scene->minquality;
 		scene->idle = 0;
 		scene->rays_set = FALSE;
@@ -522,15 +523,35 @@ static void	iterate_pixels(t_scene *scene)
 			if (x % scene->everynframe == 0 &&
 				y % scene->everynframe == 0)
 			{
-//				printf("p.x %d p.y %d\n", pixel.x, pixel.y);
 				if (!ray->t)
 				{
 					ray->t = INFINITY;
 					raytrace(x, y, ray, scene);
 					compute_light(ray, scene);
 				}
-				draw_pixel(scene, x, y, ray->color);
 			}
+			x++;
+		}
+		y++;
+	}
+}
+
+static void	iterate_pixels_gamma_correction(t_scene *scene)
+{
+	t_ray	*ray;
+	int		x;
+	int		y;
+
+	y = 0;
+	while (y < scene->height)
+	{
+		x = 0;
+		while (x < scene->width)
+		{
+			ray = &scene->rays[y * scene->width + x];
+			if (x % scene->everynframe == 0 &&
+				y % scene->everynframe == 0)
+				draw_pixel(scene, x, y, colour_gamma_apply(ray->color, scene));
 			x++;
 		}
 		y++;
@@ -566,6 +587,7 @@ int	render_next_frame(t_scene *scene)
 	if (!scene->rays_set)
 		reset_rays(scene);
 	iterate_pixels(scene);
+	iterate_pixels_gamma_correction(scene);
 	time2 = mtv() - time1;
 	scene->hud = kd_strf("quality %d/%d view %d fov %d zoom %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov, (int)scene->camera->zoom, (int)time2);
 	update_window(scene);

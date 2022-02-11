@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/29 01:31:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/02 01:35:22 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 11:25:35 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	add_light(t_scene *scene, char *str)
 	if (err)
 		ft_error(7);
 	add_light_back(&scene->light, new_light(position, bright, color));
+	scene->current_light = scene->light;
 }
 
 t_light	*new_light(t_vector3 position, double bright, t_color color)

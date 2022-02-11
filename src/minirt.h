@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 01:05:08 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 16:01:48 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ enum e_keycode
 	KEY_V = 9,
 	KEY_B = 11,
 	KEY_N = 45,
+	KEY_M = 46,
 	KEY_F = 3,
 	KEY_I = 34,
 	KEY_J = 38,
@@ -223,6 +224,7 @@ typedef struct s_scene
 	t_camera	*camera;
 	t_ambient	*ambient;
 	t_light		*light;
+	t_light		*current_light;
 	void		*mlx;
 	void		*window;
 	t_img		*img;
@@ -251,6 +253,8 @@ typedef struct s_scene
 	t_bool		bump;
 	t_img 		*bumpmap;
 	t_img 		*texturemap;
+	t_bool		gamma_correction;
+	double		gamma;
 }	t_scene;
 
 typedef struct s_screen
@@ -361,6 +365,8 @@ t_color			colour_amplify(t_color colour, double amplifier);
 t_color			colour_add(t_color colour1, t_color colour_add);
 t_color			colour_clamp(t_color colour);
 t_color			colour_matrix_amplify(t_color colour, t_color colour_amplifier);
+t_color			colour_gamma_collect(t_color colour, t_scene *scene);
+t_color			colour_gamma_apply(t_color colour, t_scene *scene);
 
 //cone.c
 t_cone			*new_cone(t_vector3 position, t_vector3 orient, double radius);
@@ -421,5 +427,6 @@ int	mouse_hook(int button, int x, int y, t_scene *scene);
 int		change_fov(int key, t_scene *scene);
 void	rotate_camera_xz(t_camera *camera, int theta);
 void	rotate_camera_y(t_camera *camera, int theta);
+void	redraw_frame(t_scene *scene);
 
 #endif

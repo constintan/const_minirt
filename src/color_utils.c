@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 23:22:20 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/08 11:06:18 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 14:25:32 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,23 @@ t_color	colour_matrix_amplify(t_color colour, t_color colour_amplifier)
 	colour.b = colour.b * colour_amplifier.b / 255
 		+ colour_amplifier.r / mix + colour_amplifier.g / mix;
 	return (colour);
+}
+
+t_color	colour_gamma_collect(t_color colour, t_scene *scene)
+{
+	scene->gamma = fmax(scene->gamma, kd_max(kd_max(colour.r, colour.g), colour.b) / (double)255);
+	return (colour);
+}
+
+t_color	colour_gamma_apply(t_color colour, t_scene *scene)
+{
+	if (scene->gamma_correction)
+	{
+		colour.r /= scene->gamma;
+		colour.g /= scene->gamma;
+		colour.b /= scene->gamma;
+		return (colour);
+	}
+	else
+		return (colour_clamp(colour));
 }
