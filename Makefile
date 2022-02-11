@@ -32,7 +32,7 @@ toggle.c \
 vector3.c \
 
 SRC_BON1		= $(patsubst minirt.c, minirt_bonus.c, $(SRC))
-SRC_BON2		= $(patsubst render_next_frame.c, render_next_frame.c, $(SRC_BON1))
+SRC_BON2		= $(patsubst render_next_frame.c, render_next_frame_bonus.c, $(SRC_BON1))
 SRC_BON3		= $(patsubst hud.c, hud_bonus.c, $(SRC_BON2))
 SRC_BON		= $(SRC_BON3) mtv_bonus.c
 

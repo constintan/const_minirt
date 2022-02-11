@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 23:17:31 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 23:48:58 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <pthread.h>
 # include <semaphore.h>
 
-# define THREADS 16
+# define THREADS 8
 
 typedef struct s_thread {
 	pthread_t	thread;

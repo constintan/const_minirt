@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 16:29:49 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 17:35:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,16 +142,19 @@ int	change_maxquality(int key, t_scene *scene)
 
 int	change_minquality(int key, t_scene *scene)
 {
-	if (key == KEY_6)
+	if (key == KEY_6 && kd_max(scene->width, scene->height) >= 240)
 		scene->minquality = kd_max(scene->width, scene->height) / 240;
-	else if (key == KEY_7)
+	else if (key == KEY_7 && kd_max(scene->width, scene->height) >= 120)
 		scene->minquality = kd_max(scene->width, scene->height) / 120;
-	else if (key == KEY_8)
+	else if (key == KEY_8 && kd_max(scene->width, scene->height) >= 60)
 		scene->minquality = kd_max(scene->width, scene->height) / 60;
-	else if (key == KEY_9)
+	else if (key == KEY_9 && kd_max(scene->width, scene->height) >= 40)
 		scene->minquality = kd_max(scene->width, scene->height) / 40;
-	else if (key == KEY_0)
+	else if (key == KEY_0 && kd_max(scene->width, scene->height) >= 20)
 		scene->minquality = kd_max(scene->width, scene->height) / 20;
+	else if (key == KEY_6 || key == KEY_7 || key == KEY_8 || key == KEY_9
+		|| key == KEY_0)
+		scene->minquality = 1;
 	else
 		return (0);
 	scene->idle = 0;
