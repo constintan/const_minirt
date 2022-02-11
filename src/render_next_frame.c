@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 01:06:51 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 03:22:05 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,22 +439,30 @@ void	raytrace(int x, int y, t_ray *ray, t_scene *scene)
 // включает поворот камеры, если флаг play активирован
 static void	animate(t_scene *scene)
 {
-	t_vector2	q;
+	static t_vector2			q;
 
-	q = scene->camera->rotate;
 	if (scene->play)
 	{
+		printf("c u %f v %f\n", scene->camera->rotate.u, scene->camera->rotate.v);
 		scene->everynframe = scene->minquality;
 		scene->idle = 0;
 		scene->rays_set = FALSE;
 		if (q.v >= 360 && q.u < 720 && q.v < 720)
 		{
+			rotate_camera_xz(scene->camera, -10);
+			rotate_camera_y(scene->camera, 10);
 			q.u += 10;
 			q.v += 10;
 		} else if (q.u == 360)
+		{
+			rotate_camera_xz(scene->camera, -10);
 			q.v += 10;
+		}
 		else if (q.u < 720 && q.v < 720)
+		{
+			rotate_camera_y(scene->camera, 10);
 			q.u += 10;
+		}
 		else
 		{
 			q.u = 0;
@@ -462,8 +470,11 @@ static void	animate(t_scene *scene)
 			scene->play = FALSE;
 		}
 	}
-	scene->camera->rotate.u = q.u;
-	scene->camera->rotate.v = q.v;
+	else
+	{
+		q.u = 0;
+		q.v = 0;
+	}
 }
 #include <sys/time.h>
 long	mtv(void)

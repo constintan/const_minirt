@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 02:36:41 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 02:40:06 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	rotate_camera_y(t_camera *camera, int theta)
 	camera->rotate.u += theta;
 }
 
-int		rotate_camera(int key, t_scene *scene)
+static int		rotate_camera(int key, t_scene *scene)
 {
 	if (key == KEY_UP)
 		rotate_camera_xz(scene->camera, 5);
