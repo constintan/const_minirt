@@ -28,7 +28,7 @@ t_color	new_light_color_atoc(char **str, int *err)
 		(*str)++;
 	if (**str == '\0')
 	{
-		ft_putstr_fd("Color not specified. Init with white color\n", 1);
+		ft_putstr_fd("Light color not specified. Init with white color\n", 1);
 		return (new_color(255, 255, 255));
 	}
 	if (!BONUS)
