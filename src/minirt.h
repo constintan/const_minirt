@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 15:33:28 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 16:02:37 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,6 +264,16 @@ typedef struct s_quad {
 	double		t1;
 	double		t2;
 }	t_quad;
+
+typedef struct s_cl {
+	t_light		*light;
+	t_vector3	l;
+	double		fctr;
+	t_color		color;
+	double		hf;
+	t_vector3	h;
+	double		n;
+}	t_cl;
 
 //libft.c
 size_t			ft_strlen(const char *s);

@@ -6,11 +6,31 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 18:18:10 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 18:18:27 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+
+static	void	intersect_cone2(t_ray tmp_ray, t_cone *cone, t_ray *ray)
+{
+	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(
+					tmp_ray.coordinates, cone->position), cone->orient)
+			> -EPSILON))
+		return ;
+	if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cone->position))
+		> pow(cone->height / cone->costheta, 2))
+		return ;
+	*ray = tmp_ray;
+	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates,
+				matrix3_addition(cone->position, vector3_multiply(
+						cone->orient, vector3_distance(ray->coordinates,
+							cone->position) / cone->costheta))));
+	if (vector3_scalar(matrix3_subtract(ray->position, cone->position),
+			cone->orient) > 0)
+		ray->normal = vector3_negate(ray->normal);
+	ray->color = cone->color;
+}
 
 // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание
 // || удаляет результат если ранее был найден объект с пересечением ближе конуса
@@ -40,22 +60,7 @@ void	intersect_cone(t_cone *cone, t_ray *ray, t_scene *scene)
 		return ;
 	tmp_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(
 				ray->orient, tmp_ray.t));
-	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(
-					tmp_ray.coordinates, cone->position), cone->orient)
-			> -EPSILON))
-		return ;
-	if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, cone->position))
-		> pow(cone->height / cone->costheta, 2))
-		return ;
-	*ray = tmp_ray;
-	ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates,
-				matrix3_addition(cone->position, vector3_multiply(
-						cone->orient, vector3_distance(ray->coordinates,
-							cone->position) / cone->costheta))));
-	if (vector3_scalar(matrix3_subtract(ray->position,
-				cone->position), cone->orient) > 0)
-		ray->normal = vector3_negate(ray->normal);
-	ray->color = cone->color;
+	intersect_cone2(tmp_ray, cone, ray);
 }
 
 void	add_cone_props(t_cone *cone, char *str)

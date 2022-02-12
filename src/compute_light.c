@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 16:41:49 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 18:47:59 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,36 @@ static t_color	apply_light(t_color object, t_color light, double intensity)
 	return (colour_matrix_amplify(object, colour_amplify(light, intensity)));
 }
 
+static void	process_light(t_cl *cl, t_ray *ray, t_scene *scene)
+{
+	cl->l = vector3_normalise(
+			matrix3_subtract(cl->light->position, ray->coordinates));
+	cl->fctr = vector3_scalar(ray->normal, cl->l);
+	if (cl->fctr < 0 || (!scene->no_shadows
+			&& compute_shadow(cl->light, cl->l, ray, scene)))
+		cl->fctr = 0;
+	cl->color = colour_add(cl->color, colour_amplify(apply_light(
+					ray->color, cl->light->color, cl->light->bright),
+				cl->fctr));
+	if (!scene->no_specular && cl->fctr)
+	{
+		cl->h = vector3_normalise(matrix3_addition(
+					vector3_negate(ray->orient), cl->l));
+		cl->n = 16;
+		cl->hf = vector3_scalar(cl->h, ray->normal) * sin(M_PI_2
+				* sin(M_PI_2 * sin(M_PI_2 * sin(M_PI_2 * cl->fctr))));
+		if (cl->hf > 0)
+			cl->color = colour_add(cl->color, colour_amplify(apply_light(
+							cl->color, cl->light->color,
+							cl->light->bright), pow(cl->hf, cl->n)));
+	}
+}
+
+//блики
+//перпендикулярный нормаль к свету = 0, параллельный = 1
 void	compute_light(t_ray *ray, t_scene *scene)
 {
-	t_light		*light;
-	t_vector3	l;
-	double		fctr;
-	t_color		color;
-	double		hf;
-	t_vector3	h;
-	double		n;
+	t_cl	cl;
 
 	if (ray->t == INFINITY)
 	{
@@ -48,38 +69,18 @@ void	compute_light(t_ray *ray, t_scene *scene)
 		return ;
 	}
 	if (scene->ambient)
-		color = apply_light(ray->color, scene->ambient->color,
+		cl.color = apply_light(ray->color, scene->ambient->color,
 				scene->ambient->bright);
 	else
-		color = new_color(0, 0, 0);
-	light = scene->light;
-	while (light && !scene->no_lights)
+		cl.color = new_color(0, 0, 0);
+	cl.light = scene->light;
+	while (cl.light && !scene->no_lights)
 	{
-		if (!scene->one_light || scene->current_light == light)
+		if (!scene->one_light || scene->current_light == cl.light)
 		{
-			l = vector3_normalise(
-					matrix3_subtract(light->position, ray->coordinates));
-			fctr = vector3_scalar(ray->normal, l);
-			//перпендикулярный нормаль к свету = 0, параллельный = 1
-			if (fctr < 0 || (!scene->no_shadows
-					&& compute_shadow(light, l, ray, scene)))
-				fctr = 0;
-			color = colour_add(color, colour_amplify(apply_light(
-							ray->color, light->color, light->bright), fctr));
-			//блики
-			if (!scene->no_specular && fctr)
-			{
-				h = vector3_normalise(matrix3_addition(
-							vector3_negate(ray->orient), l));
-				n = 16;
-				hf = vector3_scalar(h, ray->normal) * sin(M_PI_2 * sin(M_PI_2
-							* sin(M_PI_2 * sin(M_PI_2 * fctr))));
-				if (hf > 0)
-					color = colour_add(color, colour_amplify(apply_light(color,
-									light->color, light->bright), pow(hf, n)));
-			}
+			process_light(&cl, ray, scene);
 		}
-		light = light->next;
+		cl.light = cl.light->next;
 	}
-	ray->color = colour_gamma_collect(color, scene);
+	ray->color = colour_gamma_collect(cl.color, scene);
 }
