@@ -6,25 +6,12 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 23:01:54 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 01:04:14 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 #include "minirt_bonus.h"
-
-static void	flags_init(int argc, char **argv, t_scene *scene)
-{
-	while (--argc > 1)
-	{
-		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 's'))
-			scene->no_shadows = TRUE;
-		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 'l'))
-			scene->one_light = TRUE;
-		if (argv[argc][0] == '-' && kd_strchr(argv[argc], 'L'))
-			scene->no_lights = TRUE;
-	}
-}
 
 static void	vars_init(t_scene *scene)
 {
@@ -73,17 +60,21 @@ static void	threads_init(t_scene *scene)
 		pthread_detach(thread[i].thread);
 		i++;
 	}
+	printf("Started %d threads\n", THREADS);
 }
 
 int	main(int argc, char **argv)
 {
 	t_scene *scene;
 
-	printf("THREADS %d\n", THREADS);
 	if (argc == 1 || invalid_filename(argv[1]))
 		ft_error(1);
-	scene = scene_init(argv[1]);
-	flags_init(argc, argv, scene);
+	scene = (t_scene *)kd_calloc(1, sizeof(t_scene));
+	if (scene == NULL)
+		ft_error(-1);
+	scene->maps = &argv[1];
+	scene_init(*scene->maps, scene);
+	mlx_window_init(scene);
 	vars_init(scene);
 	semaphores_init(scene);
 	threads_init(scene);
