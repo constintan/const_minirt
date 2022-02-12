@@ -119,7 +119,7 @@ gnl_clean:
 clean_all:	mlx_clean libkd_clean gnl_clean clean
 
 fclean:
-			@$(RM) $(OBJS) $(OBJS_BON) $(NAME) .bonus
+			@$(RM) $(OBJS) $(OBJS_BON) $(NAME) .main .bonus
 			@echo "fclean is finished"
 
 libkd_fclean:
