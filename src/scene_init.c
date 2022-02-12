@@ -67,5 +67,8 @@ void	scene_init(char *filename, t_scene *scene)
 		kd_free(str);
 		str = kd_malloc_add(get_next_line(fd));
 	}
+	if (scene->camera == NULL)
+		scene->camera = new_camera(new_vector3(0, 0, 0),
+				new_vector3(0, 0, 1), 70);
 	close(fd);
 }
