@@ -25,6 +25,7 @@ new_image.c \
 parse_utils.c \
 plane.c \
 quaternion.c \
+raytrace.c \
 render_next_frame.c \
 scene_init.c \
 sphere.c \

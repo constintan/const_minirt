@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 00:48:56 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 01:24:12 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ int	key_hook(int key, t_scene *scene)
 			scene->view = 0;
 		redraw_frame(scene);
 	} else if (key == KEY_ENTER)
-		scene->play = TRUE;
+		toggle(&scene->play);
 	else if (key == KEY_F)
 		reset_camera(scene);
 	else if (key == KEY_TAB)

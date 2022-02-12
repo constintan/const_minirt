@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 00:36:57 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 01:16:59 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,5 +439,11 @@ void	rotate_camera_xz(t_camera *camera, int theta);
 void	rotate_camera_y(t_camera *camera, int theta);
 void	redraw_frame(t_scene *scene);
 void	next_scene(t_scene *scene);
+//raytrace.c
+void	compute_light(t_ray *ray, t_scene *scene);
+void update_window(t_scene *scene);
+void	reset_rays(t_scene *scene);
+void	animate(t_scene *scene);
+void	iterate_pixels_gamma_correction(t_scene *scene);
 
 #endif
