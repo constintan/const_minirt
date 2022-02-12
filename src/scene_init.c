@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 00:22:25 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 00:22:34 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,11 @@ void	parse_line(t_scene *scene, char *str)
 		ft_error(5);
 }
 
-t_scene	*scene_init(char *filename)
+void	scene_init(char *filename, t_scene *scene)
 {
-	t_scene	*scene;
 	char	*str;
 	int		fd;
 
-	scene = (t_scene *)kd_calloc(1, sizeof(t_scene));
-	if (scene == NULL)
-		ft_error(-1);
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		ft_error(2);
@@ -90,6 +86,5 @@ t_scene	*scene_init(char *filename)
 		kd_free(str);
 		str = kd_malloc_add(get_next_line(fd));
 	}
-	mlx_window_init(scene);
-	return (scene);
+	close(fd);
 }

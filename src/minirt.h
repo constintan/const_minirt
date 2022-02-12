@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 22:08:20 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 00:36:57 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,8 @@ typedef struct s_scene
 	t_img 		*texturemap;
 	t_bool		gamma_correction;
 	double		gamma;
+	char	**maps;
+	int			map_index;
 	void		*bonus;
 }	t_scene;
 
@@ -337,7 +339,7 @@ void			add_light(t_scene *scene, char *str);
 void			mlx_window_init(t_scene *scene);
 
 //scene_init.c
-t_scene			*scene_init(char *filename);
+void			scene_init(char *filename, t_scene *scene);
 
 //ray_tracing.c
 t_screen		*new_screen(double width, double height, double fov);
@@ -436,5 +438,6 @@ int		rotate_camera(int key, t_scene *scene);
 void	rotate_camera_xz(t_camera *camera, int theta);
 void	rotate_camera_y(t_camera *camera, int theta);
 void	redraw_frame(t_scene *scene);
+void	next_scene(t_scene *scene);
 
 #endif

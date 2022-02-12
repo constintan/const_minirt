@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 17:35:23 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 00:48:56 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,35 @@ int	move_light(int key, t_scene *scene)
 	return (1);
 }
 
+static void	*clean_shapes(void *shape, void *next)
+{
+	kd_free(shape);
+	return (next);
+}
+
+void	next_scene(t_scene *scene)
+{
+	scene->light = kd_free(scene->light);
+	scene->ambient = kd_free(scene->ambient);
+	scene->camera = kd_free(scene->camera);
+	while (scene->spheres)
+		scene->spheres = clean_shapes(scene->spheres, scene->spheres->next);
+	while (scene->planes)
+		scene->planes = clean_shapes(scene->planes, scene->planes->next);
+	while (scene->cylinders)
+		scene->cylinders = clean_shapes(scene->cylinders, scene->cylinders->next);
+	while (scene->cones)
+		scene->cones = clean_shapes(scene->cones, scene->cones->next);
+	if (!scene->maps[++scene->map_index])
+	{
+		printf("This was the last scene...\n");
+		scene->map_index = 0;
+	}
+	printf("Starting scene: %s\n", scene->maps[scene->map_index]);
+	scene_init(scene->maps[scene->map_index], scene);
+	redraw_frame(scene);
+}
+
 int	key_hook(int key, t_scene *scene)
 {
 	if (key == KEY_ESC)
@@ -229,6 +258,8 @@ int	key_hook(int key, t_scene *scene)
 		scene->play = TRUE;
 	else if (key == KEY_F)
 		reset_camera(scene);
+	else if (key == KEY_TAB)
+		next_scene(scene);
 	else if (change_fov(key, scene) || rotate_camera(key, scene)
 	|| move_camera(key, scene) || change_maxquality(key, scene)
 	|| change_minquality(key, scene) || toggle_flags(key, scene)
