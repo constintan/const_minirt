@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:30:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 16:02:37 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 18:18:10 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ void	intersect_cone(t_cone *cone, t_ray *ray, t_scene *scene)
 				matrix3_addition(cone->position, vector3_multiply(
 						cone->orient, vector3_distance(ray->coordinates,
 							cone->position) / cone->costheta))));
+	if (vector3_scalar(matrix3_subtract(ray->position,
+				cone->position), cone->orient) > 0)
+		ray->normal = vector3_negate(ray->normal);
 	ray->color = cone->color;
 }
 
