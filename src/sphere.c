@@ -48,34 +48,33 @@ static t_color	texture_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
 }
 
 //https://www.ccs.neu.edu/home/fell/CS4300/Lectures/Ray-TracingFormulas.pdf
-void	intersect_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
+void	intersect_sphere(t_sphere *sphere, t_ray *r, t_scene *scene)
 {
 	t_ray		tmp_ray;
 	t_vector3	d;
 	t_vector3	p;
 	t_quad		q;
 
-	d = ray->orient;
-	p = matrix3_subtract(ray->position, sphere->position);
+	d = r->orient;
+	p = matrix3_subtract(r->position, sphere->position);
 	q.a = vector3_sumpow2(d);
 	q.b = 2 * d.x * p.x + 2 * d.y * p.y + 2 * d.z * p.z;
-	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(ray->position)
-		- 2 * vector3_scalar(sphere->position, ray->position)
+	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(r->position)
+		- 2 * vector3_scalar(sphere->position, r->position)
 		- pow(sphere->radius, 2);
-	tmp_ray = *ray;
+	tmp_ray = *r;
 	tmp_ray.t = math_quadratic_equation(&q);
-	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
+	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > r->t)
 		return ;
-	*ray = tmp_ray;
-	ray->coordinates = matrix3_addition(ray->position,
-			vector3_multiply(d, ray->t));
+	*r = tmp_ray;
+	r->coordinates = matrix3_addition(r->position, vector3_multiply(d, r->t));
 	if (fmin(q.t1, q.t2) > EPSILON)
-		ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates,
+		r->normal = vector3_normalise(matrix3_subtract(r->coordinates,
 					sphere->position));
 	else
-		ray->normal = vector3_normalise(matrix3_subtract(sphere->position,
-					ray->coordinates));
-	ray->color = texture_sphere(sphere, ray, scene);
+		r->normal = vector3_normalise(matrix3_subtract(sphere->position,
+					r->coordinates));
+	r->color = texture_sphere(sphere, r, scene);
 }
 
 void	add_sphere(t_scene *scene, char *str)

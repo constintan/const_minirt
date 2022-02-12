@@ -60,3 +60,20 @@ t_color	new_color_atoc(char **str, int *err)
 	b = ft_atoc(str, err);
 	return (new_color(r, g, b));
 }
+
+t_color	colour_clamp(t_color colour)
+{
+	if (colour.r < 0)
+		colour.r = 0;
+	else if (colour.r > 255)
+		colour.r = 255;
+	if (colour.g < 0)
+		colour.g = 0;
+	else if (colour.g > 255)
+		colour.g = 255;
+	if (colour.b < 0)
+		colour.b = 0;
+	else if (colour.b > 255)
+		colour.b = 255;
+	return (colour);
+}

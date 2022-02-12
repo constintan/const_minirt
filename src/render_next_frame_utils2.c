@@ -47,12 +47,29 @@ void	intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
 	*ray = tmp_ray;
 }
 
+void	intersect2(t_ray *ray, t_scene *scene)
+{
+	t_cone		*cone;
+	t_cylinder	*cylinder;
+
+	cone = scene->cones;
+	while (cone)
+	{
+		intersect_cone(cone, ray, scene);
+		cone = cone->next;
+	}
+	cylinder = scene->cylinders;
+	while (cylinder)
+	{
+		intersect_cylinder(cylinder, ray, scene);
+		cylinder = cylinder->next;
+	}
+}
+
 void	intersect(t_ray *ray, t_scene *scene)
 {
 	t_plane		*plane;
 	t_sphere	*sphere;
-	t_cone		*cone;
-	t_cylinder	*cylinder;
 
 	plane = scene->planes;
 	while (plane)
@@ -66,16 +83,5 @@ void	intersect(t_ray *ray, t_scene *scene)
 		intersect_sphere(sphere, ray, scene);
 		sphere = sphere->next;
 	}
-	cone = scene->cones;
-	while (cone)
-	{
-		intersect_cone(cone, ray, scene);
-		cone = cone->next;
-	}
-	cylinder = scene->cylinders;
-	while (cylinder)
-	{
-		intersect_cylinder(cylinder, ray, scene);
-		cylinder = cylinder->next;
-	}
+	intersect2(ray, scene);
 }

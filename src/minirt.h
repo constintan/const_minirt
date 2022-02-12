@@ -293,7 +293,7 @@ int				invalid_filename(char *filename);
 t_vector3		new_vector_atof(char **str, int *err);
 
 //sphere.c
-void			intersect_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene);
+void			intersect_sphere(t_sphere *sphere, t_ray *r, t_scene *scene);
 void			add_sphere(t_scene *scene, char *str);
 t_sphere		*new_sphere(t_vector3 position, double radius, t_color color);
 

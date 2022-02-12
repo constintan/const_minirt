@@ -12,23 +12,6 @@
 
 #include "minirt.h"
 
-t_color	colour_clamp(t_color colour)
-{
-	if (colour.r < 0)
-		colour.r = 0;
-	else if (colour.r > 255)
-		colour.r = 255;
-	if (colour.g < 0)
-		colour.g = 0;
-	else if (colour.g > 255)
-		colour.g = 255;
-	if (colour.b < 0)
-		colour.b = 0;
-	else if (colour.b > 255)
-		colour.b = 255;
-	return (colour);
-}
-
 t_color	colour_amplify(t_color colour, double amplifier)
 {
 	colour.r *= amplifier;

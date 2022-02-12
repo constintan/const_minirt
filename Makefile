@@ -16,6 +16,9 @@ ft_atox.c \
 ft_exit.c \
 hud.c \
 key_hook.c \
+key_hook2.c \
+key_hook3.c \
+key_hook_move_camera.c \
 libft.c \
 libft2.c \
 light.c \
@@ -31,8 +34,12 @@ render_next_frame_utils2.c \
 scene_init.c \
 sphere.c \
 toggle.c \
-vector3.c \
+vector3_1.c \
+vector3_2.c \
+vector3_3.c \
+vector3_4.c \
 views.c \
+views_2.c \
 
 SRC_BON1		= $(patsubst minirt.c, minirt_bonus.c, $(SRC))
 SRC_BON2		= $(patsubst render_next_frame.c, render_next_frame_bonus.c, $(SRC_BON1))
