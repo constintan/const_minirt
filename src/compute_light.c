@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 14:51:01 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 16:41:49 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,11 @@ void	compute_light(t_ray *ray, t_scene *scene)
 		ray->color = new_color(DEF_BG_COLOR_R, DEF_BG_COLOR_G, DEF_BG_COLOR_B);
 		return ;
 	}
-	color = apply_light(ray->color, scene->ambient->color,
-			scene->ambient->bright);
+	if (scene->ambient)
+		color = apply_light(ray->color, scene->ambient->color,
+				scene->ambient->bright);
+	else
+		color = new_color(0, 0, 0);
 	light = scene->light;
 	while (light && !scene->no_lights)
 	{
