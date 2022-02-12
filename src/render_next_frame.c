@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 22:08:20 by                  ###   ########.fr       */
+/*   Updated: 2022/02/11 22:17:10 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,10 @@ static void	intersect_cone(t_cone *cone, t_ray *ray, t_scene *scene)
 	q.c = pow(vector3_scalar(v_c2r, cone->orient), 2) - vector3_scalar(v_c2r, v_c2r) * cone->pow2costheta;
 	tmp_ray = *ray;
 	tmp_ray.t = math_quadratic_equation(&q);
-	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
-		return ; // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание || удаляет результат если ранее был найден объект с пересечением ближе конуса
 	if (q.t1 > EPSILON && q.t2 > EPSILON && vector3_scalar(ray->orient, cone->orient) > 0)
 		tmp_ray.t = q.t2;
+	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
+		return ; // q.d < 0 нет пересечений, [t1,t2] < 0 отрезает заднее отзеркаливание || удаляет результат если ранее был найден объект с пересечением ближе конуса
 	tmp_ray.coordinates = matrix3_addition(ray->position, vector3_multiply(ray->orient, tmp_ray.t));
 	if (!(cone->theta < M_PI_2 && vector3_scalar(matrix3_subtract(tmp_ray.coordinates, cone->position), cone->orient) > -EPSILON))
 		return ; // отрезает конус-двойник
