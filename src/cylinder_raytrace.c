@@ -76,5 +76,7 @@ void	intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene)
 	ray->normal = vector3_normalise(matrix3_subtract(op,
 				vector3_multiply(cylinder->orient,
 					vector3_scalar(cylinder->orient, op))));
+	if (tmp_ray.t == q.t2)
+		ray->normal = vector3_negate(ray->normal);
 	ray->color = cylinder->color;
 }
