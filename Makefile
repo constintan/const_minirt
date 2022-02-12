@@ -14,7 +14,6 @@ error_managment.c \
 ft_atox.c \
 ft_exit.c \
 hud.c \
-kd_strf.c \
 key_hook.c \
 libft.c \
 libft2.c \

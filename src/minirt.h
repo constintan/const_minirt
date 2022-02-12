@@ -6,21 +6,21 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 01:16:59 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 03:50:07 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
 
+# include "../mlx_static/mlx.h"
+# include "../gnl/get_next_line.h"
+# include "../libkd/libkd.h"
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <math.h>
-# include "../mlx_static/mlx.h"
-# include "../gnl/get_next_line.h"
 # include <fcntl.h>
-# include "../libkd/libkd.h"
 
 # ifndef BONUS
 #  define BONUS 0
@@ -40,12 +40,6 @@ typedef enum e_bool
 	TRUE = 1,
 	FALSE = 0
 }	t_bool;
-
-typedef struct s_xy
-{
-	int	x;
-	int	y;
-}	t_xy;
 
 enum e_keycode
 {
@@ -122,13 +116,30 @@ typedef struct s_color
 	int	b;
 }	t_color;
 
-typedef struct s_sphere
+typedef struct s_camera
 {
 	t_vector3		position;
-	double			radius;
+	t_vector3		orient;
+	t_vector2		rotate;
+	t_vector3		rotate_origin;
+	double			fov;
+	double			zoom;
+	struct s_camera	*defaults;
+}	t_camera;
+
+typedef struct s_ambient
+{
+	double	bright;
+	t_color	color;
+}	t_ambient;
+
+typedef struct s_light
+{
+	t_vector3		position;
+	double			bright;
 	t_color			color;
-	struct s_sphere	*next;
-}	t_sphere;
+	struct s_light	*next;
+}	t_light;
 
 typedef struct s_plane
 {
@@ -146,6 +157,14 @@ typedef struct s_disc
 	t_color			color;
 	struct s_plane	*next;
 }	t_disc;
+
+typedef struct s_sphere
+{
+	t_vector3		position;
+	double			radius;
+	t_color			color;
+	struct s_sphere	*next;
+}	t_sphere;
 
 typedef struct s_cylinder
 {
@@ -172,31 +191,6 @@ typedef struct s_cone
 	double			pow2costheta;
 	struct s_cone	*next;
 }	t_cone;
-
-typedef struct s_camera
-{
-	t_vector3		position;
-	t_vector3		orient;
-	t_vector2		rotate;
-	t_vector3		rotate_origin;
-	double			fov;
-	double			zoom;
-	struct s_camera	*defaults;
-}	t_camera;
-
-typedef struct s_light
-{
-	t_vector3		position;
-	double			bright;
-	t_color			color;
-	struct s_light	*next;
-}	t_light;
-
-typedef struct s_ambient
-{
-	double	bright;
-	t_color	color;
-}	t_ambient;
 
 typedef struct s_img
 {
@@ -225,50 +219,42 @@ typedef struct s_scene
 	t_ambient	*ambient;
 	t_light		*light;
 	t_light		*current_light;
+	t_plane		*planes;
+	t_sphere	*spheres;
+	t_cylinder	*cylinders;
+	t_cone		*cones;
+	int			width;
+	int			height;
 	void		*mlx;
 	void		*window;
 	t_img		*img;
 	t_img		*img2;
-	int			width;
-	int			height;
 	char		*hud;
-	t_sphere	*spheres;
-	t_plane		*planes;
-	t_cylinder	*cylinders;
-	t_cone		*cones;
 	t_bool		play;
 	t_bool		no_shadows;
 	t_bool		one_light;
 	t_bool		no_lights;
 	t_bool		no_specular;
-	int			view;
+	t_bool		checkerboard;
+	t_bool		bump;
+	t_bool		gamma_correction;
 	int			oddframe;
 	int			maxquality;
 	int			minquality;
 	int			everynframe;
 	int			idle;
-	t_bool		rays_set;
+	int			view;
+	double		gamma;
 	t_ray		*rays;
-	t_bool		checkerboard;
-	t_bool		bump;
+	t_bool		rays_set;
 	t_img 		*bumpmap;
 	t_img 		*texturemap;
-	t_bool		gamma_correction;
-	double		gamma;
-	char	**maps;
+	char		**maps;
 	int			map_index;
 	void		*bonus;
 }	t_scene;
 
-typedef struct s_screen
-{
-	double	width;
-	double	height;
-	double	x_step;
-	double	y_step;
-}	t_screen;
-
-//quadratic function, d - discriminant
+//quadratic equation, d - discriminant, t1 t2 - roots
 typedef struct s_quad {
 	double		a;
 	double		b;
@@ -283,8 +269,6 @@ typedef struct s_quad {
 size_t			ft_strlen(const char *s);
 void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char *s, int fd);
-void			free_after_split(char **argv);
-int				ft_strcmp(char *s1, char *s2);
 
 //libft2.c
 int				ft_isspace(char c);
@@ -301,8 +285,6 @@ t_vector3		new_vector_atof(char **str, int *err);
 //sphere.c
 void			add_sphere(t_scene *scene, char *str);
 t_sphere		*new_sphere(t_vector3 position, double radius, t_color color);
-int				sphere_intersect(t_camera *camera, t_vector3 ray,
-					t_sphere *sphere);
 
 //plane.c
 void			add_plane(t_scene *scene, char *str);
@@ -335,25 +317,15 @@ void			check_ratio_limits(double bright, int *err);
 t_light			*new_light(t_vector3 position, double bright, t_color color);
 void			add_light(t_scene *scene, char *str);
 
-//scene.c
-void			mlx_window_init(t_scene *scene);
-
 //scene_init.c
+void			mlx_window_init(t_scene *scene);
 void			scene_init(char *filename, t_scene *scene);
 
-//ray_tracing.c
-t_screen		*new_screen(double width, double height, double fov);
-void			ray_tracing(t_scene *scene);
-
 //draw.c
-int				color_to_int(t_color color);
 void			draw_pixel(t_scene *scene, int x, int y, t_color color);
 
 //get_next_line.c
 char			*get_next_line(int fd);
-
-//ft_split.c
-char			**ft_split(char const *s, char c);
 
 //ft_atox.c
 double			ft_atof(char **str, int *err);
@@ -376,20 +348,15 @@ t_cone			*new_cone(t_vector3 position, t_vector3 orient, double radius);
 void			add_cone_props(t_cone *cone, char *str);
 void			add_cone(t_scene *scene, char *str);
 
-int				close_minirt(void);
-
-char			*kd_strf(char const *format, ...);
-
 //render_next_frame.c
 int				render_next_frame(t_scene *scene);
 void			intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene);
-double			math_discriminant(double a, double b, double c);
 void			intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene);
 double			math_quadratic_equation(t_quad *q);
-
+//hud.c
 void			hud(t_scene *scene);
 
-//vector3
+//vector3.c
 t_vector3		matrix3_subtract(t_vector3 a, t_vector3 b);
 t_vector3		matrix3_addition(t_vector3 a, t_vector3 b);
 double			vector3_distance(t_vector3 a, t_vector3 b);
@@ -407,7 +374,7 @@ t_vector3		vector3_negate(t_vector3 a);
 t_vector3		vector3_cw(t_vector3 a);
 t_vector3		vector3_ccw(t_vector3 a);
 
-//quaternion
+//quaternion.c
 double			quaternion_sumpow2(t_quaternion q);
 t_quaternion	quaternion_normalise(t_quaternion q);
 t_quaternion	new_quaternion(double theta, t_vector3 axis);
@@ -426,7 +393,7 @@ int	key_hook(int key, t_scene *scene);
 //mouse_hook.c
 int	mouse_hook(int button, int x, int y, t_scene *scene);
 //new_image.c
-t_img	*new_image(char *path, t_scene *scene);
+t_img	*new_image(char *path, int width, int height, t_scene *scene);
 //key_hook.c
 int		move_light(int key, t_scene *scene);
 int		toggle_flags(int key, t_scene *scene);
@@ -439,6 +406,7 @@ void	rotate_camera_xz(t_camera *camera, int theta);
 void	rotate_camera_y(t_camera *camera, int theta);
 void	redraw_frame(t_scene *scene);
 void	next_scene(t_scene *scene);
+int		close_minirt(void);
 //raytrace.c
 void	compute_light(t_ray *ray, t_scene *scene);
 void update_window(t_scene *scene);

@@ -32,31 +32,3 @@ void	ft_putstr_fd(char *s, int fd)
 	while (*s)
 		ft_putchar_fd(*s++, fd);
 }
-
-// void	free_after_split(char **argv)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (argv && argv[i])
-// 	{
-// 		free(argv[i]);
-// 		argv[i] = NULL;
-// 		i++;
-// 	}
-// 	free(argv);
-// }
-
-int	ft_strcmp(char *s1, char *s2)
-{
-	if (s1 == NULL && s2 == NULL)
-		return (0);
-	if (s1 == NULL || s2 == NULL)
-		return (-1);
-	while ((*s1 != '\0') && (*s1 == *s2))
-	{
-		s1++;
-		s2++;
-	}
-	return (*s1 - *s2);
-}

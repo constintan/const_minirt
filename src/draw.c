@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-int	color_to_int(t_color color)
+static int	color_to_int(t_color color)
 {
 	return (color.r << 16 | color.g << 8 | color.b);
 }

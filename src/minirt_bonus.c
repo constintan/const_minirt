@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:43:53 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 01:04:14 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 02:30:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ static void	vars_init(t_scene *scene)
 	scene->maxquality = 1;
 	scene->minquality = kd_max(scene->width, scene->height) / 20;
 	scene->everynframe = scene->minquality;
-	scene->bumpmap = new_image("sprites/plane_bump_map.xpm", scene);
-	scene->texturemap = new_image("sprites/textureground.xpm", scene);
+	scene->bumpmap = new_image("sprites/plane_bump_map.xpm", 0, 0, scene);
+	scene->texturemap = new_image("sprites/textureground.xpm", 0, 0, scene);
 	scene->rays = kd_calloc(scene->width * scene->height, sizeof(t_ray));
 }
 

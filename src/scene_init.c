@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 22:19:30 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/11 00:22:34 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 00:26:17 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,28 +22,8 @@ void mlx_window_init(t_scene *scene)
 	scene->window = mlx_new_window(scene->mlx, scene->width, scene->height, WN);
 	if (scene->window == NULL)
 		ft_error(-1);
-	scene->img = kd_calloc(1, sizeof(t_img));
-	if (scene->img == NULL)
-		ft_error(-1);
-	scene->img->img = mlx_new_image(scene->mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
-	if (scene->img->img == NULL)
-		ft_error(-1);
-	scene->img->addr = mlx_get_data_addr(scene->img->img,
-			&scene->img->bits_per_pixel,
-			&scene->img->bytes_per_line, &scene->img->endian);
-	if (scene->img->addr == NULL)
-		ft_error(-1);
-	scene->img2 = kd_calloc(1, sizeof(t_img));
-	if (scene->img2 == NULL)
-		ft_error(-1);
-	scene->img2->img = mlx_new_image(scene->mlx, scene->width, scene->height);
-	if (scene->img2->img == NULL)
-		ft_error(-1);
-	scene->img2->addr = mlx_get_data_addr(scene->img2->img,
-			&scene->img2->bits_per_pixel,
-			&scene->img2->bytes_per_line, &scene->img2->endian);
-	if (scene->img2->addr == NULL)
-		ft_error(-1);
+	scene->img = new_image(NULL, WINDOW_WIDTH, WINDOW_HEIGHT, scene);
+	scene->img2 = new_image(NULL, WINDOW_WIDTH, WINDOW_HEIGHT, scene);
 }
 // sp 0,0,20.6 12.6 10,0,255
 

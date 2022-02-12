@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 03:04:14 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 03:41:54 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,15 @@ static void	iterate_pixels(t_scene *scene, t_thread *thread)
 	}
 }
 
-void	*thread_loop(void *thread_void)
+void	*thread_loop(void *thread)
 {
-	t_scene *scene;
-	t_thread *thread;
-	t_bonus *bonus;
-
-	thread = thread_void;
-	scene = thread->scene;
-	bonus = scene->bonus;
 	while (1)
 	{
-		sem_wait(bonus->threads1);
-		sem_post(bonus->threads2);
-		iterate_pixels(scene, thread);
-		sem_wait(bonus->threads3);
-		sem_post(bonus->threads4);
+		sem_wait(((t_bonus *)((t_thread *)thread)->scene->bonus)->threads1);
+		sem_post(((t_bonus *)((t_thread *)thread)->scene->bonus)->threads2);
+		iterate_pixels(((t_thread *)thread)->scene, thread);
+		sem_wait(((t_bonus *)((t_thread *)thread)->scene->bonus)->threads3);
+		sem_post(((t_bonus *)((t_thread *)thread)->scene->bonus)->threads4);
 	}
 	return (NULL);
 }
@@ -82,16 +75,13 @@ static void semaphores(t_bonus *bonus)
 
 int	render_next_frame_bonus(t_scene *scene)
 {
-	t_bonus	*bonus;
-
-	bonus = scene->bonus;
 	animate(scene);
 	if (scene->idle < 0)
 		return (0);
-	bonus->timestamp = mtv();
+	((t_bonus *)scene->bonus)->timestamp = mtv();
 	if (!scene->rays_set)
 		reset_rays(scene);
-	semaphores(bonus);
+	semaphores(((t_bonus *)scene->bonus));
 	iterate_pixels_gamma_correction(scene);
 	update_window(scene);
 	if (scene->everynframe >= 20)

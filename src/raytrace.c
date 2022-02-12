@@ -6,16 +6,11 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 01:22:20 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 01:44:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-double	math_discriminant(double a, double b, double c)
-{
-	return (pow(b, 2) - 4 * a * c);
-}
 
 double	math_quadratic_equation(t_quad *q)
 {

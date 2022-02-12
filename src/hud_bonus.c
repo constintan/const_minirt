@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/11 22:17:56 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 03:43:24 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,24 @@
 
 void	hud(t_scene *scene)
 {
-	t_bonus	*bonus;
-
-	bonus = scene->bonus;
 	kd_free(scene->hud);
+	scene->hud = kd_strjoin_free("quality ", kd_itoa(scene->everynframe), 2);
+	scene->hud = kd_strjoin_free(scene->hud, "/", 1);
+	scene->hud = kd_strjoin_free(scene->hud, kd_itoa(scene->minquality), 0);
+	scene->hud = kd_strjoin_free(scene->hud, " view ", 1);
+	scene->hud = kd_strjoin_free(scene->hud, kd_itoa(scene->view), 0);
 	if (!scene->view)
-		scene->hud = kd_strf("quality %d/%d view %d zoom %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->zoom, (int)mtv() - (int)bonus->timestamp);
+	{
+		scene->hud = kd_strjoin_free(scene->hud, " zoom ", 1);
+		scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)scene->camera->zoom), 0);
+	}
 	else
-		scene->hud = kd_strf("quality %d/%d view %d fov %d frame %dms", scene->everynframe, scene->minquality, scene->view, (int)scene->camera->fov, (int)mtv() - (int)bonus->timestamp);
+	{
+		scene->hud = kd_strjoin_free(scene->hud, " fov ", 1);
+		scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)scene->camera->fov), 0);
+	}
+	scene->hud = kd_strjoin_free(scene->hud, " frame ", 1);
+	scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)mtv() - (int)((t_bonus *)scene->bonus)->timestamp), 0);
+	scene->hud = kd_strjoin_free(scene->hud, "ms", 1);
 	mlx_string_put(scene->mlx, scene->window, 20, 30, 0xFFFF00, scene->hud);
 }

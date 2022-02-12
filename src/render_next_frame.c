@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 01:33:05 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 01:44:23 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	render_next_frame(t_scene *scene)
 	}
 	else if (scene->idle < 0)
 		return (0);
-//	scene->hud = kd_strf("x %d y %d", (int)scene->camera->rotate.u, (int)scene->camera->rotate.v);
 	if (!scene->rays_set)
 		reset_rays(scene);
 	iterate_pixels(scene);

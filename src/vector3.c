@@ -125,7 +125,6 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 	t_vector2	c;
 	t_vector2	r;
 
-	(void)b;
 	c.u = 0;
 	c.v = 0;
 	r.v = -90;
@@ -134,15 +133,9 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 		r.u = 0;
 		while (r.u < 360)
 		{
-			if (vector3_scalar(a, vector3_rotate_yx(b, r)) > vector3_scalar(a,
-																			vector3_rotate_yx(
-																				 b,
-																				 c)))
+			if (vector3_scalar(a, vector3_rotate_yx(b, r)) > vector3_scalar(a, vector3_rotate_yx(b, c)))
 			{
-//				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a,
-//																							 vector3_rotate_yx(
-//																								  b,
-//																								  c)));
+//				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a, vector3_rotate_yx(b, c)));
 				c = r;
 			}
 			r.u++;
