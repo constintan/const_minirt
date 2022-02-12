@@ -108,7 +108,6 @@ SRCS_BON	= $(addprefix $(FOLDER_BON), $(SRC_BON))
 
 HDRS		= \
 libkd.h \
-$(FT_PRINTF)ft_printf.h \
 
 OBJS		= $(SRCS:%.c=%.o)
 
