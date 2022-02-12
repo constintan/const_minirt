@@ -275,6 +275,15 @@ typedef struct s_cl {
 	double		n;
 }	t_cl;
 
+typedef struct s_pl {
+	char		*dst;
+	t_vector3	local;
+	t_vector3	ulocal;
+	double		costheta;
+	t_vector2	tile;
+	t_vector3	color;
+}	t_pl;
+
 //libft.c
 size_t			ft_strlen(const char *s);
 void			ft_putchar_fd(char c, int fd);
@@ -300,6 +309,8 @@ t_sphere		*new_sphere(t_vector3 position, double radius, t_color color);
 //plane.c
 void			add_plane(t_scene *scene, char *str);
 t_plane			*new_plane(t_vector3 position, t_vector3 orient, t_color color);
+void			texture_plane(t_plane *plane, t_ray *ray, t_bool bump,
+					t_scene *scene);
 
 //cylinder.c
 t_cylinder		*new_cylinder(t_vector3 position, t_vector3 orient,

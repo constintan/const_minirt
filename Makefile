@@ -27,6 +27,7 @@ mouse_hook.c \
 new_image.c \
 parse_utils.c \
 plane.c \
+plane2.c \
 quaternion.c \
 render_next_frame.c \
 render_next_frame_utils.c \
