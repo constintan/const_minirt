@@ -244,6 +244,7 @@ void	next_scene(t_scene *scene)
 	redraw_frame(scene);
 }
 
+//	printf("key %d\n", key);
 int	key_hook(int key, t_scene *scene)
 {
 	if (key == KEY_ESC)
@@ -254,17 +255,17 @@ int	key_hook(int key, t_scene *scene)
 		if (scene->view >= 7 || scene->view < 0)
 			scene->view = 0;
 		redraw_frame(scene);
-	} else if (key == KEY_ENTER)
-		toggle(&scene->play);
+	}
+	else if (key == KEY_ENTER)
+		scene->play++;
 	else if (key == KEY_F)
 		reset_camera(scene);
 	else if (key == KEY_TAB)
 		next_scene(scene);
 	else if (change_fov(key, scene) || rotate_camera(key, scene)
-	|| move_camera(key, scene) || change_maxquality(key, scene)
-	|| change_minquality(key, scene) || toggle_flags(key, scene)
-	|| move_light(key, scene))
+		|| move_camera(key, scene) || change_maxquality(key, scene)
+		|| change_minquality(key, scene) || toggle_flags(key, scene)
+		|| move_light(key, scene))
 		;
-//	printf("key %d\n", key);
 	return (0);
 }

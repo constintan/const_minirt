@@ -6,6 +6,7 @@ camera.c \
 close_minirt.c \
 color.c \
 color_utils.c \
+compute_light.c \
 cone.c \
 cylinder.c \
 cylinder_raytrace.c \
@@ -24,12 +25,14 @@ new_image.c \
 parse_utils.c \
 plane.c \
 quaternion.c \
-raytrace.c \
 render_next_frame.c \
+render_next_frame_utils.c \
+render_next_frame_utils2.c \
 scene_init.c \
 sphere.c \
 toggle.c \
 vector3.c \
+views.c \
 
 SRC_BON1		= $(patsubst minirt.c, minirt_bonus.c, $(SRC))
 SRC_BON2		= $(patsubst render_next_frame.c, render_next_frame_bonus.c, $(SRC_BON1))
@@ -135,7 +138,7 @@ re_all:		fclean_all all
 
 norm:
 			@make norm -C $(LIBKD_PATH)
-			@norminette
+			@norminette $(GNL_PATH) $(FOLDER)
 
 leaks:
 			leaks --atExit -- ./$(NAME)

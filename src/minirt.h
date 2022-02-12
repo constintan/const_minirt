@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 03:50:07 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 14:36:45 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,6 @@ typedef struct s_scene
 	t_img		*img;
 	t_img		*img2;
 	char		*hud;
-	t_bool		play;
 	t_bool		no_shadows;
 	t_bool		one_light;
 	t_bool		no_lights;
@@ -242,6 +241,7 @@ typedef struct s_scene
 	int			maxquality;
 	int			minquality;
 	int			everynframe;
+	int			play;
 	int			idle;
 	int			view;
 	double		gamma;
@@ -283,6 +283,7 @@ int				invalid_filename(char *filename);
 t_vector3		new_vector_atof(char **str, int *err);
 
 //sphere.c
+void			intersect_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene);
 void			add_sphere(t_scene *scene, char *str);
 t_sphere		*new_sphere(t_vector3 position, double radius, t_color color);
 
@@ -344,6 +345,7 @@ t_color			colour_gamma_collect(t_color colour, t_scene *scene);
 t_color			colour_gamma_apply(t_color colour, t_scene *scene);
 
 //cone.c
+void			intersect_cone(t_cone *cone, t_ray *ray, t_scene *scene);
 t_cone			*new_cone(t_vector3 position, t_vector3 orient, double radius);
 void			add_cone_props(t_cone *cone, char *str);
 void			add_cone(t_scene *scene, char *str);
@@ -407,6 +409,15 @@ void	rotate_camera_y(t_camera *camera, int theta);
 void	redraw_frame(t_scene *scene);
 void	next_scene(t_scene *scene);
 int		close_minirt(void);
+//views.c
+void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray);
+void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray);
+void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray);
+void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray);
+void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *ray);
+void	ray_perspective_quaternion(t_scene *scene, int x, int y, t_ray *ray);
+void	ray_perspective_quaternion2(t_scene *scene, int x, int y, t_ray *ray);
+
 //raytrace.c
 void	compute_light(t_ray *ray, t_scene *scene);
 void update_window(t_scene *scene);
