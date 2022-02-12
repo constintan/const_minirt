@@ -14,6 +14,8 @@
 
 double	math_quadratic_equation(t_quad *q)
 {
+	q->t1 = 0;
+	q->t2 = 0;
 	q->d = pow(q->b, 2) - 4 * q->a * q->c;
 	if (q->d < 0 && q->d > -EPSILON)
 		q->d = 0;
