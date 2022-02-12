@@ -80,16 +80,6 @@ ft_gnl.c \
 ft_lstadd_back.c \
 ft_lstclear.c \
 ft_putstr_fd.c \
-ft_printf/ft_format_lstnew.c \
-ft_printf/ft_format_lstreset.c \
-ft_printf/ft_format_putchar.c \
-ft_printf/ft_format_puthex.c \
-ft_printf/ft_format_putnbr_uint.c \
-ft_printf/ft_format_putnbr.c \
-ft_printf/ft_format_putptr.c \
-ft_printf/ft_format_putstr.c \
-ft_printf/ft_format_utils.c \
-ft_printf/ft_printf.c \
 ft_split.c \
 ft_strdup.c \
 ft_strjoin.c \

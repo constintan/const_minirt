@@ -17,7 +17,6 @@
 # include <unistd.h> //write
 # include <stdlib.h> //malloc, free
 # include <limits.h> //INT_MIN, INT_MAX
-# include "modified/ft_printf/ft_printf.h" //va_start, va_arg, va_end
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 100
 # endif
