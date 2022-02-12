@@ -26,8 +26,8 @@ static void	iterate_pixels(t_scene *scene, t_thread *thread)
 		while (x < scene->width)
 		{
 			ray = &scene->rays[y * scene->width + x];
-			if (x % scene->everynframe == 0 &&
-				y % scene->everynframe == 0)
+			if (x % scene->everynframe == 0
+				&& y % scene->everynframe == 0)
 			{
 				if (!ray->t)
 				{
@@ -55,7 +55,7 @@ void	*thread_loop(void *thread)
 	return (NULL);
 }
 
-static void semaphores(t_bonus *bonus)
+static void	semaphores(t_bonus *bonus)
 {
 	int	i;
 

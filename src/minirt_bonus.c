@@ -47,7 +47,7 @@ static void	semaphores_init(t_scene *scene)
 
 static void	threads_init(t_scene *scene)
 {
-	int		i;
+	int			i;
 	t_thread	*thread;
 
 	thread = kd_calloc(THREADS, sizeof(t_thread));
@@ -65,7 +65,7 @@ static void	threads_init(t_scene *scene)
 
 int	main(int argc, char **argv)
 {
-	t_scene *scene;
+	t_scene	*scene;
 
 	if (argc == 1 || invalid_filename(argv[1]))
 		ft_error(1);

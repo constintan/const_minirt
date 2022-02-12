@@ -27,7 +27,7 @@ double	math_quadratic_equation(t_quad *q)
 	return (fmax(q->t1, q->t2));
 }
 
-void intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
+void	intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
 {
 	t_ray	tmp_ray;
 	t_plane	plane;
@@ -39,7 +39,8 @@ void intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene)
 	intersect_plane(&plane, &tmp_ray, FALSE, scene);
 	if (tmp_ray.t + EPSILON > ray->t)
 		return ;
-	if (vector3_sumpow2(matrix3_subtract(tmp_ray.coordinates, disc->position)) > pow(disc->radius, 2))
+	if (vector3_sumpow2(matrix3_subtract(
+				tmp_ray.coordinates, disc->position)) > pow(disc->radius, 2))
 		return ;
 	*ray = tmp_ray;
 }
@@ -49,7 +50,7 @@ void	intersect(t_ray *ray, t_scene *scene)
 	t_plane		*plane;
 	t_sphere	*sphere;
 	t_cone		*cone;
-	t_cylinder 	*cylinder;
+	t_cylinder	*cylinder;
 
 	plane = scene->planes;
 	while (plane)

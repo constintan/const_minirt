@@ -24,15 +24,18 @@ void	hud(t_scene *scene)
 	if (!scene->view)
 	{
 		scene->hud = kd_strjoin_free(scene->hud, " zoom ", 1);
-		scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)scene->camera->zoom), 0);
+		scene->hud = kd_strjoin_free(scene->hud,
+				kd_itoa((int)scene->camera->zoom), 0);
 	}
 	else
 	{
 		scene->hud = kd_strjoin_free(scene->hud, " fov ", 1);
-		scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)scene->camera->fov), 0);
+		scene->hud = kd_strjoin_free(scene->hud,
+				kd_itoa((int)scene->camera->fov), 0);
 	}
 	scene->hud = kd_strjoin_free(scene->hud, " frame ", 1);
-	scene->hud = kd_strjoin_free(scene->hud, kd_itoa((int)mtv() - (int)((t_bonus *)scene->bonus)->timestamp), 0);
+	scene->hud = kd_strjoin_free(scene->hud,
+			kd_itoa((int)mtv() - (int)((t_bonus *)scene->bonus)->timestamp), 0);
 	scene->hud = kd_strjoin_free(scene->hud, "ms", 1);
 	mlx_string_put(scene->mlx, scene->window, 20, 30, 0xFFFF00, scene->hud);
 }

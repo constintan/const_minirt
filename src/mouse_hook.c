@@ -28,11 +28,18 @@ int	mouse_hook(int button, int x, int y, t_scene *scene)
 	{
 		scene->camera->rotate_origin = scene->camera->position;
 		if (scene->view)
-			scene->camera->rotate = vector3_arotate(ray.orient, scene->camera->orient);
+			scene->camera->rotate = vector3_arotate(ray.orient,
+					scene->camera->orient);
 		else if (ray.t < INFINITY)
-			scene->camera->rotate = vector3_arotate(vector3_normalise(matrix3_subtract(ray.coordinates, scene->camera->position)), scene->camera->orient);
+			scene->camera->rotate = vector3_arotate(vector3_normalise(
+						matrix3_subtract(ray.coordinates,
+							scene->camera->position)), scene->camera->orient);
 		else
-			scene->camera->rotate = vector3_arotate(vector3_normalise(matrix3_subtract(matrix3_addition(ray.position,vector3_multiply(ray.orient, 100)), scene->camera->position)), scene->camera->orient);
+			scene->camera->rotate = vector3_arotate(vector3_normalise(
+						matrix3_subtract(matrix3_addition(
+								ray.position, vector3_multiply(ray.orient,
+									100)), scene->camera->position)),
+					scene->camera->orient);
 		scene->everynframe = scene->minquality;
 		scene->rays_set = FALSE;
 		scene->idle = 0;

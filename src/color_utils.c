@@ -61,7 +61,8 @@ t_color	colour_matrix_amplify(t_color colour, t_color colour_amplifier)
 
 t_color	colour_gamma_collect(t_color colour, t_scene *scene)
 {
-	scene->gamma = fmax(scene->gamma, kd_max(kd_max(colour.r, colour.g), colour.b) / (double)255);
+	scene->gamma = fmax(scene->gamma,
+			kd_max(kd_max(colour.r, colour.g), colour.b) / (double)255);
 	return (colour);
 }
 

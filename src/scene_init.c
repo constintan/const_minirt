@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-void mlx_window_init(t_scene *scene)
+void	mlx_window_init(t_scene *scene)
 {
 	scene->width = WINDOW_WIDTH;
 	scene->height = WINDOW_HEIGHT;
@@ -31,7 +31,8 @@ void	parse_line(t_scene *scene, char *str)
 {
 	while (ft_isspace(*str))
 		str++;
-	if (str[0] == '\0' || (BONUS && (str[0] == '#' || (str[0] == '/' && str[1] == '/'))))
+	if (str[0] == '\0'
+		|| (BONUS && (str[0] == '#' || (str[0] == '/' && str[1] == '/'))))
 		;
 	else if (str[0] == 's' && str[1] == 'p')
 		add_sphere(scene, &str[2]);

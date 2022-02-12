@@ -69,7 +69,7 @@ t_vector3	vector3_multiply(t_vector3 direction, double multiply)
 
 double	vector3_sumpow2(t_vector3 a)
 {
-	return(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
+	return (pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
 }
 
 double	vector3_scalar(t_vector3 a, t_vector3 b)
@@ -84,9 +84,12 @@ t_vector3	vector3_qrotate(t_vector3 a, double theta, t_vector3 axis)
 
 	theta = M_PI / 180 * theta;
 	q = new_quaternion(theta, axis);
-	b.x = a.x * (1 - 2 * (pow(q.j, 2) + pow(q.k, 2))) + a.y * (2 * (q.i * q.j - q.k * q.w)) + a.z * (2 * (q.i * q.k + q.j * q.w));
-	b.y = a.x * (2 * (q.i * q.j + q.k * q.w)) + a.y * (1 - 2 * (pow(q.i, 2) + pow(q.k, 2))) + a.z * (2 * (q.j * q.k - q.i * q.w));
-	b.z = a.x * (2 * (q.i * q.k - q.j * q.w)) + a.y * (2 * (q.j * q.k + q.i * q.w)) + a.z * (1 - 2 * (pow(q.i, 2) + pow(q.j, 2)));
+	b.x = a.x * (1 - 2 * (pow(q.j, 2) + pow(q.k, 2))) + a.y * (2 * (q.i * q.j
+				- q.k * q.w)) + a.z * (2 * (q.i * q.k + q.j * q.w));
+	b.y = a.x * (2 * (q.i * q.j + q.k * q.w)) + a.y * (1 - 2 * (pow(q.i, 2)
+				+ pow(q.k, 2))) + a.z * (2 * (q.j * q.k - q.i * q.w));
+	b.z = a.x * (2 * (q.i * q.k - q.j * q.w)) + a.y * (2 * (q.j * q.k + q.i
+				* q.w)) + a.z * (1 - 2 * (pow(q.i, 2) + pow(q.j, 2)));
 	return (b);
 }
 
@@ -120,6 +123,8 @@ t_vector3	vector3_rotate_xy(t_vector3 b, t_vector2 rotate)
 	return (b);
 }
 
+//printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)),
+// vector3_scalar(a, vector3_rotate_yx(b, c)));
 t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 {
 	t_vector2	c;
@@ -133,11 +138,9 @@ t_vector2	vector3_arotate(t_vector3 a, t_vector3 b)
 		r.u = 0;
 		while (r.u < 360)
 		{
-			if (vector3_scalar(a, vector3_rotate_yx(b, r)) > vector3_scalar(a, vector3_rotate_yx(b, c)))
-			{
-//				printf("%f %f\n", vector3_scalar(a, vector3_rotate_yx(b, r)), vector3_scalar(a, vector3_rotate_yx(b, c)));
+			if (vector3_scalar(a, vector3_rotate_yx(b, r)) > vector3_scalar(a,
+					vector3_rotate_yx(b, c)))
 				c = r;
-			}
 			r.u++;
 		}
 		r.v++;
@@ -174,7 +177,7 @@ t_vector3	vector3_negate(t_vector3 a)
 
 t_vector3	vector3_cw(t_vector3 a)
 {
-	double tmp;
+	double	tmp;
 
 	tmp = a.x;
 	a.x = a.y;
@@ -185,7 +188,7 @@ t_vector3	vector3_cw(t_vector3 a)
 
 t_vector3	vector3_ccw(t_vector3 a)
 {
-	double tmp;
+	double	tmp;
 
 	tmp = a.z;
 	a.z = a.y;

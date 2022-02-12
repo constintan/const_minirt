@@ -15,9 +15,9 @@
 static void	bump(t_ray *ray, double u, double v, t_scene *scene)
 {
 	ray->normal = vector3_qrotate(ray->normal, sin(u * M_PI_2 * 360) * 10,
-								  vector3_cw(ray->normal));
+			vector3_cw(ray->normal));
 	ray->normal = vector3_qrotate(ray->normal, sin(v * M_PI_2 * 180) * 10,
-								  vector3_cw(ray->normal));
+			vector3_cw(ray->normal));
 	(void)scene;
 }
 
@@ -30,8 +30,11 @@ static t_color	texture_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
 
 	if (!scene->checkerboard && !scene->bump)
 		return (sphere->color);
-	u = 0.5 + atan2((ray->coordinates.z - sphere->position.z) / sphere->radius, (ray->coordinates.x - sphere->position.x) / sphere->radius) / (2 * M_PI);
-	v = 0.5 - asin((ray->coordinates.y - sphere->position.y) / sphere->radius) / M_PI;
+	u = 0.5 + atan2((ray->coordinates.z - sphere->position.z) / sphere->radius,
+			(ray->coordinates.x - sphere->position.x) / sphere->radius)
+		/ (2 * M_PI);
+	v = 0.5 - asin((ray->coordinates.y - sphere->position.y) / sphere->radius)
+		/ M_PI;
 	if (scene->bump)
 		bump(ray, u, v, scene);
 	if (!scene->checkerboard)
@@ -56,17 +59,22 @@ void	intersect_sphere(t_sphere *sphere, t_ray *ray, t_scene *scene)
 	p = matrix3_subtract(ray->position, sphere->position);
 	q.a = vector3_sumpow2(d);
 	q.b = 2 * d.x * p.x + 2 * d.y * p.y + 2 * d.z * p.z;
-	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(ray->position) - 2 * vector3_scalar(sphere->position, ray->position) - pow(sphere->radius, 2);
+	q.c = vector3_sumpow2(sphere->position) + vector3_sumpow2(ray->position)
+		- 2 * vector3_scalar(sphere->position, ray->position)
+		- pow(sphere->radius, 2);
 	tmp_ray = *ray;
 	tmp_ray.t = math_quadratic_equation(&q);
 	if (tmp_ray.t < EPSILON || tmp_ray.t + EPSILON > ray->t)
 		return ;
 	*ray = tmp_ray;
-	ray->coordinates = matrix3_addition(ray->position, vector3_multiply(d, ray->t));
+	ray->coordinates = matrix3_addition(ray->position,
+			vector3_multiply(d, ray->t));
 	if (fmin(q.t1, q.t2) > EPSILON)
-		ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates, sphere->position));
+		ray->normal = vector3_normalise(matrix3_subtract(ray->coordinates,
+					sphere->position));
 	else
-		ray->normal = vector3_normalise(matrix3_subtract(sphere->position, ray->coordinates));
+		ray->normal = vector3_normalise(matrix3_subtract(sphere->position,
+					ray->coordinates));
 	ray->color = texture_sphere(sphere, ray, scene);
 }
 

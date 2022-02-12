@@ -25,8 +25,8 @@ static void	iterate_pixels(t_scene *scene)
 		while (x < scene->width)
 		{
 			ray = &scene->rays[y * scene->width + x];
-			if (x % scene->everynframe == 0 &&
-				y % scene->everynframe == 0)
+			if (x % scene->everynframe == 0
+				&& y % scene->everynframe == 0)
 			{
 				if (!ray->t)
 				{

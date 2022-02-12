@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 03:14:57 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 15:52:25 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ void	rotate_camera_xz(t_camera *camera, int theta)
 	rotate.u = camera->rotate.u - 90;
 	rotate.v = 0;
 	axis = vector3_rotate_yx(camera->orient, rotate);
-	camera->position = matrix3_addition(camera->rotate_origin, vector3_qrotate(matrix3_subtract(camera->position, camera->rotate_origin), theta, axis));
+	camera->position = matrix3_addition(camera->rotate_origin, vector3_qrotate(
+				matrix3_subtract(camera->position, camera->rotate_origin),
+				theta, axis));
 	camera->rotate.v += theta;
 }
 
@@ -37,11 +39,13 @@ void	rotate_camera_y(t_camera *camera, int theta)
 	t_vector3	axis;
 
 	axis = new_vector3(0, 1, 0);
-	camera->position = matrix3_addition(camera->rotate_origin, vector3_qrotate(matrix3_subtract(camera->position, camera->rotate_origin), theta, axis));
+	camera->position = matrix3_addition(camera->rotate_origin, vector3_qrotate(
+				matrix3_subtract(camera->position, camera->rotate_origin),
+				theta, axis));
 	camera->rotate.u += theta;
 }
 
-int		rotate_camera(int key, t_scene *scene)
+int	rotate_camera(int key, t_scene *scene)
 {
 	if (key == KEY_UP)
 		rotate_camera_xz(scene->camera, 5);
@@ -79,7 +83,8 @@ static void	move_camera_x(t_camera *camera, double distance)
 
 	rotate.u = camera->rotate.u + 90;
 	rotate.v = 0;
-	camera->position = matrix3_addition(camera->position, vector3_multiply(vector3_rotate_yx(camera->orient, rotate), distance));
+	camera->position = matrix3_addition(camera->position, vector3_multiply(
+				vector3_rotate_yx(camera->orient, rotate), distance));
 }
 
 static void	move_camera_y(t_camera *camera, double distance)
@@ -88,7 +93,8 @@ static void	move_camera_y(t_camera *camera, double distance)
 
 	rotate.u = camera->rotate.u;
 	rotate.v = camera->rotate.v + 90;
-	camera->position = matrix3_addition(camera->position, vector3_multiply(vector3_rotate_yx(camera->orient, rotate), distance));
+	camera->position = matrix3_addition(camera->position, vector3_multiply(
+				vector3_rotate_yx(camera->orient, rotate), distance));
 }
 
 static void	move_camera_z(t_camera *camera, double distance)
@@ -96,7 +102,8 @@ static void	move_camera_z(t_camera *camera, double distance)
 	t_vector2	rotate;
 
 	rotate = camera->rotate;
-	camera->position = matrix3_addition(camera->position, vector3_multiply(vector3_rotate_yx(camera->orient, rotate), distance));
+	camera->position = matrix3_addition(camera->position, vector3_multiply(
+				vector3_rotate_yx(camera->orient, rotate), distance));
 }
 
 int	move_camera(int key, t_scene *scene)
@@ -231,7 +238,8 @@ void	next_scene(t_scene *scene)
 	while (scene->planes)
 		scene->planes = clean_shapes(scene->planes, scene->planes->next);
 	while (scene->cylinders)
-		scene->cylinders = clean_shapes(scene->cylinders, scene->cylinders->next);
+		scene->cylinders = clean_shapes(scene->cylinders,
+				scene->cylinders->next);
 	while (scene->cones)
 		scene->cones = clean_shapes(scene->cones, scene->cones->next);
 	if (!scene->maps[++scene->map_index])

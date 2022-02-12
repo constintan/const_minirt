@@ -6,7 +6,7 @@
 /*   By: konstanting <konstanting@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:18:39 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 14:36:45 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 15:33:28 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,8 +247,8 @@ typedef struct s_scene
 	double		gamma;
 	t_ray		*rays;
 	t_bool		rays_set;
-	t_img 		*bumpmap;
-	t_img 		*texturemap;
+	t_img		*bumpmap;
+	t_img		*texturemap;
 	char		**maps;
 	int			map_index;
 	void		*bonus;
@@ -301,7 +301,8 @@ void			add_cylinder(t_scene *scene, char *str);
 int				is_in_cutted_cylinder(t_cylinder *cylinder, t_ray *ray,
 					t_quad q);
 void			init_cylinder_q(t_cylinder *cylinder, t_ray	*ray, t_quad *q);
-void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray, t_scene *scene);
+void			intersect_cylinder(t_cylinder *cylinder, t_ray *ray,
+					t_scene *scene);
 
 //camera.c
 t_camera		*new_camera(t_vector3 position, t_vector3 orient, double fov);
@@ -352,7 +353,8 @@ void			add_cone(t_scene *scene, char *str);
 
 //render_next_frame.c
 int				render_next_frame(t_scene *scene);
-void			intersect_plane(t_plane *plane, t_ray *ray, t_bool bump, t_scene *scene);
+void			intersect_plane(t_plane *plane, t_ray *ray, t_bool bump,
+					t_scene *scene);
 void			intersect_disc(t_disc *disc, t_ray *ray, t_scene *scene);
 double			math_quadratic_equation(t_quad *q);
 //hud.c
@@ -381,48 +383,53 @@ double			quaternion_sumpow2(t_quaternion q);
 t_quaternion	quaternion_normalise(t_quaternion q);
 t_quaternion	new_quaternion(double theta, t_vector3 axis);
 
-
-void	intersect(t_ray *ray, t_scene *scene);
-void	raytrace(int x, int y, t_ray *ray, t_scene *scene);
+void			intersect(t_ray *ray, t_scene *scene);
+void			raytrace(int x, int y, t_ray *ray, t_scene *scene);
 //ft_exit.c
-void	ft_exit(int status);
+void			ft_exit(int status);
 //close_minirt.c
-int	close_minirt(void);
+int				close_minirt(void);
 //toggle.c
-t_bool	toggle(t_bool *b);
+t_bool			toggle(t_bool *b);
 //key_hook.c
-int	key_hook(int key, t_scene *scene);
+int				key_hook(int key, t_scene *scene);
 //mouse_hook.c
-int	mouse_hook(int button, int x, int y, t_scene *scene);
+int				mouse_hook(int button, int x, int y, t_scene *scene);
 //new_image.c
-t_img	*new_image(char *path, int width, int height, t_scene *scene);
+t_img			*new_image(char *path, int width, int height, t_scene *scene);
 //key_hook.c
-int		move_light(int key, t_scene *scene);
-int		toggle_flags(int key, t_scene *scene);
-int		change_minquality(int key, t_scene *scene);
-int		change_maxquality(int key, t_scene *scene);
-int		move_camera(int key, t_scene *scene);
-int		change_fov(int key, t_scene *scene);
-int		rotate_camera(int key, t_scene *scene);
-void	rotate_camera_xz(t_camera *camera, int theta);
-void	rotate_camera_y(t_camera *camera, int theta);
-void	redraw_frame(t_scene *scene);
-void	next_scene(t_scene *scene);
-int		close_minirt(void);
+int				move_light(int key, t_scene *scene);
+int				toggle_flags(int key, t_scene *scene);
+int				change_minquality(int key, t_scene *scene);
+int				change_maxquality(int key, t_scene *scene);
+int				move_camera(int key, t_scene *scene);
+int				change_fov(int key, t_scene *scene);
+int				rotate_camera(int key, t_scene *scene);
+void			rotate_camera_xz(t_camera *camera, int theta);
+void			rotate_camera_y(t_camera *camera, int theta);
+void			redraw_frame(t_scene *scene);
+void			next_scene(t_scene *scene);
+int				close_minirt(void);
 //views.c
-void ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray);
-void ray_perspective_tan(t_camera *camera, t_vector2 step, t_ray *ray);
-void	ray_perspective_spherise(t_camera *camera, t_vector2 step, t_ray *ray);
-void	ray_perspective_spherise2(t_camera *camera, t_vector2 step, t_ray *ray);
-void	ray_perspective_spherise3(t_camera *camera, t_vector2 step, t_ray *ray);
-void	ray_perspective_quaternion(t_scene *scene, int x, int y, t_ray *ray);
-void	ray_perspective_quaternion2(t_scene *scene, int x, int y, t_ray *ray);
+void			ray_orthographic(t_camera *camera, t_vector2 step, t_ray *ray);
+void			ray_perspective_tan(t_camera *camera, t_vector2 step,
+					t_ray *ray);
+void			ray_perspective_spherise(t_camera *camera, t_vector2 step,
+					t_ray *ray);
+void			ray_perspective_spherise2(t_camera *camera, t_vector2 step,
+					t_ray *ray);
+void			ray_perspective_spherise3(t_camera *camera, t_vector2 step,
+					t_ray *ray);
+void			ray_perspective_quaternion(t_scene *scene, int x, int y,
+					t_ray *ray);
+void			ray_perspective_quaternion2(t_scene *scene, int x, int y,
+					t_ray *ray);
 
 //raytrace.c
-void	compute_light(t_ray *ray, t_scene *scene);
-void update_window(t_scene *scene);
-void	reset_rays(t_scene *scene);
-void	animate(t_scene *scene);
-void	iterate_pixels_gamma_correction(t_scene *scene);
+void			compute_light(t_ray *ray, t_scene *scene);
+void			update_window(t_scene *scene);
+void			reset_rays(t_scene *scene);
+void			animate(t_scene *scene);
+void			iterate_pixels_gamma_correction(t_scene *scene);
 
 #endif

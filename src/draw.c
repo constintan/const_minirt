@@ -34,7 +34,8 @@ void	draw_pixel(t_scene *scene, int x, int y, t_color color)
 		j = 0;
 		while (j < scene->everynframe && x + j < scene->width)
 		{
-			dst = img->addr + ((y + i) * img->bytes_per_line + (x + j) * (img->bits_per_pixel / 8));
+			dst = img->addr + ((y + i) * img->bytes_per_line + (x + j)
+					* (img->bits_per_pixel / 8));
 			*(unsigned int *)dst = color_to_int(color);
 			j++;
 		}

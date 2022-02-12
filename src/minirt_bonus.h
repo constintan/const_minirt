@@ -20,8 +20,8 @@
 
 typedef struct s_thread {
 	pthread_t	thread;
-	int		index;
-	t_scene	*scene;
+	int			index;
+	t_scene		*scene;
 }	t_thread;
 
 typedef struct s_bonus {
