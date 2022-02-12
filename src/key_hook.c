@@ -6,7 +6,7 @@
 /*   By: lajudy <lajudy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 00:12:06 by lajudy            #+#    #+#             */
-/*   Updated: 2022/02/12 01:24:12 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 03:14:57 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ int	move_light(int key, t_scene *scene)
 		scene->current_light->position.y += 5;
 	else
 		return (0);
-	if (key != KEY_SPACE)
+	if (!(key == KEY_SPACE && !scene->one_light))
 		redraw_frame(scene);
 	return (1);
 }

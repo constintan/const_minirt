@@ -6,7 +6,7 @@
 /*   By: swilmer <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 22:06:03 by swilmer           #+#    #+#             */
-/*   Updated: 2022/02/12 01:44:23 by                  ###   ########.fr       */
+/*   Updated: 2022/02/12 03:04:14 by                  ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,30 +56,16 @@ void	*thread_loop(void *thread_void)
 		sem_wait(bonus->threads1);
 		sem_post(bonus->threads2);
 		iterate_pixels(scene, thread);
-		printf("thread %d finished %d quality\n", thread->index, scene->everynframe);
 		sem_wait(bonus->threads3);
 		sem_post(bonus->threads4);
 	}
 	return (NULL);
 }
 
-int	render_next_frame_bonus(t_scene *scene)
+static void semaphores(t_bonus *bonus)
 {
 	int	i;
-	t_bonus	*bonus;
 
-	bonus = scene->bonus;
-	animate(scene);
-	if (scene->idle > 0)
-	{
-		scene->idle--;
-		return (0);
-	}
-	else if (scene->idle < 0)
-		return (0);
-	bonus->timestamp = mtv();
-	if (!scene->rays_set)
-		reset_rays(scene);
 	i = 0;
 	while (i++ < THREADS)
 		sem_post(bonus->threads1);
@@ -92,9 +78,22 @@ int	render_next_frame_bonus(t_scene *scene)
 	i = 0;
 	while (i++ < THREADS)
 		sem_wait(bonus->threads4);
+}
+
+int	render_next_frame_bonus(t_scene *scene)
+{
+	t_bonus	*bonus;
+
+	bonus = scene->bonus;
+	animate(scene);
+	if (scene->idle < 0)
+		return (0);
+	bonus->timestamp = mtv();
+	if (!scene->rays_set)
+		reset_rays(scene);
+	semaphores(bonus);
 	iterate_pixels_gamma_correction(scene);
 	update_window(scene);
-	scene->idle = 1;
 	if (scene->everynframe >= 20)
 		scene->everynframe /= 2;
 	else if (scene->everynframe > 10)
