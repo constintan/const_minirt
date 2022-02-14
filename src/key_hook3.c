@@ -22,6 +22,7 @@ void	next_scene(t_scene *scene)
 {
 	scene->light = kd_free(scene->light);
 	scene->ambient = kd_free(scene->ambient);
+	scene->camera->defaults = kd_free(scene->camera->defaults);
 	scene->camera = kd_free(scene->camera);
 	while (scene->spheres)
 		scene->spheres = clean_shapes(scene->spheres, scene->spheres->next);

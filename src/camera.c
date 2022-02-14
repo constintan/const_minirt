@@ -42,7 +42,6 @@ void	add_camera(t_scene *scene, char *str)
 	if (err)
 		ft_error(4);
 	scene->camera = new_camera(origin, direction, fov);
-	scene->camera->defaults = new_camera(origin, direction, fov);
 }
 
 void	reset_camera(t_scene *scene)
@@ -53,6 +52,22 @@ void	reset_camera(t_scene *scene)
 	scene->camera->fov = scene->camera->defaults->fov;
 	scene->camera->zoom = scene->camera->defaults->zoom;
 	redraw_frame(scene);
+}
+
+static t_camera	*copy_camera(t_vector3 position, t_vector3 orient, double fov)
+{
+	t_camera	*camera;
+
+	camera = kd_calloc(1, sizeof(t_camera));
+	if (camera == NULL)
+		ft_error(-1);
+	camera->position = position;
+	camera->orient = new_vector3(0, 0, 1);
+	camera->rotate = vector3_arotate(vector3_normalise(orient), camera->orient);
+	camera->rotate_origin = position;
+	camera->fov = fov;
+	camera->zoom = DEFAULT_ZOOM;
+	return (camera);
 }
 
 t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
@@ -68,5 +83,6 @@ t_camera	*new_camera(t_vector3 position, t_vector3 orient, double fov)
 	camera->rotate_origin = position;
 	camera->fov = fov;
 	camera->zoom = DEFAULT_ZOOM;
+	camera->defaults = copy_camera(position, orient, fov);
 	return (camera);
 }
