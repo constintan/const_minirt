@@ -82,7 +82,8 @@ GNL_PATH	= gnl/
 
 $(NAME):	all
 
-all:		mlx libkd gnl .main
+all:		bonus
+#all:		mlx libkd gnl .main #to compile mandatory part without bonus additions -- uncomment this line
 
 bonus:		mlx libkd gnl .bonus
 
