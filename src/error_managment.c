@@ -49,5 +49,7 @@ void	ft_error(int err)
 	else if (err == 10)
 		ft_putstr_fd("Light color specified in the mandatory part\n",
 			STDERR_FILENO);
+	else if (err == 11)
+		ft_putstr_fd("Error during screen resulution setting up.\n", STDERR_FILENO);
 	ft_exit(err);
 }

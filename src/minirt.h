@@ -26,14 +26,17 @@
 #  define BONUS 0
 # endif
 
-# define WINDOW_WIDTH 1200
-# define WINDOW_HEIGHT 1200
 # define WN "miniRT window"
 # define DEF_BG_COLOR_R 128
 # define DEF_BG_COLOR_G 128
 # define DEF_BG_COLOR_B 128
 # define DEFAULT_ZOOM 32
 # define EPSILON 1e-6
+
+int WINDOW_WIDTH;
+int WINDOW_HEIGHT;
+#define WINDOW_WIDTH_DEFAULT 1920
+#define WINDOW_HEIGHT_DEFAULT 1080
 
 typedef enum e_bool
 {
@@ -300,6 +303,7 @@ int				invalid_filename(char *filename);
 
 //parse_utils.c
 t_vector3		new_vector_atof(char **str, int *err);
+void			init_resolution(t_scene *scene, char *str);
 
 //sphere.c
 void			intersect_sphere(t_sphere *sphere, t_ray *r, t_scene *scene);
@@ -353,6 +357,8 @@ char			*get_next_line(int fd);
 //ft_atox.c
 double			ft_atof(char **str, int *err);
 unsigned char	ft_atoc(char **str, int *err);
+int				ft_atoi(char **str, int *err);
+
 
 //color.c
 t_color			new_color(int r, int g, int b);

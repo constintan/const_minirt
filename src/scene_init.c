@@ -14,6 +14,10 @@
 
 void	mlx_window_init(t_scene *scene)
 {
+	if (WINDOW_WIDTH == 0)
+		WINDOW_WIDTH = WINDOW_WIDTH_DEFAULT;
+	if (WINDOW_HEIGHT == 0)
+		WINDOW_HEIGHT = WINDOW_HEIGHT_DEFAULT;
 	scene->width = WINDOW_WIDTH;
 	scene->height = WINDOW_HEIGHT;
 	scene->mlx = mlx_init();
@@ -48,6 +52,8 @@ void	parse_line(t_scene *scene, char *str)
 		add_ambient(scene, &str[1]);
 	else if (str[0] == 'L')
 		add_light(scene, &str[1]);
+	else if (str[0] == 'R')
+		init_resolution(scene, &str[1]);
 	else
 		ft_error(5);
 }
@@ -61,6 +67,8 @@ void	scene_init(char *filename, t_scene *scene)
 	if (fd < 0)
 		ft_error(2);
 	str = kd_malloc_add(get_next_line(fd));
+	WINDOW_WIDTH = 0;
+	WINDOW_HEIGHT = 0;
 	while (str)
 	{
 		parse_line(scene, str);

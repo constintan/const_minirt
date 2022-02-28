@@ -31,3 +31,15 @@ t_vector3	new_vector_atof(char **str, int *err)
 	z = ft_atof(str, err);
 	return (new_vector3(x, y, z));
 }
+
+void init_resolution(t_scene *scene, char *str)
+{
+	int err;
+
+	err = 0;
+	(void)scene;
+	WINDOW_WIDTH = ft_atoi(&str, &err);
+	WINDOW_HEIGHT = ft_atoi(&str, &err);
+	if (err)
+		ft_error(11);
+}

@@ -85,3 +85,29 @@ unsigned char	ft_atoc(char **str, int *err)
 		*err = local_err;
 	return ((unsigned char) n);
 }
+
+//function to set resolution of renderring. values above 10 000 are considered invalid
+int	ft_atoi(char **str, int *err)
+{
+	int	n;
+	int	local_err;
+
+	while (ft_isspace(**str))
+		(*str)++;
+	local_err = 1;
+	if (**str == '+')
+		(*str)++;
+	n = 0;
+	while (**str && ft_isdigit(**str))
+	{
+		local_err = 0;
+		n = 10 * n + (**str - '0');
+		(*str)++;
+	}
+	if (n > 10000)
+		local_err = 1;
+	if (*err == 0)
+		*err = local_err;
+	return (n);
+}
+
