@@ -24,13 +24,12 @@ void	check_direction_limits(t_vector3 orient, int *err)
 
 void	add_camera(t_scene *scene, char *str)
 {
+	t_camera	*camera;
 	t_vector3	origin;
 	t_vector3	direction;
 	double		fov;
 	int			err;
 
-	if (scene->camera != NULL)
-		ft_error(4);
 	err = 0;
 	origin = new_vector_atof(&str, &err);
 	direction = new_vector_atof(&str, &err);
@@ -41,7 +40,10 @@ void	add_camera(t_scene *scene, char *str)
 	check_endline(&str, &err);
 	if (err)
 		ft_error(4);
+	camera = new_camera(origin, direction, fov);
 	scene->camera = new_camera(origin, direction, fov);
+	camera->next = scene->camera;
+	scene->camera = camera;
 }
 
 void	reset_camera(t_scene *scene)

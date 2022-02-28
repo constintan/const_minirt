@@ -46,7 +46,7 @@ void	parse_line(t_scene *scene, char *str)
 		add_cylinder(scene, &str[2]);
 	else if (str[0] == 'c' && str[1] == 'n')
 		add_cone(scene, &str[2]);
-	else if (str[0] == 'C')
+	else if (str[0] == 'C' || str[0] == 'c')
 		add_camera(scene, &str[1]);
 	else if (str[0] == 'A')
 		add_ambient(scene, &str[1]);

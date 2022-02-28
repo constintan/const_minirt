@@ -128,6 +128,7 @@ typedef struct s_camera
 	double			fov;
 	double			zoom;
 	struct s_camera	*defaults;
+	struct s_camera	*next;
 }	t_camera;
 
 typedef struct s_ambient
