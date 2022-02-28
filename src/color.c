@@ -46,7 +46,7 @@ t_color	new_color_atoc(char **str, int *err)
 		(*str)++;
 	if (**str == ',')
 		(*str)++;
-	if (**str == '\0' && BONUS)
+	if ((**str == '\0' || kd_isalpha(**str)) && BONUS )
 	{
 		ft_putstr_fd("Color not specified. Init with white color\n", 1);
 		return (new_color(255, 255, 255));

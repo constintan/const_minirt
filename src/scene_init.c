@@ -35,25 +35,28 @@ void	parse_line(t_scene *scene, char *str)
 {
 	while (ft_isspace(*str))
 		str++;
-	if (str[0] == '\0'
-		|| (BONUS && (str[0] == '#' || (str[0] == '/' && str[1] == '/'))))
+	if (str[0] == '\0' || (BONUS && (str[0] == '#' || check_identyfier(str, "//"))))
 		;
-	else if (str[0] == 's' && str[1] == 'p')
+	else if (check_identyfier(str, "sp"))
 		add_sphere(scene, &str[2]);
-	else if (str[0] == 'p' && str[1] == 'l')
+	else if (check_identyfier(str, "pl"))
 		add_plane(scene, &str[2]);
-	else if (str[0] == 'c' && str[1] == 'y')
+	else if (check_identyfier(str, "cy"))
 		add_cylinder(scene, &str[2]);
-	else if (str[0] == 'c' && str[1] == 'n')
+	else if (check_identyfier(str, "cn") || check_identyfier(str, "co"))
 		add_cone(scene, &str[2]);
-	else if (str[0] == 'C' || str[0] == 'c')
+	else if (check_identyfier(str, "c"))
 		add_camera(scene, &str[1]);
-	else if (str[0] == 'A')
+	else if (check_identyfier(str, "a"))
 		add_ambient(scene, &str[1]);
-	else if (str[0] == 'L')
+	else if (check_identyfier(str, "l"))
 		add_light(scene, &str[1]);
-	else if (str[0] == 'R')
+	else if (check_identyfier(str, "r"))
 		init_resolution(scene, &str[1]);
+	else if (check_identyfier(str, "sq") || check_identyfier(str, "tr")
+			|| check_identyfier(str, "aa")
+			|| check_identyfier(str, "sky") || check_identyfier(str, "cb"))
+		;
 	else
 		ft_error(5);
 }

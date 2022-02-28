@@ -29,6 +29,6 @@ void	check_endline(char **str, int *err)
 {
 	while (ft_isspace(**str))
 		(*str)++;
-	if (**str != '\0')
+	if (**str != '\0' && check_identyfier(*str, "raiiinbow"))
 		*err = 1;
 }

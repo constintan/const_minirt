@@ -31,6 +31,7 @@
 # define DEF_BG_COLOR_G 128
 # define DEF_BG_COLOR_B 128
 # define DEFAULT_ZOOM 32
+# define DEFAULT_FOV 70
 # define EPSILON 1e-6
 
 int WINDOW_WIDTH;
@@ -305,6 +306,7 @@ int				invalid_filename(char *filename);
 //parse_utils.c
 t_vector3		new_vector_atof(char **str, int *err);
 void			init_resolution(t_scene *scene, char *str);
+int				check_identyfier(char const *s1, char const *s2);
 
 //sphere.c
 void			intersect_sphere(t_sphere *sphere, t_ray *r, t_scene *scene);

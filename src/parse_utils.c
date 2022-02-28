@@ -43,3 +43,16 @@ void init_resolution(t_scene *scene, char *str)
 	if (err)
 		ft_error(11);
 }
+
+int	check_identyfier(char const *s1, char const *s2)
+{
+	while (*s2 && kd_tolower(*s1) == kd_tolower(*s2))
+	{
+		s1++;
+		s2++;
+	}
+	if (*s2 == '\0' && (*s1 == '\0' || ft_isspace(*s1)))
+		return (1);
+	else
+		return (0);
+}

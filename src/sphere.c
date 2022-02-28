@@ -89,7 +89,7 @@ void	add_sphere(t_scene *scene, char *str)
 	center = new_vector_atof(&str, &err);
 	diametr = ft_atof(&str, &err);
 	color = new_color_atoc(&str, &err);
-	check_endline(&str, &err);
+//	check_endline(&str, &err);
 	if (err)
 		ft_error(3);
 	sphere = new_sphere(center, diametr / 2, color);

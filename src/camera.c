@@ -34,9 +34,17 @@ void	add_camera(t_scene *scene, char *str)
 	origin = new_vector_atof(&str, &err);
 	direction = new_vector_atof(&str, &err);
 	check_direction_limits(direction, &err);
-	fov = ft_atof(&str, &err);
-	if (fov < 0 || fov > 180)
-		err = 1;
+	while (ft_isspace(*str))
+		(str)++;
+	if (*str == '\0')
+		fov = DEFAULT_FOV;
+	else
+	{
+		fov = ft_atof(&str, &err);
+		if (fov < 0 || fov > 180)
+			err = 1;
+
+	}
 	check_endline(&str, &err);
 	if (err)
 		ft_error(4);
