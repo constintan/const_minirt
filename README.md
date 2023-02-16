@@ -69,7 +69,10 @@ These parameters describe shape's position, direction and color (check the subje
 
 
 ### Some visualization
-![](visualization.gif)
+![](img1.png)
+![](img2.png)
+![](gif1.gif)
+![](gif2.gif)
 
 
 ### AUTHORS
